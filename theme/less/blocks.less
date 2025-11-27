@@ -1,0 +1,25 @@
+.mappers-section {
+	--padding: 100px;
+	padding: var(--padding) 0;
+	@media @md {
+		--padding: 40px;
+	}
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6 {
+		margin-top: 0;
+		margin-bottom: 0;
+	}
+	a {
+		text-decoration: none;
+	}
+	& + .mappers-section-benefits {
+		margin-top: -100px;
+		@media @md {
+			margin-top: -40px;
+		}
+	}
+}
