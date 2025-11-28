@@ -1,0 +1,78 @@
+<?php
+/**
+ * Modal auth registration
+ *
+ * @package mappers
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+$google_auth_url = mappers_get_google_auth_url();
+?>
+<div id="mappers-modal-registration" class="mappers-modal mappers-modal-registration">
+	<div tabindex="-1" class="mappers-modal-wrapp">
+		<div role="dialog" aria-modal="true" class="mappers-modal-body">
+			<button type="button" class="mappers-modal-close-btn" data-modal-close aria-label="<?php esc_attr_e( 'Закрити', 'mappers' ); ?>">
+				<svg class="mappers-icon"><use xlink:href="#icon-close"/></svg>
+			</button>
+			<form action="?" class="mappers-login-form mappers-modal-form" data-action="registration">
+				<?php get_template_part( 'template-parts/form', 'notifications' ); ?>
+				<div class="mappers-modal-head">
+					<div class="mappers-modal-title mappers-h2"><?php esc_html_e( 'Реєстрація', 'mappers' ); ?></div>
+					<div class="mappers-modal-desc">
+						<?php echo esc_html_e( 'Після реєстрації на нашому сайті вам буде відкритий доступ в особистий кабінет, і ви зможете користуватися усіма перевагам сервісу', 'mappers' ); ?>
+					</div>
+				</div>
+				<div class="mappers-form-inputs">
+					<label class="mappers-form-block">
+						<span class="mappers-form-block-title"><?php esc_html_e( "Ім'я та прізвище", 'mappers' ); ?></span>
+						<input type="text" class="mappers-input" name="mappers_name" placeholder="<?php esc_attr_e( "Введіть ім'я та прізвище", 'mappers' ); ?>" required>
+					</label>
+					<label class="mappers-form-block">
+						<span class="mappers-form-block-title"><?php esc_html_e( 'Електронна пошта', 'mappers' ); ?></span>
+						<input type="email" class="mappers-input" name="email" placeholder="<?php esc_attr_e( 'Введіть електронну пошта', 'mappers' ); ?>" required>
+					</label>
+					<label class="mappers-form-block">
+						<span class="mappers-form-block-title"><?php esc_html_e( 'Пароль', 'mappers' ); ?></span>
+						<span class="mappers-input-block mappers-input-block-password">
+							<input type="password" class="mappers-input" name="password" placeholder="<?php esc_attr_e( 'Введіть пароль', 'mappers' ); ?>" required>
+							<button type="button" class="mappers-password-toggle" aria-label="<?php esc_attr_e( 'Показати/сховати пароль', 'mappers' ); ?>">
+								<svg class="mappers-icon"><use xlink:href="#icon-eye"/></svg>
+								<svg class="mappers-icon"><use xlink:href="#icon-eye-slash"/></svg>
+							</button>
+						</span>
+					</label>
+					<label class="mappers-form-block">
+						<span class="mappers-form-block-title"><?php esc_html_e( 'Телефон', 'mappers' ); ?></span>
+						<input type="tel" class="mappers-input" name="mappers_tel" placeholder="<?php esc_attr_e( 'Номер телефону', 'mappers' ); ?>" required>
+					</label>
+					<label class="mappers-form-block">
+						<span class="mappers-form-block-title"><?php esc_html_e( 'Веб-сайт', 'mappers' ); ?></span>
+						<input type="url" class="mappers-input" name="mappers_website" placeholder="<?php esc_attr_e( 'Введіть веб-сайт', 'mappers' ); ?>">
+					</label>
+				</div>
+				<?php get_template_part( 'template-parts/form', 'rules' ); ?>
+				<div class="mappers-form-btns">
+					<button type="submit" class="mappers-modal-form-submit mappers-btn"><?php esc_html_e( 'Зареєструватись', 'mappers' ); ?></button>
+					<div class="mappers-form-btns-divider"><?php esc_html_e( 'Або', 'mappers' ); ?></div>
+					<?php if ( $google_auth_url ) : ?>
+					<button
+						type="button"
+						class="mappers-google-auth-btn mappers-btn mappers-btn-gray"
+						data-url="<?php echo esc_url( $google_auth_url ); ?>"
+					>
+						<img src="<?php echo esc_url( get_template_directory_uri() ); ?>/img/google-logo.svg" alt="<?php esc_attr_e( 'Логотип Google', 'mappers' ); ?>">
+						<span><?php esc_html_e( 'Зареєструватися за допомогою Google', 'mappers' ); ?></span>
+					</button>
+					<?php endif; ?>
+				</div>
+				<div class="mappers-login-form-change">
+					<div class="mappers-login-form-change-title"><?php esc_html_e( 'Вже зарєструвалися?', 'mappers' ); ?></div>
+					<button type="button" class="mappers-login-form-change-btn" data-modal-toggle="mappers-modal-enter"><?php esc_html_e( 'Увійти', 'mappers' ); ?></button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

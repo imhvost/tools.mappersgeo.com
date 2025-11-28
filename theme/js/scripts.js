@@ -50,6 +50,37 @@ const mappersModal = new AccessibleMinimodal({
 	},
 });
 
+$(document).ready(function () {
+	const params = new URL(window.location.href).searchParams;
+	if (params.get('modal')) {
+		mappersModal.openModal('mappers-modal-' + params.get('modal'));
+	}
+	if (params.get('faq')) {
+		const q = $(`#faq-${params.get('faq')}`)[0];
+		if (q) {
+			q.scrollIntoView({ behavior: 'smooth' });
+		}
+	}
+});
+
+$('.mappers-modal').on('accessible-minimodal:after-close', e => {
+	const target = e.currentTarget;
+
+	if (target) {
+		$(target).find('.mappers-modal-wrapp').scrollTop(0);
+	}
+
+	const url = new URL(window.location.href);
+	url.searchParams.delete('modal');
+	window.history.replaceState({}, '', url.toString());
+});
+
+$(document).on('click', '[data-modal-toggle]', function () {
+	const modalId = $(this).data('modal-toggle');
+	mappersModal.closeAllModals();
+	setTimeout(() => mappersModal.openModal(modalId), 400);
+});
+
 /* header */
 
 mappersFixedHeader();
@@ -132,4 +163,130 @@ $(document).on('click', '.mappers-accordion-item-toggle', function () {
 		item.addClass('mappers-active');
 	}
 	return false;
+});
+
+/* mappers-password-toggle */
+
+$(document).on('click', '.mappers-password-toggle', function () {
+	const t = $(this);
+	const input = t.closest('.mappers-form-block').find('.mappers-input');
+	if (input.attr('type') === 'text') {
+		input.attr('type', 'password');
+	} else {
+		input.attr('type', 'text');
+	}
+	t.toggleClass('mappers-active');
+});
+
+/* mappers-form-notifications-close */
+
+$(document).on('click', '.mappers-form-notifications-close', function () {
+	$(this).closest('.mappers-form-notifications').removeClass('mappers-error mappers-success mappers-active');
+});
+
+/* mappers-login-form */
+
+$(document).on('submit', '.mappers-login-form', function (e) {
+	e.preventDefault();
+	if (!window.wp_ajax) {
+		return;
+	}
+
+	const t = $(this);
+
+	if (t.hasClass('mappers-ajax-process')) {
+		return;
+	}
+	t.addClass('mappers-ajax-process');
+
+	const notifications = t.find('.mappers-form-notifications');
+	const notificationsText = notifications.find('.mappers-form-notifications-text');
+	notifications.removeClass('mappers-error mappers-active mappers-success');
+
+	const action = t.data('action');
+
+	const formData = new FormData(this);
+	formData.append('action', `mappers_auth_${action}`);
+	formData.append('nonce', wp_ajax.nonce);
+	if (action !== 'forgot_password') {
+		formData.append('redirect', location.href);
+	}
+	$.ajax({
+		url: wp_ajax.url,
+		type: 'POST',
+		data: formData,
+		processData: false,
+		contentType: false,
+		success: function (response) {
+			if (response.success) {
+				if (response.data.redirect) {
+					location.href = response.data.redirect;
+					return;
+				}
+				if (action === 'forgot_password') {
+					notificationsText.text(response.data.message);
+					notifications.addClass('mappers-success mappers-active');
+				}
+			} else {
+				notificationsText.text(response.data.message);
+				notifications.addClass('mappers-error mappers-active');
+			}
+			t.removeClass('mappers-ajax-process');
+		},
+		error: error => {
+			t.removeClass('mappers-ajax-process');
+		},
+	});
+});
+
+/* mappers-password-recovery-form */
+
+$(document).on('submit', '.mappers-password-recovery-form', function (e) {
+	e.preventDefault();
+	if (!window.wp_ajax) {
+		return;
+	}
+
+	const t = $(this);
+
+	if (t.hasClass('mappers-ajax-process')) {
+		return;
+	}
+	t.addClass('mappers-ajax-process');
+
+	const notifications = t.find('.mappers-form-notifications');
+	const notificationsText = notifications.find('.mappers-form-notifications-text');
+	notifications.removeClass('mappers-error mappers-active mappers-success');
+
+	const params = new URL(location.href).searchParams;
+
+	const formData = new FormData(this);
+	formData.append('action', 'mappers_auth_password_recovery');
+	formData.append('key', params.get('key'));
+	formData.append('login', params.get('login'));
+	formData.append('nonce', wp_ajax.nonce);
+	$.ajax({
+		url: wp_ajax.url,
+		type: 'POST',
+		data: formData,
+		processData: false,
+		contentType: false,
+		success: function (response) {
+			if (response.success) {
+				if (response.data.redirect) {
+					location.href = response.data.redirect;
+					return;
+				} else {
+					location.href = location.href.split('?')[0];
+				}
+			} else {
+				notificationsText.text(response.data.message);
+				notifications.addClass('mappers-error mappers-active');
+			}
+			t.removeClass('mappers-ajax-process');
+		},
+		error: error => {
+			t.removeClass('mappers-ajax-process');
+		},
+	});
 });

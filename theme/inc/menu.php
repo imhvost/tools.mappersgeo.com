@@ -15,7 +15,7 @@ add_action(
 		register_nav_menus(
 			array(
 				'mappers_header' => esc_html__( 'Шапка', 'mappers' ),
-				'mappers_footer' => esc_html__( 'Підвал', 'mappers' ),
+				'mappers_rules'  => esc_html__( 'Правила', 'mappers' ),
 			)
 		);
 	}

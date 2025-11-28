@@ -76,33 +76,39 @@ $credits = new Mappers_Credits( get_current_user_id() );
 								</span>
 							</a>
 						<?php endif; ?>
-						<?php if ( is_user_logged_in() ) : ?>
-							<?php
-								$profile_page_id = mappers_get_page_id_by_template( 'page-profile.php' );
-							if ( $profile_page_id ) :
-								?>
-								<a href="<?php echo esc_url( get_the_permalink( $profile_page_id ) ); ?>" class="mappers-header-btn-cabinet mappers-btn">
+						<div class="mappers-header-cabinet">
+							<?php if ( is_user_logged_in() ) : ?>
+								<?php
+									$profile_page_id = mappers_get_page_id_by_template( 'page-profile.php' );
+								if ( $profile_page_id ) :
+									?>
+									<a href="<?php echo esc_url( get_the_permalink( $profile_page_id ) ); ?>" class="mappers-header-btn-cabinet mappers-btn">
+										<svg class="mappers-icon"><use xlink:href="#icon-cabinet"/></svg>
+										<span>
+										<?php echo esc_html_e( 'Профіль', 'mappers' ); ?>
+										</span>
+									</a>
+									
+								<?php endif; ?>
+								<a href="<?php echo esc_url( wp_logout_url( home_url( '/' ) ) ); ?>" class="mappers-header-logout" aria-label="<?php esc_attr_e( 'Вийти з профілю', 'mappers' ); ?>">
+									<svg class="mappers-icon"><use xlink:href="#icon-logout"/></svg>
+								</a>
+							<?php else : ?>
+								<button type="button" class="mappers-header-btn-cabinet mappers-btn" data-modal-open="mappers-modal-registration">
 									<svg class="mappers-icon"><use xlink:href="#icon-cabinet"/></svg>
 									<span>
-									<?php echo esc_html_e( 'Профіль', 'mappers' ); ?>
+										<?php echo esc_html_e( 'Профіль', 'mappers' ); ?>
 									</span>
-								</a>
+								</button>
 							<?php endif; ?>
-						<?php else : ?>
-							<button type="button" class="mappers-header-btn-cabinet mappers-btn" data-modal-open="mappers-modal-registration">
-								<svg class="mappers-icon"><use xlink:href="#icon-cabinet"/></svg>
-								<span>
-									<?php echo esc_html_e( 'Профіль', 'mappers' ); ?>
-								</span>
-							</button>
-						<?php endif; ?>
+						</div>
 				</div>
 			</div>
 		</nav>
 		<?php if ( has_nav_menu( 'mappers_header' ) ) : ?>
 			<button type="button" class="mappers-header-nav-toggle mappers-visible-tablet" aria-label="<?php esc_attr_e( 'Меню', 'mappers' ); ?>">
 				<svg class="mappers-icon"><use xlink:href="#icon-menu"/></svg>
-				<svg class="mappers-icon"><use xlink:href="#icon-x"/></svg>
+				<svg class="mappers-icon"><use xlink:href="#icon-close"/></svg>
 			</button>
 		<?php endif; ?>
 	</div>

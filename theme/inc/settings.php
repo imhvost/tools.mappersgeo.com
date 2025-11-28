@@ -189,3 +189,19 @@ add_action(
 		load_theme_textdomain( 'mappers', get_template_directory() . '/languages' );
 	}
 );
+
+/* logo */
+
+add_action(
+	'after_setup_theme',
+	function () {
+		add_theme_support(
+			'custom-logo',
+			array(
+				'width'       => 150,
+				'flex-height' => true,
+				'flex-width'  => true,
+			)
+		);
+	}
+);

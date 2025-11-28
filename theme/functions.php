@@ -49,3 +49,5 @@ require_once get_template_directory() . '/inc/profile.php';
 require_once get_template_directory() . '/inc/api.php';
 
 require_once get_template_directory() . '/inc/feeds.php';
+
+require_once get_template_directory() . '/inc/mail.php';
