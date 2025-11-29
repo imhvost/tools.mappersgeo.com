@@ -24,6 +24,8 @@ add_action(
 					Field::make( 'text', 'mappers_name', __( "Ім'я та прізвище", 'mappers' ) ),
 					Field::make( 'text', 'mappers_tel', __( 'Номер телефону', 'mappers' ) ),
 					Field::make( 'text', 'mappers_website', __( 'Веб-сайт', 'mappers' ) ),
+					Field::make( 'text', 'mappers_telegram', __( 'Telegram', 'mappers' ) ),
+					Field::make( 'text', 'mappers_facebook', __( 'Facebook', 'mappers' ) ),
 					Field::make( 'text', 'mappers_credits', __( 'Кредити', 'mappers' ) )
 						->set_attribute( 'type', 'number' ),
 				)

@@ -259,3 +259,77 @@
 		color: @linkH;
 	}
 }
+
+.mappers-page-main {
+	padding: 64px 0 80px;
+	@media @md {
+		padding: 32px 0 48px;
+	}
+}
+
+.mappers-page-title {
+	margin-bottom: 40px;
+	@media @md {
+		margin-bottom: 24px;
+	}
+}
+
+.mappers-profile {
+	display: flex;
+	background-color: @white;
+	border-radius: 16px;
+	border: solid 1px @border;
+}
+
+.mappers-profile-nav {
+	flex: none;
+	width: 416px;
+	padding: 40px;
+	border-radius: 16px;
+	background-color: @white;
+	box-shadow: 2px 2px 20px 0px #52422f1f;
+	display: flex;
+	flex-direction: column;
+	gap: 32px;
+	margin: -1px 0 -1px -1px;
+}
+
+.mappers-profile-menu {
+	margin: -20px 0;
+	li {
+		&:not(:last-child) {
+			border-bottom: solid 1px @border;
+		}
+		&.mappers-active {
+			.mappers-profile-menu-link {
+				color: @link;
+			}
+		}
+	}
+}
+
+.mappers-profile-menu-link {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 20px 0;
+	color: @title;
+	span {
+		.mappers-h3;
+	}
+	i {
+		font-size: 12px;
+		padding: 3px 6px;
+		border: solid 1px @border;
+		color: @link;
+		border-radius: 6px;
+		font-style: normal;
+	}
+}
+
+a.mappers-profile-menu-link {
+	transition: color 0.4s;
+	&:hover {
+		color: @link;
+	}
+}
