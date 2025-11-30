@@ -85,9 +85,22 @@ if ( $profile_tab && ! in_array( $profile_tab, array( 'password', 'delete' ), tr
 				</ul>
 			</nav>
 			<div class="mappers-profile-body">
-				<?php
-				if ( 'delete' === $profile_tab ) :
-					elseif ( 'password' === $profile_tab ) :
+				<?php if ( 'delete' === $profile_tab ) : ?>
+					<div class="mappers-profile-delete">
+						<div class="mappers-profile-delete-title mappers-h2">
+							<?php esc_html_e( 'Видалити профіль', 'mappers' ); ?>
+						</div>
+						<div class="mappers-profile-delete-desc">
+							<?php esc_html_e( 'Ви хочете видалити свій профіль?', 'mappers' ); ?>
+							<?php esc_html_e( 'Видалення профілю призведе до видалення всіх даних, пов’язаних із вашим профілем.', 'mappers' ); ?>
+						</div>
+						<button type="button" class="mappers-profile-delete-btn mappers-btn mappers-btn-gray" data-modal-open="mappers-modal-profile-delete">
+							<?php esc_attr_e( 'Я хочу видалити свій профіль', 'mappers' ); ?>
+						</button>
+					</div>
+					<?php get_template_part( 'template-parts/modal/profile', 'delete' ); ?>
+					<?php
+				elseif ( 'password' === $profile_tab ) :
 					else :
 						$mappers_name     = carbon_get_user_meta( $user_id, 'mappers_name' );
 						$mappers_tel      = carbon_get_user_meta( $user_id, 'mappers_tel' );
@@ -95,6 +108,72 @@ if ( $profile_tab && ! in_array( $profile_tab, array( 'password', 'delete' ), tr
 						$mappers_telegram = carbon_get_user_meta( $user_id, 'mappers_telegram' );
 						$mappers_facebook = carbon_get_user_meta( $user_id, 'mappers_facebook' );
 						?>
+						<form action="?" class="mappers-profile-form">
+							<label class="mappers-form-block">
+								<span class="mappers-form-block-title"><?php esc_html_e( "Ім'я та прізвище", 'mappers' ); ?></span>
+								<input
+									type="text"
+									class="mappers-input"
+									name="mappers_name"
+									placeholder="<?php esc_attr_e( "Введіть ім'я та прізвище", 'mappers' ); ?>"
+									value="<?php echo esc_attr( $mappers_name ); ?>"
+									required
+								>
+							</label>
+							<label class="mappers-form-block">
+								<span class="mappers-form-block-title"><?php esc_html_e( 'Електронна пошта', 'mappers' ); ?></span>
+								<input
+									type="email"
+									class="mappers-input"
+									name="user_email"
+									placeholder="<?php esc_attr_e( 'Введіть електронну пошта', 'mappers' ); ?>"
+									value="<?php echo esc_attr( mappers_get_user_email( $user_id ) ); ?>"
+									required
+								>
+							</label>
+							<label class="mappers-form-block">
+								<span class="mappers-form-block-title"><?php esc_html_e( 'Телефон', 'mappers' ); ?></span>
+								<input
+									type="tel"
+									class="mappers-input"
+									name="mappers_tel"
+									placeholder="<?php esc_attr_e( 'Номер телефону', 'mappers' ); ?>"
+									value="<?php echo esc_attr( $mappers_tel ); ?>"
+									required
+								>
+							</label>
+							<label class="mappers-form-block">
+								<span class="mappers-form-block-title"><?php esc_html_e( 'Веб-сайт', 'mappers' ); ?></span>
+								<input
+									type="url"
+									class="mappers-input"
+									name="mappers_website"
+									placeholder="<?php esc_attr_e( 'Введіть веб-сайт', 'mappers' ); ?>"
+									value="<?php echo esc_attr( $mappers_website ); ?>"
+								>
+							</label>
+							<label class="mappers-form-block">
+								<span class="mappers-form-block-title"><?php esc_html_e( 'Telegram', 'mappers' ); ?></span>
+								<input
+									type="url"
+									class="mappers-input"
+									name="mappers_telegram"
+									placeholder="<?php esc_attr_e( 'Введіть telegram', 'mappers' ); ?>"
+									value="<?php echo esc_attr( $mappers_telegram ); ?>"
+								>
+							</label>
+							<label class="mappers-form-block">
+								<span class="mappers-form-block-title"><?php esc_html_e( 'Facebook', 'mappers' ); ?></span>
+								<input
+									type="url"
+									class="mappers-input"
+									name="mappers_facebook"
+									placeholder="<?php esc_attr_e( 'Введіть facebook', 'mappers' ); ?>"
+									value="<?php echo esc_attr( $mappers_facebook ); ?>"
+								>
+							</label>
+							<button type="submit" class="mappers-modal-form-submit mappers-btn"><?php esc_html_e( 'Зберегти зміни', 'mappers' ); ?></button>
+						</form>
 				<?php endif; ?>
 			</div>
 		</div>

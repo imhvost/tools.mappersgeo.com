@@ -290,3 +290,85 @@ $(document).on('submit', '.mappers-password-recovery-form', function (e) {
 		},
 	});
 });
+
+/* mappers-profile-form */
+
+$(document).on('submit', '.mappers-profile-form', function (e) {
+	e.preventDefault();
+	if (!window.wp_ajax) {
+		return;
+	}
+
+	const t = $(this);
+
+	if (t.hasClass('mappers-ajax-process')) {
+		return;
+	}
+	t.addClass('mappers-ajax-process');
+
+	const formData = new FormData(this);
+	formData.append('action', 'mappers_profile_form');
+	formData.append('nonce', wp_ajax.nonce);
+	$.ajax({
+		url: wp_ajax.url,
+		type: 'POST',
+		data: formData,
+		processData: false,
+		contentType: false,
+		success: function (response) {
+			if (response.success) {
+				location.reload();
+			}
+			t.removeClass('mappers-ajax-process');
+		},
+		error: error => {
+			t.removeClass('mappers-ajax-process');
+		},
+	});
+});
+
+/* mappers-profile-delete-submit */
+
+$(document).on('click', '.mappers-profile-delete-submit', function () {
+	if (!window.wp_ajax) {
+		return;
+	}
+
+	const t = $(this);
+
+	if (t.hasClass('mappers-ajax-process')) {
+		return;
+	}
+	t.addClass('mappers-ajax-process');
+
+	const formData = new FormData();
+	formData.append('action', 'mappers_profile_delete');
+	formData.append('nonce', wp_ajax.nonce);
+	$.ajax({
+		url: wp_ajax.url,
+		type: 'POST',
+		data: formData,
+		processData: false,
+		contentType: false,
+		success: function (response) {
+			if (response.data.redirect) {
+				t.data('redirect', response.data.redirect);
+				t.closest('.mappers-modal-profile-delete')
+					.find('.mappers-modal-profile-delete-tab')
+					.toggleClass('mappers-active');
+				return;
+			}
+			t.removeClass('mappers-ajax-process');
+		},
+		error: error => {
+			t.removeClass('mappers-ajax-process');
+		},
+	});
+});
+
+$('#mappers-modal-profile-delete').on('accessible-minimodal:after-close', function () {
+	const redirect = $(this).find('.mappers-profile-delete-submit').data('redirect');
+	if (redirect) {
+		location.href = redirect;
+	}
+});

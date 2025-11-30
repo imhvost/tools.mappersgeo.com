@@ -701,6 +701,19 @@
 	text-align: center;
 }
 
+.mappers-modal-btns {
+	display: flex;
+	gap: 16px;
+	.mappers-btn {
+		flex: auto;
+		&:only-child {
+			@media @xs_ {
+				margin: 0 auto;
+			}
+		}
+	}
+}
+
 .mappers-form-btns {
 	display: flex;
 	flex-direction: column;

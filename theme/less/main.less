@@ -279,6 +279,9 @@
 	background-color: @white;
 	border-radius: 16px;
 	border: solid 1px @border;
+	@media @md {
+		flex-direction: column;
+	}
 }
 
 .mappers-profile-nav {
@@ -292,6 +295,12 @@
 	flex-direction: column;
 	gap: 32px;
 	margin: -1px 0 -1px -1px;
+	@media @md {
+		margin: -1px -1px 0;
+		padding: 24px var(--mappers-container-padding);
+		gap: 24px;
+		width: auto;
+	}
 }
 
 .mappers-profile-menu {
@@ -332,4 +341,29 @@ a.mappers-profile-menu-link {
 	&:hover {
 		color: @link;
 	}
+}
+
+.mappers-profile-body {
+	display: flex;
+	flex-direction: column;
+	flex: auto;
+	min-width: 0;
+	padding: 64px 56px;
+	@media @md {
+		padding: 24px var(--mappers-container-padding);
+	}
+}
+
+.mappers-profile-form,
+.mappers-profile-delete {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+	max-width: 476px;
+}
+
+.mappers-modal-profile-delete-tab {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
 }

@@ -253,46 +253,6 @@ add_action( 'wp_ajax_nopriv_mappers_auth_password_recovery', 'mappers_auth_passw
 add_action( 'wp_ajax_mappers_auth_password_recovery', 'mappers_auth_password_recovery' );
 
 
-/**
- * Ajax password change function
- *
- * @return void
- */
-function mappers_auth_password_change() {
-
-	$fields = mappers_check_text_fields(
-		array(
-			'password',
-			'old_password',
-		)
-	);
-
-	$user_id = get_current_user_id();
-	if ( ! $user_id ) {
-		wp_send_json_error( array( 'message' => esc_html__( 'Користувач відсутній', 'mappers' ) ) );
-	}
-
-	$user = get_userdata( $user_id );
-	if ( ! $user ) {
-		wp_send_json_error( array( 'message' => esc_html__( 'Користувач не знайдений', 'mappers' ) ) );
-	}
-
-	if ( ! wp_check_password( $fields['old_password'], $user->user_pass, $user_id ) ) {
-		wp_send_json_error( array( 'message' => esc_html__( 'Старий пароль невірний', 'mappers' ) ) );
-	}
-
-	wp_set_password( $fields['password'], $user_id );
-
-	wp_set_current_user( $user_id );
-	wp_set_auth_cookie( $user_id );
-
-	wp_send_json_success( array( 'message' => esc_html__( 'Пароль успішно змінено.', 'mappers' ) ) );
-}
-
-add_action( 'wp_ajax_nopriv_mappers_auth_password_change', 'mappers_auth_password_change' );
-add_action( 'wp_ajax_mappers_auth_password_change', 'mappers_auth_password_change' );
-
-
 /* google auth */
 
 add_action(
