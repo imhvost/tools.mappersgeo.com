@@ -4,7 +4,7 @@
  *
  * Handles user credits operations.
  *
- * @package v
+ * @package mappers
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -27,8 +27,6 @@ class Mappers_Credits {
 	 * Constructor.
 	 *
 	 * @param int $user_id User ID.
-	 *
-	 * @throws \InvalidArgumentException If user does not exist.
 	 */
 	public function __construct( int $user_id ) {
 		if ( get_userdata( $user_id ) ) {

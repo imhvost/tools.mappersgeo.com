@@ -372,3 +372,96 @@ $('#mappers-modal-profile-delete').on('accessible-minimodal:after-close', functi
 		location.href = redirect;
 	}
 });
+
+/* mappers-new-password-form */
+
+$(document).on('submit', '.mappers-new-password-form', function (e) {
+	e.preventDefault();
+	if (!window.wp_ajax) {
+		return;
+	}
+
+	const t = $(this);
+
+	if (t.hasClass('mappers-ajax-process')) {
+		return;
+	}
+	t.addClass('mappers-ajax-process');
+
+	const notifications = t.find('.mappers-form-notifications');
+	const notificationsText = notifications.find('.mappers-form-notifications-text');
+	notifications.removeClass('mappers-error mappers-active mappers-success');
+
+	const formData = new FormData(this);
+	formData.append('action', 'mappers_auth_password_change');
+	formData.append('nonce', wp_ajax.nonce);
+	$.ajax({
+		url: wp_ajax.url,
+		type: 'POST',
+		data: formData,
+		processData: false,
+		contentType: false,
+		success: function (response) {
+			if (response.data.message) {
+				notificationsText.text(response.data.message);
+				notifications.addClass('mappers-error mappers-active');
+			}
+			if (response.success) {
+				notifications.addClass('mappers-success mappers-active');
+			} else {
+				notifications.addClass('mappers-error mappers-active');
+			}
+			t.removeClass('mappers-ajax-process');
+		},
+		error: error => {
+			t.removeClass('mappers-ajax-process');
+		},
+	});
+});
+
+/* mappers-google-auth-btn */
+
+$(document).on('click', '.mappers-google-auth-btn', function () {
+	const t = $(this);
+	const form = t.closest('.mappers-login-form');
+	const url = new URL(t.data('url'));
+	const nonce = url.searchParams.get('state');
+	const stateObj = {
+		nonce: nonce,
+		redirect: location.href,
+	};
+	const state = btoa(JSON.stringify(stateObj));
+	url.searchParams.set('state', state);
+
+	const notifications = form.find('.mappers-form-notifications');
+	const notificationsText = notifications.find('.mappers-form-notifications-text');
+	notifications.removeClass('mappers-error mappers-active mappers-success');
+
+	const width = 500;
+	const height = window.innerHeight;
+	const left = (window.screen.width - width) / 2;
+	const top = (window.screen.height - height) / 2;
+
+	const popup = window.open(url, 'googleLogin', `width=${width},height=${height},left=${left},top=${top}`);
+
+	window.addEventListener('message', function messageHandler(event) {
+		if (event.origin !== window.location.origin) {
+			return;
+		}
+
+		const data = event.data;
+
+		if (data.success) {
+			if (data.redirect) {
+				location.href = data.redirect;
+			} else {
+				this.location.reload();
+			}
+		} else {
+			notificationsText.text(data.message);
+			notifications.addClass('mappers-error mappers-active');
+		}
+
+		window.removeEventListener('message', messageHandler);
+	});
+});

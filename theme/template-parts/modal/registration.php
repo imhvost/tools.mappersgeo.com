@@ -60,7 +60,7 @@ $google_auth_url = mappers_get_google_auth_url();
 					<?php if ( $google_auth_url ) : ?>
 					<button
 						type="button"
-						class="mappers-google-auth-btn mappers-btn mappers-btn-gray"
+						class="mappers-google-auth-btn mappers-btn mappers-btn-white-border"
 						data-url="<?php echo esc_url( $google_auth_url ); ?>"
 					>
 						<img src="<?php echo esc_url( get_template_directory_uri() ); ?>/img/google-logo.svg" alt="<?php esc_attr_e( 'Логотип Google', 'mappers' ); ?>">

@@ -324,7 +324,7 @@ add_action(
 			return mappers_google_auth_render_popup_result( $result );
 		}
 
-		// Get user info
+		// Get user info.
 		$user_info_response = wp_remote_get(
 			'https://www.googleapis.com/oauth2/v2/userinfo',
 			array(
@@ -346,7 +346,7 @@ add_action(
 			return mappers_google_auth_render_popup_result( $result );
 		}
 
-		// Create or get user
+		// Create or get user.
 		$user = get_user_by( 'email', $user_info['email'] );
 
 		if ( $user ) {
@@ -364,18 +364,12 @@ add_action(
 					'user_pass'  => wp_generate_password(),
 					'first_name' => $first_name,
 					'last_name'  => $last_name,
-					'role'       => $role ? $role : 'mappers_questioner',
 				)
 			);
 
 			if ( is_wp_error( $user_id ) ) {
 				$result['message'] = esc_html__( 'Не вдалося створити користувача.', 'mappers' );
 				return mappers_google_auth_render_popup_result( $result );
-			}
-
-			$attachment_id = null;
-			if ( ! empty( $user_info['picture'] ) ) {
-				$attachment_id = mappers_media_handle_sideload_image( $user_info['picture'] );
 			}
 
 			if ( $full_name ) {
@@ -385,7 +379,7 @@ add_action(
 			$result['type'] = 'registration';
 		}
 
-		// Log in user
+		// Log in user.
 		wp_set_auth_cookie( $user_id );
 
 		$result['success']  = true;

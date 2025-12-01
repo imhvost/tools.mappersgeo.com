@@ -355,7 +355,8 @@ a.mappers-profile-menu-link {
 }
 
 .mappers-profile-form,
-.mappers-profile-delete {
+.mappers-profile-delete,
+.mappers-new-password-form {
 	display: flex;
 	flex-direction: column;
 	gap: 24px;
@@ -366,4 +367,154 @@ a.mappers-profile-menu-link {
 	display: flex;
 	flex-direction: column;
 	gap: 24px;
+}
+
+.mappers-profile-head {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	justify-content: space-between;
+}
+
+.mappers-credits-body {
+	display: flex;
+	padding: 24px 40px 40px;
+	border-radius: 20px;
+	border: solid 1px @border;
+	background-color: @white;
+	gap: 40px;
+	@media @md {
+		flex-direction: column;
+		padding: 24px var(--mappers-container-padding);
+	}
+}
+
+.mappers-credits-my {
+	gap: 12px;
+	display: flex;
+	flex-direction: column;
+	@media @md_ {
+		border-right: solid 1px @border;
+		flex: none;
+		width: 240px;
+		padding-right: 40px;
+		gap: 14px;
+	}
+}
+
+.mappers-credits-my-title {
+	font-size: 12px;
+	color: @title;
+}
+
+.mappers-credits-my-count {
+	display: flex;
+	gap: 6px;
+	align-items: center;
+	font-size: 40px;
+	line-height: 1;
+	font-weight: 600;
+	color: @title;
+	svg {
+		--size: 32px;
+		color: @text;
+	}
+}
+
+.mappers-credits-my-price {
+	padding-top: 14px;
+	border-top: solid 1px @border;
+	margin-top: auto;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-weight: 700;
+	color: @title;
+}
+
+.mappers-credits-my-price-item {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	svg {
+		color: @link;
+	}
+}
+
+.mappers-credits-my-btn {
+	align-self: flex-start;
+}
+
+.mappers-credits-packages {
+	flex: auto;
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+	@media @md {
+		gap: 16px;
+	}
+}
+
+.mappers-credits-packages-title {
+	font-size: 12px;
+	color: @title;
+}
+
+.mappers-credits-packages-list {
+	display: grid;
+	gap: 16px;
+	@media @md_ {
+		grid-template-columns: 1fr 1fr 1fr;
+		gap: 24px;
+	}
+}
+
+.mappers-credits-package {
+	display: flex;
+	align-items: center;
+	border-radius: 20px;
+	padding: 24px;
+	color: @white;
+	background-color: var(--bg-color, @text);
+	gap: 24px;
+	transition: background-color 0.4s;
+	&:hover {
+		background-color: var(--gradient-end, @text);
+	}
+}
+
+.mappers-credits-package-icon {
+	display: grid;
+	place-items: center;
+	width: 100px;
+	aspect-ratio: 1;
+	flex: none;
+	color: var(--icon-color);
+	background: linear-gradient(141.13deg, var(--gradient-start) 10.16%, var(--gradient-end) 173.41%);
+	border-radius: 20px;
+	border: solid 1px var(--border-color, @text);
+	svg {
+		--size: 84px;
+	}
+}
+
+.mappers-credits-package-body {
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.mappers-credits-package-title {
+	font-size: 30px;
+	font-weight: 700;
+	line-height: 1;
+}
+
+.mappers-credits-package-price {
+	padding: 4px 16px;
+	font-weight: 600;
+	border-radius: 100px;
+	background-color: @white;
+	color: var(--icon-color, @title);
 }

@@ -381,7 +381,7 @@ function mappers_check_text_fields( $fields = array(), $is_all_required = true, 
  * @return string Correct plural form.
  */
 function mappers_plural( $number, $forms ) {
-	$locale = determine_locale(); // Gets the current WordPress locale
+	$locale = determine_locale(); // Gets the current WordPress locale.
 
 	switch ( substr( $locale, 0, 2 ) ) {
 		case 'uk':
@@ -389,15 +389,79 @@ function mappers_plural( $number, $forms ) {
 			$mod100 = $number % 100;
 
 			if ( 1 === $mod10 && 11 !== $mod100 ) {
-				return $forms[0]; // singular
+				return $forms[0]; // singular.
 			} elseif ( $mod10 >= 2 && $mod10 <= 4 && ( $mod100 < 10 || $mod100 >= 20 ) ) {
-				return $forms[1]; // few
+				return $forms[1]; // few.
 			} else {
-				return $forms[2]; // many
+				return $forms[2]; // many.
 			}
 
 		case 'en':
 		default:
 			return ( 1 === $number ) ? $forms[0] : $forms[1];
 	}
+}
+
+/**
+ * Lighten a HEX color.
+ *
+ * @param string $hex   HEX color.
+ * @param int    $percent Percentage to lighten (0-100).
+ * @return string
+ */
+function mappers_lighten_color( string $hex, int $percent ): string {
+	$rgb = mappers_hex_to_rgb( $hex );
+
+	foreach ( $rgb as &$value ) {
+		$value = (int) min( 255, $value + ( 255 - $value ) * ( $percent / 100 ) );
+	}
+
+	return mappers_rgb_to_hex( $rgb );
+}
+
+/**
+ * Darken a HEX color.
+ *
+ * @param string $hex   HEX color.
+ * @param int    $percent Percentage to darken (0-100).
+ * @return string
+ */
+function mappers_darken_color( string $hex, int $percent ): string {
+	$rgb = mappers_hex_to_rgb( $hex );
+
+	foreach ( $rgb as &$value ) {
+		$value = (int) max( 0, $value * ( 1 - $percent / 100 ) );
+	}
+
+	return mappers_rgb_to_hex( $rgb );
+}
+
+/**
+ * Convert HEX to RGB.
+ *
+ * @param string $hex HEX color.
+ * @return array{0:int,1:int,2:int}
+ */
+function mappers_hex_to_rgb( string $hex ): array {
+	$hex = ltrim( $hex, '#' );
+
+	if ( strlen( $hex ) === 3 ) {
+		$hex = $hex[0] . $hex[0] . $hex[1] . $hex[1] . $hex[2] . $hex[2];
+	}
+
+	return array(
+		hexdec( substr( $hex, 0, 2 ) ),
+		hexdec( substr( $hex, 2, 2 ) ),
+		hexdec( substr( $hex, 4, 2 ) ),
+	);
+}
+
+/**
+ * Convert RGB array to HEX color.
+ *
+ * @param array $rgb Array with RGB values.
+ * @return string
+ */
+function mappers_rgb_to_hex( array $rgb ): string {
+	return sprintf( '#%02x%02x%02x', $rgb[0], $rgb[1], $rgb[2] );
 }

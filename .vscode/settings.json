@@ -7,14 +7,17 @@
 	"less.hover.references": false,
 	"files.exclude": {
 		"node_modules": true,
+		"**/plugins/**": true,
 		"**/vendor/**": true
 	},
 	"search.exclude": {
 		"node_modules": true,
+		"**/plugins/**": true,
 		"**/vendor/**": true
 	},
 	"files.watcherExclude": {
 		"node_modules": true,
+		"**/plugins/**": true,
 		"**/vendor/**": true
 	},
 	"files.eol": "\n",
@@ -29,6 +32,8 @@
 	"editor.unicodeHighlight.ambiguousCharacters": false,
 	"editor.stickyScroll.enabled": false,
 	"window.zoomLevel": -1,
+	"editor.occurrencesHighlight": "off",
+	// "editor.matchBrackets": "never",
 	"security.workspace.trust.untrustedFiles": "open",
 
 	"[html]": {
