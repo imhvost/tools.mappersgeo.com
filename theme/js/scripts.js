@@ -465,3 +465,84 @@ $(document).on('click', '.mappers-google-auth-btn', function () {
 		window.removeEventListener('message', messageHandler);
 	});
 });
+
+/* mappers-credits-buy-btn */
+
+$(document).on('click', '.mappers-credits-buy-btn', function () {
+	const t = $(this);
+	if (t.data('modal-open')) {
+		return false;
+	}
+	const packageId = t.data('package');
+	const packageInput = $('#mappers-modal-credits-buy [name="package"]');
+	if (packageId === 'custom') {
+		packageInput.val('');
+	} else {
+		packageInput.val(packageId);
+	}
+	$('.mappers-credits-buy-form-tab').removeClass('mappers-active').find('[data-required]').removeAttr('required');
+	$(`.mappers-credits-buy-form-tab[data-package="${packageId}"]`)
+		.addClass('mappers-active')
+		.find('[data-required]')
+		.attr('required', true);
+	mappersModal.openModal('mappers-modal-credits-buy');
+	return false;
+});
+
+/* mappers-credits-buy-form-amount-input */
+
+$(document).on('input', '.mappers-credits-buy-form-amount-input', function () {
+	const t = $(this);
+	const val = Number(t.val());
+	const price = t.data('price');
+	let credits = 0;
+	if (val && price) {
+		credits = Math.floor(val / price);
+	}
+	t.closest('.mappers-credits-buy-form').find('.mappers-credits-buy-form-total-count').text(credits);
+});
+
+/* mappers-credits-buy-form */
+
+$(document).on('submit', '.mappers-credits-buy-form', function (e) {
+	e.preventDefault();
+	if (!window.wp_ajax) {
+		return;
+	}
+
+	const t = $(this);
+
+	if (t.hasClass('mappers-ajax-process')) {
+		return;
+	}
+	t.addClass('mappers-ajax-process');
+
+	const notifications = t.find('.mappers-form-notifications');
+	const notificationsText = notifications.find('.mappers-form-notifications-text');
+	notifications.removeClass('mappers-error mappers-active mappers-success');
+
+	const formData = new FormData(this);
+	formData.append('action', 'mappers_create_order');
+	formData.append('nonce', wp_ajax.nonce);
+	$.ajax({
+		url: wp_ajax.url,
+		type: 'POST',
+		data: formData,
+		processData: false,
+		contentType: false,
+		success: function (response) {
+			if (response.success && response.data?.payment?.checkout_url) {
+				location.href = response.data.payment.checkout_url;
+			} else {
+				if (response.data.message) {
+					notificationsText.text(response.data.message);
+					notifications.addClass('mappers-error mappers-active');
+				}
+			}
+			t.removeClass('mappers-ajax-process');
+		},
+		error: error => {
+			t.removeClass('mappers-ajax-process');
+		},
+	});
+});

@@ -33,5 +33,39 @@ add_action(
 				'show_in_rest'  => false,
 			)
 		);
+
+		register_post_type(
+			'mappers-package',
+			array(
+				'labels'        => array(
+					'name'          => __( 'Пакети', 'mappers' ),
+					'singular_name' => __( 'Пакет', 'mappers' ),
+					'add_new'       => __( 'Добавить', 'mappers' ),
+				),
+				'public'        => false,
+				'show_ui'       => true,
+				'menu_icon'     => 'dashicons-products',
+				'menu_position' => 5,
+				'supports'      => array( 'title' ),
+				'show_in_rest'  => false,
+			)
+		);
+
+		register_post_type(
+			'mappers-order',
+			array(
+				'labels'        => array(
+					'name'          => __( 'Замовлення', 'mappers' ),
+					'singular_name' => __( 'Замовлення', 'mappers' ),
+					'add_new'       => __( 'Добавить', 'mappers' ),
+				),
+				'public'        => false,
+				'show_ui'       => true,
+				'menu_icon'     => 'dashicons-cart',
+				'menu_position' => 5,
+				'supports'      => array( 'title' ),
+				'show_in_rest'  => false,
+			)
+		);
 	}
 );

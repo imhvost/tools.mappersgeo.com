@@ -1,6 +1,6 @@
 <?php
 /**
- * Cart page
+ * Payment result page
  *
  * @package mappers
  */
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /*
-	Template Name: Cart
+	Template Name: Payment result
 	Template Post Type: page
 */
 

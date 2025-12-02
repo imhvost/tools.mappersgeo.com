@@ -415,16 +415,15 @@ a.mappers-profile-menu-link {
 	line-height: 1;
 	font-weight: 600;
 	color: @title;
+	padding-bottom: 14px;
+	border-bottom: solid 1px @border;
 	svg {
 		--size: 32px;
 		color: @text;
 	}
 }
 
-.mappers-credits-my-price {
-	padding-top: 14px;
-	border-top: solid 1px @border;
-	margin-top: auto;
+.mappers-credits-price {
 	display: flex;
 	align-items: center;
 	gap: 8px;
@@ -432,7 +431,7 @@ a.mappers-profile-menu-link {
 	color: @title;
 }
 
-.mappers-credits-my-price-item {
+.mappers-credits-price-item {
 	display: flex;
 	align-items: center;
 	gap: 6px;
@@ -517,4 +516,79 @@ a.mappers-profile-menu-link {
 	border-radius: 100px;
 	background-color: @white;
 	color: var(--icon-color, @title);
+}
+
+.mappers-modal-credits-buy {
+	.mappers-modal-body {
+		width: 526px;
+		padding: 24px 40px 40px;
+	}
+}
+
+.mappers-credits-buy-form {
+	--gap: 24px;
+	display: flex;
+	flex-direction: column;
+	gap: var(--gap);
+	.mappers-modal-title {
+		text-align: left;
+	}
+	.mappers-form-notifications {
+		&:not(.mappers-active) {
+			margin-bottom: calc(-1 * var(--gap));
+		}
+	}
+}
+
+.mappers-credits-buy-form-body {
+	padding-top: 24px;
+	border-top: solid 1px @border;
+}
+
+.mappers-credits-buy-form-inputs {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+}
+
+.mappers-credits-buy-form-total {
+	padding-top: 24px;
+	border-top: solid 1px @border;
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	justify-content: space-between;
+	color: @title;
+}
+
+.mappers-credits-buy-form-total-title {
+	font-size: 16px;
+}
+
+.mappers-credits-buy-form-total-body {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	svg {
+		--size: 40px;
+		color: @link;
+	}
+}
+
+.mappers-credits-buy-form-package {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	color: @title;
+}
+
+.mappers-credits-buy-form-package-title {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	svg {
+		--size: 40px;
+		color: @link;
+	}
 }

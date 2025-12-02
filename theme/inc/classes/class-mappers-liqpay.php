@@ -33,7 +33,7 @@ class Mappers_Liqpay {
 	 *
 	 * @var bool
 	 */
-	private string $sandbox_enabled;
+	private bool $sandbox_enabled;
 
 	/**
 	 * Constructor.
@@ -54,8 +54,8 @@ class Mappers_Liqpay {
 	 */
 	public function register_rest_routes(): void {
 		register_rest_route(
-			'liqpay/v1',
-			'/callback',
+			'mappers/v1',
+			'/liqpay',
 			array(
 				'methods'             => 'POST',
 				'callback'            => array( $this, 'rest_callback' ),
@@ -67,22 +67,22 @@ class Mappers_Liqpay {
 	/**
 	 * Create LiqPay payment
 	 *
-	 * @param float       $amount Payment amount.
-	 * @param string      $order_id Order identifier.
-	 * @param string      $description Payment description.
-	 * @param string      $currency Currency code (default 'UAH').
-	 * @param string|null $result_url Redirect URL after payment.
-	 * @param string|null $server_url Callback URL.
+	 * @param string $order_id Order identifier.
+	 * @param float  $amount Payment amount.
+	 * @param string $currency Currency code (default 'UAH').
+	 * @param string $description Payment description.
+	 *
 	 * @return array Payment data with data, signature, and checkout_url
 	 */
 	public function create_payment(
-		float $amount,
 		string $order_id,
-		string $description = '',
+		float $amount,
 		string $currency = 'UAH',
-		string $result_url = null,
-		string $server_url = null
+		string $description = '',
 	): array {
+
+		$payment_result_page_id = mappers_get_page_id_by_template( 'page-payment-result.php' );
+
 		$data = array(
 			'version'     => '3',
 			'public_key'  => $this->public_key,
@@ -91,15 +91,9 @@ class Mappers_Liqpay {
 			'currency'    => $currency,
 			'description' => $description,
 			'order_id'    => $order_id,
+			'server_url'  => home_url( '/wp-json/mappers/v1/liqpay' ),
+			'result_url'  => $payment_result_page_id ? get_the_permalink( $payment_result_page_id ) : home_url( '/' ),
 		);
-
-		if ( $server_url ) {
-			$data['server_url'] = $server_url;
-		}
-
-		if ( $result_url ) {
-			$data['result_url'] = $result_url;
-		}
 
 		if ( $this->sandbox_enabled ) {
 			$data['sandbox'] = 1;

@@ -12,7 +12,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 $mappers_logo       = carbon_get_theme_option( 'mappers_logo' );
 $mappers_header_tel = carbon_get_theme_option( 'mappers_header_tel' );
 
-$cart    = new Mappers_Cart();
 $credits = new Mappers_Credits( get_current_user_id() );
 ?>
 <!DOCTYPE html>
@@ -49,19 +48,6 @@ $credits = new Mappers_Credits( get_current_user_id() );
 
 					?>
 					<div class="mappers-header-btns">
-						<?php
-							$cart_page_id = mappers_get_page_id_by_template( 'page-cart.php' );
-						if ( $cart_page_id ) :
-							?>
-							<a href="<?php echo esc_url( get_the_permalink( $cart_page_id ) ); ?>" class="mappers-header-btn-with-icon">
-								<i>
-									<svg class="mappers-icon"><use xlink:href="#icon-cart"/></svg>
-								</i>
-								<span>
-									<?php echo esc_html( $cart->get_count() ); ?>
-								</span>
-							</a>
-						<?php endif; ?>
 						<?php
 							$credits_page_id = mappers_get_page_id_by_template( 'page-credits.php' );
 						if ( $credits_page_id ) :

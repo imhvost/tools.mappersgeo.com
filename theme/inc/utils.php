@@ -353,6 +353,9 @@ function mappers_check_text_fields( $fields = array(), $is_all_required = true, 
 	if ( 'COOKIE' === $array_type ) {
 		$source = $_COOKIE;
 	}
+	if ( 'REQUEST' === $array_type ) {
+		$source = $_REQUEST;
+	}
 
 	$output = array();
 
