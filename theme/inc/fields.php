@@ -102,5 +102,137 @@ add_action(
 						->set_max( 1 ),
 				),
 			);
+
+		/* audit */
+		Container::make( 'post_meta', __( 'Поля', 'mappers' ) )
+			->where( 'post_template', '=', 'page-audit.php' )
+			->add_fields(
+				array(
+					Field::make( 'complex', 'mappers_audit', __( 'Аудит', 'mappers' ) )
+						->set_collapsed( true )
+						->set_layout( 'tabbed-horizontal' )
+						->add_fields(
+							array(
+								Field::make( 'text', 'title', __( 'Назва розділу', 'mappers' ) ),
+								Field::make( 'text', 'name', __( 'name', 'mappers' ) ),
+								Field::make( 'rich_text', 'introduction', __( 'Вступ', 'mappers' ) ),
+								Field::make( 'complex', 'quiz', __( 'Питання', 'mappers' ) )
+									->set_collapsed( true )
+									->set_layout( 'tabbed-vertical' )
+									->add_fields(
+										array(
+											Field::make( 'text', 'question', __( 'Запитання', 'mappers' ) ),
+											Field::make( 'text', 'name', __( 'name', 'mappers' ) )
+												->set_width( 50 ),
+											Field::make( 'text', 'group', __( 'Група', 'mappers' ) )
+												->set_width( 50 ),
+											Field::make( 'select', 'input_type', __( 'Тип відповіді', 'mappers' ) )
+												->set_options(
+													array(
+														'radio'    => 'radio',
+														'checkbox' => 'checkbox',
+													)
+												),
+											Field::make( 'complex', 'answers', __( 'Відповіді', 'mappers' ) )
+												->set_collapsed( true )
+												->set_layout( 'tabbed-vertical' )
+												->add_fields(
+													array(
+														Field::make( 'text', 'answer', __( 'Відповідь', 'mappers' ) ),
+														Field::make( 'text', 'val', __( 'value', 'mappers' ) ),
+														Field::make( 'text', 'points', __( 'Бали', 'mappers' ) )
+															->set_attribute( 'type', 'number' ),
+														Field::make( 'textarea', 'report', __( 'Пояснення для звіту', 'mappers' ) )
+															->set_rows( 3 ),
+														Field::make( 'select', 'report_color', __( 'Колір', 'mappers' ) )
+															->set_options(
+																array(
+																	'default' => 'За замовченням',
+																	'green'   => 'Зелений',
+																	'red'     => 'Червоний',
+																	'orange'  => 'Помаранчевий',
+																)
+															),
+														Field::make( 'complex', 'sub_questions', __( 'Підзапитання', 'mappers' ) )
+															->set_collapsed( true )
+															->set_layout( 'tabbed-vertical' )
+															->add_fields(
+																array(
+																	Field::make( 'text', 'question', __( 'Запитання', 'mappers' ) ),
+																	Field::make( 'text', 'name', __( 'name', 'mappers' ) ),
+																	Field::make( 'select', 'input_type', __( 'Тип відповіді', 'mappers' ) )
+																		->set_options(
+																			array(
+																				'radio'    => 'radio',
+																				'checkbox' => 'checkbox',
+																			)
+																		),
+																	Field::make( 'complex', 'answers', __( 'Відповіді', 'mappers' ) )
+																		->set_collapsed( true )
+																		->set_layout( 'tabbed-vertical' )
+																		->add_fields(
+																			array(
+																				Field::make( 'text', 'answer', __( 'Відповідь', 'mappers' ) ),
+																				Field::make( 'text', 'val', __( 'value', 'mappers' ) ),
+																				Field::make( 'text', 'points', __( 'Бали', 'mappers' ) )
+																					->set_attribute( 'type', 'number' ),
+																				Field::make( 'textarea', 'report', __( 'Пояснення для звіту', 'mappers' ) )
+																					->set_rows( 3 ),
+																				Field::make( 'select', 'report_color', __( 'Колір', 'mappers' ) )
+																					->set_options(
+																						array(
+																							'default' => 'За замовченням',
+																							'green'   => 'Зелений',
+																							'red'     => 'Червоний',
+																							'orange'  => 'Помаранчевий',
+																						)
+																					),
+																			)
+																		)
+																		->set_header_template( '<%= answer %>' )
+																		->set_default_value(
+																			array(
+																				array(
+																					'answer' => __( 'Так', 'mappers' ),
+																					'value'  => 'yes',
+																				),
+																				array(
+																					'answer' => __( 'Ні', 'mappers' ),
+																					'value'  => 'no',
+																				),
+																			)
+																		),
+																)
+															)
+															->set_header_template( '<small><%= ($_index + 1) %>.</small> <%= question %>' ),
+													)
+												)
+												->set_header_template( '<%= answer %>' )
+												->set_default_value(
+													array(
+														array(
+															'answer' => __( 'Так', 'mappers' ),
+															'val'  => 'yes',
+														),
+														array(
+															'answer' => __( 'Ні', 'mappers' ),
+															'val'  => 'no',
+														),
+													)
+												),
+											Field::make( 'textarea', 'do', __( 'Що зробити', 'mappers' ) )
+												->set_rows( 2 ),
+											Field::make( 'rich_text', 'auditor_note', __( 'Ремарка для аудитора', 'mappers' ) ),
+											Field::make( 'textarea', 'desc', __( 'Опис', 'mappers' ) )
+												->set_rows( 3 ),
+											Field::make( 'text', 'condition', __( 'Умова відображення', 'mappers' ) ),
+										)
+									)
+									->set_header_template( '<small><%= ($_index + 1) %> <small><%= group %>.</small>.</small> <%= question %>' ),
+							)
+						)
+						->set_header_template( '<%= title %>' ),
+				),
+			);
 	}
 );

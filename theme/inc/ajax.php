@@ -91,7 +91,7 @@ function mappers_create_order() {
 		)
 	);
 
-	$liqpay = new Mappers_Liqpay( false );
+	$liqpay = new Mappers_Liqpay( true );
 
 	$payment = $liqpay->create_payment(
 		$order_id,
