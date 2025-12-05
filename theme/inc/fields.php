@@ -122,10 +122,7 @@ add_action(
 									->add_fields(
 										array(
 											Field::make( 'text', 'question', __( 'Запитання', 'mappers' ) ),
-											Field::make( 'text', 'name', __( 'name', 'mappers' ) )
-												->set_width( 50 ),
-											Field::make( 'text', 'group', __( 'Група', 'mappers' ) )
-												->set_width( 50 ),
+											Field::make( 'text', 'name', __( 'name', 'mappers' ) ),
 											Field::make( 'select', 'input_type', __( 'Тип відповіді', 'mappers' ) )
 												->set_options(
 													array(
@@ -194,11 +191,11 @@ add_action(
 																			array(
 																				array(
 																					'answer' => __( 'Так', 'mappers' ),
-																					'value'  => 'yes',
+																					'val'  => 'yes',
 																				),
 																				array(
 																					'answer' => __( 'Ні', 'mappers' ),
-																					'value'  => 'no',
+																					'val'  => 'no',
 																				),
 																			)
 																		),
@@ -228,7 +225,7 @@ add_action(
 											Field::make( 'text', 'condition', __( 'Умова відображення', 'mappers' ) ),
 										)
 									)
-									->set_header_template( '<small><%= ($_index + 1) %> <small><%= group %>.</small>.</small> <%= question %>' ),
+									->set_header_template( '<small><%= ($_index + 1) %>.</small> <%= question %>' ),
 							)
 						)
 						->set_header_template( '<%= title %>' ),
