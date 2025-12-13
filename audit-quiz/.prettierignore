@@ -1,0 +1,7 @@
+node_modules
+src/dictionaries
+.env
+dist
+public
+android
+ios

@@ -16,6 +16,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 ?>
 <?php get_header(); ?>
-<?php the_post(); ?>
+<div id='app'></div>
 <?php
 get_footer();

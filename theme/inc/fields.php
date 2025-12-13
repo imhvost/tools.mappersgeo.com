@@ -105,6 +105,20 @@ add_action(
 
 		/* mappers-audit-quiz */
 
+		$quiz_question_fields = array(
+			Field::make( 'textarea', 'question', __( 'Запитання', 'mappers' ) )
+				->set_rows( 2 ),
+			Field::make( 'text', 'name', __( 'name', 'mappers' ) ),
+			Field::make( 'select', 'input_type', __( 'Тип відповіді', 'mappers' ) )
+				->set_options(
+					array(
+						'radio'    => 'radio',
+						'checkbox' => 'checkbox',
+						'custom'   => 'custom',
+					)
+				),
+		);
+
 		$quiz_answer_fields = array(
 			Field::make( 'text', 'answer', __( 'Відповідь', 'mappers' ) ),
 			Field::make( 'text', 'val', __( 'value', 'mappers' ) ),
@@ -145,64 +159,49 @@ add_action(
 						->set_collapsed( true )
 						->set_layout( 'tabbed-vertical' )
 						->add_fields(
-							array(
-								Field::make( 'textarea', 'question', __( 'Запитання', 'mappers' ) )
-									->set_rows( 2 ),
-								Field::make( 'text', 'name', __( 'name', 'mappers' ) ),
-								Field::make( 'select', 'input_type', __( 'Тип відповіді', 'mappers' ) )
-									->set_options(
-										array(
-											'radio'    => 'radio',
-											'checkbox' => 'checkbox',
-											'custom'   => 'custom',
-										)
-									),
-								Field::make( 'complex', 'answers', __( 'Відповіді', 'mappers' ) )
-									->set_collapsed( true )
-									->set_layout( 'tabbed-vertical' )
-									->add_fields(
-										array_merge(
-											$quiz_answer_fields,
-											array(
-												Field::make( 'complex', 'sub_questions', __( 'Підзапитання', 'mappers' ) )
-													->set_collapsed( true )
-													->set_layout( 'tabbed-vertical' )
-													->add_fields(
-														array(
-															Field::make( 'text', 'question', __( 'Запитання', 'mappers' ) ),
-															Field::make( 'text', 'name', __( 'name', 'mappers' ) ),
-															Field::make( 'select', 'input_type', __( 'Тип відповіді', 'mappers' ) )
-																->set_options(
-																	array(
-																		'radio'    => 'radio',
-																		'checkbox' => 'checkbox',
-																	)
-																),
-															Field::make( 'complex', 'answers', __( 'Відповіді', 'mappers' ) )
-																->set_collapsed( true )
-																->set_layout( 'tabbed-vertical' )
-																->add_fields(
-																	$quiz_answer_fields
+							array_merge(
+								$quiz_question_fields,
+								array(
+									Field::make( 'complex', 'answers', __( 'Відповіді', 'mappers' ) )
+										->set_collapsed( true )
+										->set_layout( 'tabbed-vertical' )
+										->add_fields(
+											array_merge(
+												$quiz_answer_fields,
+												array(
+													Field::make( 'complex', 'sub_questions', __( 'Підзапитання', 'mappers' ) )
+														->set_collapsed( true )
+														->set_layout( 'tabbed-vertical' )
+														->add_fields(
+															array_merge(
+																$quiz_question_fields,
+																array(
+																	Field::make( 'complex', 'answers', __( 'Відповіді', 'mappers' ) )
+																		->set_collapsed( true )
+																		->set_layout( 'tabbed-vertical' )
+																		->add_fields(
+																			$quiz_answer_fields
+																		)
+																		->set_header_template( '<%= answer %>' )
+																		->set_default_value(
+																			$default_answer_value
+																		),
 																)
-																->set_header_template( '<%= answer %>' )
-																->set_default_value(
-																	$default_answer_value
-																),
+															)
 														)
-													)
-													->set_header_template( '<small><%= ($_index + 1) %>.</small> <%= question %>' ),
+														->set_header_template( '<small><%= ($_index + 1) %>.</small> <%= question %>' ),
+												)
 											)
 										)
-									)
-									->set_header_template( '<%= answer %>' )
-									->set_default_value(
-										$default_answer_value
-									),
-								Field::make( 'rich_text', 'do', __( 'Що зробити', 'mappers' ) ),
-								Field::make( 'rich_text', 'auditor_note', __( 'Ремарка для аудитора', 'mappers' ) ),
-								Field::make( 'rich_text', 'desc', __( 'Опис', 'mappers' ) ),
-								Field::make( 'text', 'condition', __( 'Умова відображення', 'mappers' ) ),
-
+										->set_header_template( '<%= answer %>' )
+										->set_default_value(
+											$default_answer_value
+										),
+									Field::make( 'rich_text', 'do', __( 'Що зробити', 'mappers' ) ),
+									Field::make( 'rich_text', 'auditor_note', __( 'Ремарка для аудитора', 'mappers' ) ),
+									Field::make( 'rich_text', 'desc', __( 'Опис', 'mappers' ) ),
+									Field::make( 'text', 'condition', __( 'Умова відображення', 'mappers' ) ),
+								)
 							)
 						)
 						->set_header_template( '<small><%= ($_index + 1) %>.</small> <%= question %>' ),

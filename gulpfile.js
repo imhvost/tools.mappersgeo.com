@@ -33,6 +33,7 @@ const paths = {
 	src: {
 		root: ['theme/*.php', 'theme/screenshot.png', 'theme/style.css', 'theme/theme.json'],
 		templates: 'theme/template-parts/**/*.*',
+		'audit-quiz': ['theme/audit-quiz/app.js', 'theme/audit-quiz/app.css'],
 		functions: 'theme/inc/**/*.*',
 		woocommerce: 'theme/woocommerce/**/*.*',
 		js: 'theme/js/scripts.js',
@@ -48,6 +49,7 @@ const paths = {
 	dest: {
 		root: '../',
 		templates: '../template-parts/',
+		'audit-quiz': '../audit-quiz/',
 		functions: '../inc/',
 		woocommerce: '../woocommerce/',
 		js: '../js/',
@@ -98,10 +100,21 @@ gulp.task('svgsprite', () =>
 		.pipe(gulp.dest('theme/template-parts/')),
 );
 
-const copyKeys = ['root', 'templates', 'plugins', 'functions', 'woocommerce', 'languages', 'css', 'img', 'fonts'];
+const copyKeys = [
+	'root',
+	'templates',
+	'audit-quiz',
+	'plugins',
+	'functions',
+	'woocommerce',
+	'languages',
+	'css',
+	'img',
+	'fonts',
+];
 
 copyKeys.forEach(key => {
-	gulp.task(key, () => gulp.src(paths.src[key]).pipe(gulp.dest(paths.dest[key])));
+	gulp.task(key, () => gulp.src(paths.src[key], { allowEmpty: true }).pipe(gulp.dest(paths.dest[key])));
 });
 
 gulp.task('less', () =>
@@ -192,6 +205,7 @@ gulp.task('watch', function () {
 	gulp.watch(paths.src.fonts, gulp.series('fonts'));
 	gulp.watch(paths.src.functions, gulp.series('functions'));
 	// gulp.watch(paths.src.woocommerce, gulp.series('woocommerce'));
+	gulp.watch(paths.src['audit-quiz'], gulp.series('audit-quiz'));
 	gulp.watch(paths.src.languages, gulp.series('languages'));
 	gulp.watch(paths.src.jsFiles, gulp.series('js:files', 'js'));
 });
@@ -209,6 +223,7 @@ gulp.task(
 		'fonts',
 		'svgsprite',
 		'templates',
+		'audit-quiz',
 		// 'woocommerce',
 		'plugins',
 		'functions',
@@ -230,6 +245,7 @@ gulp.task(
 		'fonts',
 		'svgsprite',
 		'templates',
+		'audit-quiz',
 		// 'woocommerce',
 		'plugins',
 		'functions',
@@ -250,6 +266,7 @@ gulp.task(
 		'fonts',
 		'svgsprite',
 		'templates',
+		'audit-quiz',
 		// 'woocommerce',
 		'plugins',
 		'functions',

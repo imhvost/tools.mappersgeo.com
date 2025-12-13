@@ -205,3 +205,12 @@ add_action(
 		);
 	}
 );
+
+/* rest_json_encode */
+
+add_filter(
+	'rest_json_encode_options',
+	function ( $options ) {
+		return $options | JSON_UNESCAPED_UNICODE;
+	}
+);
