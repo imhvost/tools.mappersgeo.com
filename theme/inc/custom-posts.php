@@ -35,6 +35,23 @@ add_action(
 		);
 
 		register_post_type(
+			'mappers-audit-quiz',
+			array(
+				'labels'        => array(
+					'name'          => __( 'Аудит квіз', 'mappers' ),
+					'singular_name' => __( 'Квіз', 'mappers' ),
+					'add_new'       => __( 'Добавить', 'mappers' ),
+				),
+				'public'        => false,
+				'show_ui'       => true,
+				'menu_icon'     => 'dashicons-chart-pie',
+				'menu_position' => 5,
+				'supports'      => array( 'title' ),
+				'show_in_rest'  => false,
+			)
+		);
+
+		register_post_type(
 			'mappers-package',
 			array(
 				'labels'        => array(
