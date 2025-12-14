@@ -26,3 +26,15 @@ export interface Question {
   condition_ok?: string;
   initial_score?: number;
 }
+
+export interface Audit {
+  section?: number;
+  question?: string;
+  isEnd?: boolean;
+  answers: Record<string, string>[];
+}
+
+export interface QuizMeta {
+  strings: Record<string, string>;
+  urls: Record<string, string>;
+}

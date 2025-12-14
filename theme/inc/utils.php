@@ -468,3 +468,42 @@ function mappers_hex_to_rgb( string $hex ): array {
 function mappers_rgb_to_hex( array $rgb ): string {
 	return sprintf( '#%02x%02x%02x', $rgb[0], $rgb[1], $rgb[2] );
 }
+
+/**
+ * Recursively sanitize data for REST API response
+ *
+ * @param mixed $data Raw data.
+ *
+ * @return mixed
+ */
+function mappers_sanitize_api_data( $data ) {
+	if ( is_array( $data ) ) {
+		foreach ( $data as $key => $value ) {
+			if ( '_type' === $key ) {
+				unset( $data[ $key ] );
+				continue;
+			}
+
+			$data[ $key ] = mappers_sanitize_api_data( $value );
+		}
+
+		return $data;
+	}
+
+	if ( is_string( $data ) ) {
+		if ( 'true' === $data || 'false' === $data ) {
+			return 'true' === $data;
+		}
+
+		if ( preg_match( '/^-?\d+$/', $data ) ) {
+			return (int) $data;
+		}
+
+		if ( is_numeric( $data ) ) {
+			return (float) $data;
+		}
+		return wp_kses_post( $data );
+	}
+
+	return $data;
+}

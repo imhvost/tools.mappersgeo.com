@@ -1,0 +1,50 @@
+@white: #fff;
+@black: #000;
+
+@gray: #eeeeee;
+@red: #fa3a5c;
+@green: #157643;
+
+@title: #212529;
+@text: #555555;
+@placeholder: fade(#161616, 60%);
+
+@link: #f84525;
+@linkH: darken(@link, 10%);
+
+@border: #dfdfdf;
+
+@bg: #f8f4f3;
+
+@outline: @link;
+
+@filter: fade(@black, 80%);
+
+@ff: 'Montserrat', sans-serif;
+
+@xl: ~'(max-width: 1439px)';
+@lg: ~'(max-width: 1199px)';
+@md: ~'(max-width: 1023px)';
+@sm: ~'(max-width: 767px)';
+@xs: ~'(max-width: 479px)';
+
+@xl_: ~'(min-width: 1440px)';
+@lg_: ~'(min-width: 1200px)';
+@md_: ~'(min-width: 1024px)';
+@sm_: ~'(min-width: 768px)';
+@xs_: ~'(min-width: 480px)';
+
+:root {
+	--mappers-app-min-width: 390px;
+	--mappers-container-padding: 48px;
+	--mappers-header-height: 112px;
+	--mappers-content-gap: 16px;
+	--mappers-container-width: 1296px;
+	--mappers-scrollbar-color: @text;
+	@media @md {
+		--mappers-container-padding: 16px;
+		--mappers-content-gap: 12px;
+		--mappers-header-height: 80px;
+	}
+	--plyr-color-main: @link;
+}

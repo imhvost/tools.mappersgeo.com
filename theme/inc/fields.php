@@ -103,6 +103,33 @@ add_action(
 				),
 			);
 
+		/* audit-page */
+		Container::make( 'post_meta', __( 'Поля', 'mappers' ) )
+			->where( 'post_template', '=', 'page-audit.php' )
+			->add_tab(
+				__( 'Строки для аудиту', 'mappers' ),
+				array(
+					Field::make( 'text', 'mappers_start_label', __( 'Старт - етикетка', 'mappers' ) ),
+					Field::make( 'text', 'mappers_start_title', __( 'Старт - заголовок', 'mappers' ) ),
+					Field::make( 'textarea', 'mappers_start_desc', __( 'Старт - опис', 'mappers' ) )
+						->set_rows( 3 ),
+					Field::make( 'text', 'mappers_start_btn', __( 'Старт - кнопка', 'mappers' ) ),
+
+					Field::make( 'text', 'mappers_intro', __( 'Вступ', 'mappers' ) ),
+					Field::make( 'text', 'mappers_intro_title', __( 'Вступ - заголовок', 'mappers' ) ),
+					Field::make( 'text', 'mappers_questions', __( 'Питання', 'mappers' ) ),
+					Field::make( 'text', 'mappers_go_to_questions', __( 'Перейти до питань', 'mappers' ) ),
+					Field::make( 'text', 'mappers_next_section', __( 'Наступний розділ', 'mappers' ) ),
+
+					Field::make( 'text', 'mappers_finish_label', __( 'Фініш - етикетка', 'mappers' ) ),
+					Field::make( 'text', 'mappers_finish_title', __( 'Фініш - заголовок', 'mappers' ) ),
+					Field::make( 'textarea', 'mappers_finish_desc', __( 'Фініш - опис', 'mappers' ) )
+						->set_rows( 3 ),
+					Field::make( 'text', 'mappers_finish_btn_list', __( 'Фініш - кнопка список', 'mappers' ) ),
+					Field::make( 'text', 'mappers_finish_btn_result', __( 'Фініш - кнопка результат', 'mappers' ) ),
+				),
+			);
+
 		/* mappers-audit-quiz */
 
 		$quiz_question_fields = array(

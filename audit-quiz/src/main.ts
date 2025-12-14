@@ -1,12 +1,11 @@
-import { createApp } from 'vue'
-import App from './App.vue'
+import { createApp } from 'vue';
+import App from './App.vue';
 
 if (import.meta.env.DEV) {
-  // Додаємо зовнішній CSS у DEV режимі
-  const link = document.createElement('link')
-  link.rel = 'stylesheet'
-  link.href = import.meta.env.VITE_WP_URI + 'wp-content/themes/mappers/css/styles.css'
-  document.head.appendChild(link)
+  const link = document.createElement('link');
+  link.rel = 'stylesheet';
+  link.href = `${import.meta.env.VITE_WP_URI}/wp-content/themes/mappers/css/styles.css`;
+  document.head.appendChild(link);
 }
 
-createApp(App).mount('#app')
+createApp(App).mount('#app');

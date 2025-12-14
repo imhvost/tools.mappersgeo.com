@@ -16,6 +16,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 ?>
 <?php get_header(); ?>
-<div id='app'></div>
+<main id='app' class="mappers-main"></main>
 <?php
 get_footer();
