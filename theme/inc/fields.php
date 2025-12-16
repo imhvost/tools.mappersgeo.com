@@ -116,7 +116,7 @@ add_action(
 					Field::make( 'text', 'mappers_start_btn', __( 'Старт - кнопка', 'mappers' ) ),
 
 					Field::make( 'text', 'mappers_intro', __( 'Вступ', 'mappers' ) ),
-					Field::make( 'text', 'mappers_intro_title', __( 'Вступ - заголовок', 'mappers' ) ),
+					Field::make( 'text', 'mappers_intro_label', __( 'Вступ - етикетка', 'mappers' ) ),
 					Field::make( 'text', 'mappers_questions', __( 'Питання', 'mappers' ) ),
 					Field::make( 'text', 'mappers_go_to_questions', __( 'Перейти до питань', 'mappers' ) ),
 					Field::make( 'text', 'mappers_next_section', __( 'Наступний розділ', 'mappers' ) ),

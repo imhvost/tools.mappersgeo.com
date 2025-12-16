@@ -3,7 +3,8 @@ import { useFetch } from '@vueuse/core';
 import { computed, onMounted, ref, watch } from 'vue';
 import { useGlobalState } from '@/store';
 import type { Question, QuizMeta, Section } from '@/types';
-import TabsInfo from '@/components/TabInfo.vue';
+import QuizInfo from '@/components/QuizInfo.vue';
+import QuizSection from '@/components/QuizSection.vue';
 import { parseCondition, getValueByPath, evaluateConditionValue } from '@/utils';
 
 const { audit, auditIsLoad } = useGlobalState();
@@ -41,8 +42,15 @@ onMounted(async () => {
   }
 });
 
-const goToSection = (id: number) => {
+const goToSectionById = (id: number) => {
   activeSectionId.value = id;
+};
+
+const goToSectionByIndex = (index: number) => {
+  const id = sections.value[index]?.id;
+  if (id) {
+    goToSectionById(id);
+  }
 };
 
 const checkSectionCondition = (section: Section) => {
@@ -99,7 +107,6 @@ const isSectionDone = (sectionId: number) => {
 
 <template>
   <div class="mappers-audit-quiz-container mappers-container">
-    {{ activeSectionId }}
     <div
       v-if="sections.length && auditIsLoad"
       class="mappers-audit-quiz"
@@ -117,10 +124,9 @@ const isSectionDone = (sectionId: number) => {
                   'mappers-active': item.id === activeSectionId,
                   'mappers-done': isSectionDone(item.id),
                 }"
-                @click="isSectionDone(item.id) && goToSection(item.id)"
+                @click="isSectionDone(item.id) && goToSectionById(item.id)"
               >
                 <i>
-                  <span>{{ index + 1 }}</span>
                   <svg class="mappers-icon"><use xlink:href="#icon-check" /></svg>
                 </i>
                 <span>{{ item.title }}</span>
@@ -130,26 +136,21 @@ const isSectionDone = (sectionId: number) => {
         </ul>
       </nav>
       <div class="mappers-audit-quiz-body">
-        <Transition name="fade">
-          <div
+        <Transition
+          name="mappers-fade"
+          mode="out-in"
+        >
+          <QuizInfo
             v-if="isEnd"
-            class="mappers-audit-quiz-tab"
-          >
-            <TabsInfo
-              type="finish"
-              :meta="meta"
-            ></TabsInfo>
-          </div>
-          <div
+            type="finish"
+            :meta="meta"
+          ></QuizInfo>
+          <QuizInfo
             v-else-if="activeSectionId === undefined"
-            class="mappers-audit-quiz-tab"
-          >
-            <TabsInfo
-              type="start"
-              :meta="meta"
-              @start="goToSection(0)"
-            ></TabsInfo>
-          </div>
+            type="start"
+            :meta="meta"
+            @start="goToSectionByIndex(0)"
+          ></QuizInfo>
           <div
             class="mappers-audit-quiz-sections"
             v-else
@@ -158,10 +159,11 @@ const isSectionDone = (sectionId: number) => {
               v-for="(item, index) in sections"
               :key="item.id"
             >
-              <div
+              <QuizSection
                 v-if="activeSectionId === item.id"
-                class="mappers-audit-quiz-tab"
-              ></div>
+                :meta="meta"
+                :section="item"
+              ></QuizSection>
             </template>
           </div>
         </Transition>
@@ -193,9 +195,13 @@ const isSectionDone = (sectionId: number) => {
   padding: 24px 0;
   border-radius: 16px 10px 10px 16px;
   box-shadow: 2px 2px 20px 0px #52422f1f;
+  position: relative;
+  z-index: 1;
+  border: solid 1px @border;
 }
 
 .mappers-audit-quiz-menu {
+  counter-reset: counter;
   li {
     display: flex;
     border-bottom: solid 1px @border;
@@ -226,7 +232,9 @@ const isSectionDone = (sectionId: number) => {
     transition:
       color 0.4s,
       background-color 0.4s;
-    span {
+    &:before {
+      content: counter(counter);
+      counter-increment: counter;
       position: absolute;
       inset: 0;
       display: grid;
@@ -257,5 +265,22 @@ const isSectionDone = (sectionId: number) => {
       }
     }
   }
+}
+
+.mappers-audit-quiz-body {
+  flex: auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.mappers-audit-quiz-section-intro {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.mappers-audit-quiz-section-intro-label {
+  margin-bottom: -8px;
 }
 </style>
