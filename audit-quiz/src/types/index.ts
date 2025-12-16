@@ -8,10 +8,12 @@ export interface Answer {
   sub_questions: Question[];
 }
 
+export type InputType = 'radio' | 'checkbox' | 'custom';
+
 export interface Question {
   question: string;
   name: string;
-  input_type: 'radio' | 'checkbox' | 'custom';
+  input_type: InputType;
   answers: Answer[];
   do?: string;
   auditor_note?: string;
@@ -39,3 +41,12 @@ export interface QuizMeta {
   strings: Record<string, string>;
   urls: Record<string, string>;
 }
+
+export type Operator = '=' | '!=' | '>' | '<' | '>=' | '<=' | 'IN' | 'NOT IN';
+
+export type ParsedCondition = {
+  field: string;
+  fieldPath: string[];
+  operator: Operator;
+  value: string | number | Array<string | number>;
+};

@@ -2,15 +2,12 @@
 import { useFetch } from '@vueuse/core';
 import { computed, onMounted, ref, watch } from 'vue';
 import { useGlobalState } from '@/store';
-import type { Question, QuizMeta, Section } from '@/types';
+import type { Question } from '@/types';
 import QuizInfo from '@/components/QuizInfo.vue';
 import QuizSection from '@/components/QuizSection.vue';
-import { parseCondition, getValueByPath, evaluateConditionValue } from '@/utils';
+import { checkSectionCondition, checkQuestionCondition } from '@/utils';
 
-const { audit, auditIsLoad } = useGlobalState();
-
-const sections = ref<Section[]>([]);
-const meta = ref<QuizMeta>();
+const { audit, auditIsLoad, sections, meta } = useGlobalState();
 
 const activeSectionId = ref<number>();
 
@@ -53,35 +50,6 @@ const goToSectionByIndex = (index: number) => {
   }
 };
 
-const checkSectionCondition = (section: Section) => {
-  if (!section.condition) {
-    return true;
-  }
-  const { operator, fieldPath, value } = parseCondition(section.condition);
-  const conditionSection = sections.value.find(o => o.name === fieldPath[0]);
-  if (!conditionSection) {
-    return false;
-  }
-  const conditionValue = getValueByPath(conditionSection, fieldPath);
-  return evaluateConditionValue(conditionValue, operator, value);
-};
-
-const checkQuestionCondition = (question: Question) => {
-  if (!question.condition) {
-    return true;
-  }
-  const { operator, fieldPath, value } = parseCondition(question.condition);
-  if (fieldPath.length !== 2) {
-    fieldPath.unshift(question.name);
-  }
-  const conditionSection = sections.value.find(o => o.name === fieldPath[0]);
-  if (!conditionSection) {
-    return false;
-  }
-  const conditionValue = getValueByPath(conditionSection, fieldPath);
-  return evaluateConditionValue(conditionValue, operator, value);
-};
-
 const isSectionDone = (sectionId: number) => {
   const auditSection = audit.value[sectionId];
   if (!auditSection) {
@@ -93,7 +61,7 @@ const isSectionDone = (sectionId: number) => {
   }
   for (const item of section.quiz) {
     if (item.condition) {
-      if (!checkQuestionCondition(item)) {
+      if (!checkQuestionCondition(item, sections.value)) {
         continue;
       }
     }
@@ -117,7 +85,7 @@ const isSectionDone = (sectionId: number) => {
             v-for="(item, index) in sections"
             :key="item.id"
           >
-            <li v-if="checkSectionCondition(item)">
+            <li v-if="checkSectionCondition(item, sections)">
               <button
                 class="mappers-audit-quiz-nav-btn mappers-h3"
                 :class="{
@@ -143,12 +111,10 @@ const isSectionDone = (sectionId: number) => {
           <QuizInfo
             v-if="isEnd"
             type="finish"
-            :meta="meta"
           ></QuizInfo>
           <QuizInfo
             v-else-if="activeSectionId === undefined"
             type="start"
-            :meta="meta"
             @start="goToSectionByIndex(0)"
           ></QuizInfo>
           <div
@@ -161,8 +127,8 @@ const isSectionDone = (sectionId: number) => {
             >
               <QuizSection
                 v-if="activeSectionId === item.id"
-                :meta="meta"
                 :section="item"
+                :is-done="isSectionDone(item.id)"
               ></QuizSection>
             </template>
           </div>
@@ -282,5 +248,12 @@ const isSectionDone = (sectionId: number) => {
 
 .mappers-audit-quiz-section-intro-label {
   margin-bottom: -8px;
+}
+
+.mappers-audit-quiz-sections {
+  flex: auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
 }
 </style>

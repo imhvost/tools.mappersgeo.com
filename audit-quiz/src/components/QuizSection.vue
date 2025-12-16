@@ -1,12 +1,15 @@
 <script setup lang="ts">
-import type { QuizMeta, Section } from '@/types';
+import type { Section } from '@/types';
 import { ref } from 'vue';
 import QuizQuestion from '@/components/QuizQuestion.vue';
+import { useGlobalState } from '@/store';
 
 const props = defineProps<{
-  meta?: QuizMeta;
   section: Section;
+  isDone: boolean;
 }>();
+
+const { meta } = useGlobalState();
 
 const tab = ref<'intro' | 'questions'>('intro');
 const activeQuestionName = ref<string>(props.section.quiz[0]?.name || '');
@@ -52,11 +55,11 @@ const tabs = ['intro', 'questions'] as const;
           ></div>
         </div>
         <div
-          v-else-if="tab === 'questions'"
+          v-else
           class="mappers-audit-quiz-section-questions"
         >
           <template
-            v-for="item in section.quiz"
+            v-for="(item, index) in section.quiz"
             :key="item.name"
           >
             <Transition
@@ -66,13 +69,33 @@ const tabs = ['intro', 'questions'] as const;
               <QuizQuestion
                 v-if="activeQuestionName === item.name"
                 :question="item"
+                :index="index"
+                :section-id="section.id"
               ></QuizQuestion>
             </Transition>
           </template>
         </div>
       </Transition>
     </div>
-    <div class="mappers-audit-quiz-section-foot"></div>
+    <div class="mappers-audit-quiz-section-foot">
+      <Transition
+        name="mappers-fade"
+        mode="out-in"
+      >
+        <button
+          v-if="tab === 'intro'"
+          @click="tab = 'questions'"
+          class="mappers-audit-quiz-section-foot-btn mappers-btn"
+        >
+          <span>{{ meta?.strings?.go_to_questions }}</span>
+          <svg class="mappers-icon"><use xlink:href="#icon-arrow-right" /></svg>
+        </button>
+        <nav
+          v-else
+          class="mappers-audit-quiz-section-foot-nav"
+        ></nav>
+      </Transition>
+    </div>
   </div>
 </template>
 
@@ -119,5 +142,16 @@ const tabs = ['intro', 'questions'] as const;
   flex: auto;
   overflow: hidden auto;
   padding: 40px;
+}
+
+.mappers-audit-quiz-section-foot {
+  flex: none;
+  padding: 40px;
+  border-top: solid 1px @border;
+  display: flex;
+}
+
+.mappers-audit-quiz-section-foot-btn {
+  margin-left: auto;
 }
 </style>

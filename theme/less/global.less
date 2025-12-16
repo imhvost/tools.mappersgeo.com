@@ -460,21 +460,65 @@
 	}
 }
 
-.mappers-radio-label {
+.mappers-radio {
 	display: inline-flex;
 	cursor: pointer;
 	user-select: none;
 	position: relative;
 	gap: 8px;
 	align-self: flex-start;
-	input:checked {
-		& ~ .mappers-radio-label-icon {
-			&:before {
-				border-color: @link;
+	font-size: 18px;
+	font-weight: 600;
+	line-height: 1.333;
+	color: @title;
+	input {
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 24px;
+		height: 24px;
+		opacity: 0;
+		cursor: pointer;
+		border-radius: 50%;
+	}
+	input {
+		&:checked {
+			& ~ i {
+				&:before {
+					border-color: @link;
+				}
+				&:after {
+					opacity: 1;
+				}
 			}
-			&:after {
-				opacity: 1;
-			}
+		}
+	}
+	& > i {
+		flex: none;
+		width: 24px;
+		height: 24px;
+		border-radius: 50%;
+		position: relative;
+		&:before,
+		&:after {
+			content: '';
+			position: absolute;
+			border-radius: inherit;
+			width: var(--width);
+			aspect-ratio: 1;
+			left: calc(50% - 0.5 * var(--width));
+			top: calc(50% - 0.5 * var(--width));
+		}
+		&:before {
+			--width: 20px;
+			border: solid 2px @placeholder;
+			transition: border-color 0.4s;
+		}
+		&:after {
+			--width: 10px;
+			background-color: @link;
+			opacity: 0;
+			transition: opacity 0.4s;
 		}
 	}
 }
@@ -509,52 +553,7 @@
 	}
 }
 
-.mappers-radio-label-icon {
-	flex: none;
-	width: 24px;
-	height: 24px;
-	border-radius: 50%;
-	position: relative;
-	&:before,
-	&:after {
-		content: '';
-		position: absolute;
-		border-radius: inherit;
-		width: var(--width);
-		aspect-ratio: 1;
-		left: calc(50% - 0.5 * var(--width));
-		top: calc(50% - 0.5 * var(--width));
-	}
-	&:before {
-		--width: 20px;
-		border: solid 2px @placeholder;
-		transition:
-			border-color 0.4s,
-			box-shadow 0.4s;
-		box-shadow: 0 0 0 4px fade(@outline, 0%);
-	}
-	&:after {
-		--width: 10px;
-		background-color: @link;
-		opacity: 0;
-		transition: opacity 0.4s;
-	}
-}
-
-.mappers-checkbox-label-title,
-.mappers-radio-label-title {
-	min-width: 0;
-	align-self: center;
-	a {
-		transition: color 0.4s;
-		&:hover {
-			color: @linkH;
-		}
-	}
-}
-
-.mappers-checkbox-input,
-.mappers-radio-input {
+.mappers-checkbox-input {
 	position: absolute;
 	left: 0;
 	top: 0;
@@ -563,26 +562,6 @@
 	opacity: 0;
 	cursor: pointer;
 	border-radius: 4px;
-}
-
-.mappers-checkbox-input {
-	&:focus {
-		& ~ .mappers-checkbox-label-icon {
-			&:before {
-				box-shadow: 0 0 0 4px @outline;
-			}
-		}
-	}
-}
-
-.mappers-radio-input {
-	&:focus {
-		& ~ .mappers-radio-label-icon {
-			&:before {
-				box-shadow: 0 0 0 4px @outline;
-			}
-		}
-	}
 }
 
 .mappers-slider-nav {

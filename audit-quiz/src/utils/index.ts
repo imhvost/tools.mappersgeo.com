@@ -1,11 +1,4 @@
-type Operator = '=' | '!=' | '>' | '<' | '>=' | '<=' | 'IN' | 'NOT IN';
-
-export type ParsedCondition = {
-  field: string;
-  fieldPath: string[];
-  operator: Operator;
-  value: string | number | Array<string | number>;
-};
+import type { Section, Question, Operator, ParsedCondition } from '@/types';
 
 const parsePrimitive = (value: string): string | number => {
   if (!isNaN(Number(value))) {
@@ -96,4 +89,33 @@ export const evaluateConditionValue = (
     default:
       return false;
   }
+};
+
+export const checkSectionCondition = (section: Section, sections: Section[]): boolean => {
+  if (!section.condition) {
+    return true;
+  }
+  const { operator, fieldPath, value } = parseCondition(section.condition);
+  const conditionSection = sections.find(o => o.name === fieldPath[0]);
+  if (!conditionSection) {
+    return false;
+  }
+  const conditionValue = getValueByPath(conditionSection, fieldPath);
+  return evaluateConditionValue(conditionValue, operator, value);
+};
+
+export const checkQuestionCondition = (question: Question, sections: Section[]): boolean => {
+  if (!question.condition) {
+    return true;
+  }
+  const { operator, fieldPath, value } = parseCondition(question.condition);
+  if (fieldPath.length !== 2) {
+    fieldPath.unshift(question.name);
+  }
+  const conditionSection = sections.find(o => o.name === fieldPath[0]);
+  if (!conditionSection) {
+    return false;
+  }
+  const conditionValue = getValueByPath(conditionSection, fieldPath);
+  return evaluateConditionValue(conditionValue, operator, value);
 };

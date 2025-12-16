@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import type { QuizMeta } from '@/types';
+import { useGlobalState } from '@/store';
 
 const props = defineProps<{
   type: 'start' | 'finish';
-  meta?: QuizMeta;
 }>();
+
+const { meta } = useGlobalState();
 
 const emit = defineEmits(['start']);
 </script>
