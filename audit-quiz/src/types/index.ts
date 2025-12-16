@@ -5,22 +5,26 @@ export interface Answer {
   answers: Answer;
   report?: string;
   report_color: 'default' | 'green' | 'red' | 'orange' | 'black';
-  sub_questions: Quiz[];
+  sub_questions: Question[];
 }
 
-export interface Quiz {
+export interface Question {
   question: string;
   name: string;
   input_type: 'radio' | 'checkbox' | 'custom';
   answers: Answer[];
+  do?: string;
+  auditor_note?: string;
+  desc?: string;
+  condition?: string;
 }
 
-export interface Question {
+export interface Section {
   id: number;
   title: string;
   name: string;
   introduction?: string;
-  quiz: Quiz;
+  quiz: Question[];
   condition?: string;
   condition_alert?: string;
   condition_ok?: string;
@@ -28,10 +32,7 @@ export interface Question {
 }
 
 export interface Audit {
-  section?: number;
-  question?: string;
-  isEnd?: boolean;
-  answers: Record<string, string>[];
+  [key: number]: Record<string, string>;
 }
 
 export interface QuizMeta {

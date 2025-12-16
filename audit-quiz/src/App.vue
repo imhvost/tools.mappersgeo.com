@@ -1,14 +1,27 @@
 <script setup lang="ts">
 import { useFetch } from '@vueuse/core';
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { useGlobalState } from '@/store';
-import type { Question, QuizMeta } from '@/types';
+import type { Question, QuizMeta, Section } from '@/types';
 import TabsInfo from '@/components/TabInfo.vue';
+import { parseCondition, getValueByPath, evaluateConditionValue } from '@/utils';
 
-const sections = ref<Question[]>([]);
+const { audit, auditIsLoad } = useGlobalState();
+
+const sections = ref<Section[]>([]);
 const meta = ref<QuizMeta>();
 
-const { audit, auditIsFinished } = useGlobalState();
+const activeSectionId = ref<number>();
+
+watch(auditIsLoad, () => {
+  if (Object.keys(audit.value).length) {
+    activeSectionId.value = Number(Object.keys(audit.value).pop());
+  }
+});
+
+const isEnd = computed(() => {
+  return false;
+});
 
 onMounted(async () => {
   const { data: auditQuizMeta } = await useFetch<Record<string, string>>(
@@ -28,44 +41,98 @@ onMounted(async () => {
   }
 });
 
-const goToSection = (index: number) => {
-  audit.value.section = index;
+const goToSection = (id: number) => {
+  activeSectionId.value = id;
+};
+
+const checkSectionCondition = (section: Section) => {
+  if (!section.condition) {
+    return true;
+  }
+  const { operator, fieldPath, value } = parseCondition(section.condition);
+  const conditionSection = sections.value.find(o => o.name === fieldPath[0]);
+  if (!conditionSection) {
+    return false;
+  }
+  const conditionValue = getValueByPath(conditionSection, fieldPath);
+  return evaluateConditionValue(conditionValue, operator, value);
+};
+
+const checkQuestionCondition = (question: Question) => {
+  if (!question.condition) {
+    return true;
+  }
+  const { operator, fieldPath, value } = parseCondition(question.condition);
+  if (fieldPath.length !== 2) {
+    fieldPath.unshift(question.name);
+  }
+  const conditionSection = sections.value.find(o => o.name === fieldPath[0]);
+  if (!conditionSection) {
+    return false;
+  }
+  const conditionValue = getValueByPath(conditionSection, fieldPath);
+  return evaluateConditionValue(conditionValue, operator, value);
+};
+
+const isSectionDone = (sectionId: number) => {
+  const auditSection = audit.value[sectionId];
+  if (!auditSection) {
+    return false;
+  }
+  const section = sections.value.find(o => o.id === sectionId);
+  if (!section) {
+    return false;
+  }
+  for (const item of section.quiz) {
+    if (item.condition) {
+      if (!checkQuestionCondition(item)) {
+        continue;
+      }
+    }
+    if (auditSection[item.name] === undefined) {
+      return false;
+    }
+  }
+  return true;
 };
 </script>
 
 <template>
   <div class="mappers-audit-quiz-container mappers-container">
+    {{ activeSectionId }}
     <div
-      v-if="sections.length && auditIsFinished"
+      v-if="sections.length && auditIsLoad"
       class="mappers-audit-quiz"
     >
       <nav class="mappers-audit-quiz-nav">
         <ul class="mappers-audit-quiz-menu">
-          <li
+          <template
             v-for="(item, index) in sections"
             :key="item.id"
           >
-            <button
-              class="mappers-audit-quiz-nav-btn mappers-h3"
-              :class="{
-                'mappers-active': index === audit.section,
-                'mappers-done': index > audit.answers.length - 1,
-              }"
-              @click="index > audit.answers.length - 1 && goToSection(index)"
-            >
-              <i>
-                <span>{{ index + 1 }}</span>
-                <svg class="mappers-icon"><use xlink:href="#icon-check" /></svg>
-              </i>
-              <span>{{ item.title }}</span>
-            </button>
-          </li>
+            <li v-if="checkSectionCondition(item)">
+              <button
+                class="mappers-audit-quiz-nav-btn mappers-h3"
+                :class="{
+                  'mappers-active': item.id === activeSectionId,
+                  'mappers-done': isSectionDone(item.id),
+                }"
+                @click="isSectionDone(item.id) && goToSection(item.id)"
+              >
+                <i>
+                  <span>{{ index + 1 }}</span>
+                  <svg class="mappers-icon"><use xlink:href="#icon-check" /></svg>
+                </i>
+                <span>{{ item.title }}</span>
+              </button>
+            </li>
+          </template>
         </ul>
       </nav>
       <div class="mappers-audit-quiz-body">
         <Transition name="fade">
           <div
-            v-if="audit.isEnd"
+            v-if="isEnd"
             class="mappers-audit-quiz-tab"
           >
             <TabsInfo
@@ -74,7 +141,7 @@ const goToSection = (index: number) => {
             ></TabsInfo>
           </div>
           <div
-            v-else-if="audit.section === undefined"
+            v-else-if="activeSectionId === undefined"
             class="mappers-audit-quiz-tab"
           >
             <TabsInfo
@@ -92,7 +159,7 @@ const goToSection = (index: number) => {
               :key="item.id"
             >
               <div
-                v-if="index === audit.section"
+                v-if="activeSectionId === item.id"
                 class="mappers-audit-quiz-tab"
               ></div>
             </template>
@@ -145,6 +212,7 @@ const goToSection = (index: number) => {
   align-items: center;
   gap: 10px;
   pointer-events: none;
+  color: @title;
   i {
     flex: none;
     width: 40px;
