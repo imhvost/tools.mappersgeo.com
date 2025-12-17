@@ -33,8 +33,14 @@ export interface Section {
   initial_score?: number;
 }
 
+export interface AuditAnswer {
+  name: string;
+  val?: string;
+  sub_questions?: AuditAnswer[];
+}
+
 export interface Audit {
-  [key: number]: Record<string, string>;
+  [key: number]: AuditAnswer[];
 }
 
 export interface QuizMeta {

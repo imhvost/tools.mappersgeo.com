@@ -2,6 +2,7 @@
 import type { Question } from '@/types';
 import { useGlobalState } from '@/store';
 import QuizAnswer from '@/components/QuizAnswer.vue';
+import { computed } from 'vue';
 
 const props = defineProps<{
   question: Question;
@@ -9,7 +10,28 @@ const props = defineProps<{
   sectionId: number;
 }>();
 
-const { sections, meta } = useGlobalState();
+const { audit, meta, updateAuditQuestion, updateAuditSubQuestion } = useGlobalState();
+
+const subquestions = computed(() => {
+  return props.question.answers.reduce(
+    (accumulator, el) => {
+      if (el.sub_questions.length) {
+        accumulator.push({ [el.val]: el.sub_questions });
+      }
+      return accumulator;
+    },
+    [] as Record<string, Question[]>[],
+  );
+});
+
+const answerModel = computed<string | undefined>({
+  get() {
+    return audit.value[props.sectionId]?.find(o => o.name === props.question.name)?.val;
+  },
+  set(value) {
+    updateAuditQuestion(props.sectionId, props.question.name, value);
+  },
+});
 </script>
 
 <template>
@@ -19,10 +41,8 @@ const { sections, meta } = useGlobalState();
       <span>{{ question.question }}</span>
     </div>
     <QuizAnswer
-      :input-type="question.input_type"
-      :answers="question.answers"
-      :question-name="question.name"
-      :section-id="sectionId"
+      :question="question"
+      v-model="answerModel"
     ></QuizAnswer>
     <div
       v-if="question.do"
@@ -40,9 +60,9 @@ const { sections, meta } = useGlobalState();
       ></div>
     </div>
     <div
-      v-if="question.desc"
-      class="mappers-audit-quiz-question-desc mappers-content-text"
-      v-html="question.desc"
+      v-if="question.auditor_note"
+      class="mappers-audit-quiz-question-note mappers-content-text"
+      v-html="question.auditor_note"
     ></div>
   </div>
 </template>
@@ -83,7 +103,7 @@ const { sections, meta } = useGlobalState();
   color: @placeholder;
 }
 
-.mappers-audit-quiz-question-desc {
+.mappers-audit-quiz-question-note {
   padding: 24px;
   border-radius: 4px;
   background-color: @bg;

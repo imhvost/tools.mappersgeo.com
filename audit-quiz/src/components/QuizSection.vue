@@ -1,20 +1,68 @@
 <script setup lang="ts">
 import type { Section } from '@/types';
-import { ref } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import QuizQuestion from '@/components/QuizQuestion.vue';
 import { useGlobalState } from '@/store';
+import { checkQuestionCondition } from '@/utils';
 
 const props = defineProps<{
   section: Section;
   isDone: boolean;
 }>();
 
-const { meta } = useGlobalState();
+const { meta, sections, audit } = useGlobalState();
+
+const quiz = computed(() =>
+  props.section.quiz.filter(o => checkQuestionCondition(o, sections.value)),
+);
 
 const tab = ref<'intro' | 'questions'>('intro');
-const activeQuestionName = ref<string>(props.section.quiz[0]?.name || '');
+const activeQuestionName = ref<string>();
+
+const auditSection = computed(() => audit.value[props.section.id]);
+
+onMounted(() => {
+  activeQuestionName.value =
+    auditSection.value?.[auditSection.value.length - 1]?.name || quiz.value[0]?.name || '';
+});
 
 const tabs = ['intro', 'questions'] as const;
+
+const emit = defineEmits(['next']);
+
+const goToQuestionByName = (name: string) => {
+  activeQuestionName.value = name;
+};
+
+const goToNextQuestion = () => {
+  const activeIndex = quiz.value.findIndex(o => o.name === activeQuestionName.value);
+  if (activeIndex !== -1) {
+    const nextQuestion = quiz.value[activeIndex + 1];
+    if (nextQuestion) {
+      goToQuestionByName(nextQuestion.name);
+    }
+  }
+};
+
+const isQuestionDone = (name: string) => {
+  if (!auditSection.value) {
+    return false;
+  }
+  const auditAnswer = auditSection.value.find(o => o.name === name);
+  return auditAnswer && auditAnswer.val !== undefined;
+};
+
+const isQuestionEnabled = (name: string) => {
+  const activeIndex = quiz.value.findIndex(o => o.name === name);
+  if (activeIndex === -1) {
+    return false;
+  }
+  const prevQuestion = quiz.value[activeIndex - 1];
+  if (!prevQuestion) {
+    return false;
+  }
+  return isQuestionDone(prevQuestion.name);
+};
 </script>
 
 <template>
@@ -31,10 +79,7 @@ const tabs = ['intro', 'questions'] as const;
       </button>
     </nav>
     <div class="mappers-audit-quiz-section-body">
-      <Transition
-        name="mappers-fade"
-        mode="out-in"
-      >
+      <Transition name="mappers-fade">
         <div
           v-if="tab === 'intro'"
           class="mappers-audit-quiz-section-intro"
@@ -54,34 +99,28 @@ const tabs = ['intro', 'questions'] as const;
             v-html="section.introduction"
           ></div>
         </div>
-        <div
-          v-else
+        <TransitionGroup
+          v-else-if="quiz"
+          tag="div"
+          name="mappers-fade"
           class="mappers-audit-quiz-section-questions"
         >
           <template
-            v-for="(item, index) in section.quiz"
+            v-for="(item, index) in quiz"
             :key="item.name"
           >
-            <Transition
-              name="mappers-fade"
-              mode="out-in"
-            >
-              <QuizQuestion
-                v-if="activeQuestionName === item.name"
-                :question="item"
-                :index="index"
-                :section-id="section.id"
-              ></QuizQuestion>
-            </Transition>
+            <QuizQuestion
+              v-if="activeQuestionName === item.name"
+              :question="item"
+              :index="index"
+              :section-id="section.id"
+            ></QuizQuestion>
           </template>
-        </div>
+        </TransitionGroup>
       </Transition>
     </div>
     <div class="mappers-audit-quiz-section-foot">
-      <Transition
-        name="mappers-fade"
-        mode="out-in"
-      >
+      <Transition name="mappers-fade">
         <button
           v-if="tab === 'intro'"
           @click="tab = 'questions'"
@@ -93,7 +132,46 @@ const tabs = ['intro', 'questions'] as const;
         <nav
           v-else
           class="mappers-audit-quiz-section-foot-nav"
-        ></nav>
+        >
+          <div class="mappers-audit-quiz-pagination">
+            <button
+              v-for="(item, index) in quiz"
+              :key="item.name"
+              class="mappers-audit-quiz-pagination-btn"
+              :class="{
+                'mappers-active': activeQuestionName === item.name,
+                'mappers-done': isQuestionDone(item.name),
+                'mappers-enabled': isQuestionEnabled(item.name),
+              }"
+              @click="
+                activeQuestionName !== item.name &&
+                (isQuestionDone(item.name) || isQuestionEnabled(item.name)) &&
+                goToQuestionByName(item.name)
+              "
+            >
+              <i>
+                <svg class="mappers-icon"><use xlink:href="#icon-check" /></svg>
+              </i>
+              {{ index + 1 }}
+            </button>
+          </div>
+          <button
+            v-if="isDone"
+            @click="emit('next')"
+            class="mappers-audit-quiz-section-foot-btn mappers-btn"
+          >
+            <span>{{ meta?.strings?.next_section }}</span>
+            <svg class="mappers-icon"><use xlink:href="#icon-arrow-right" /></svg>
+          </button>
+          <button
+            v-else
+            @click="goToNextQuestion"
+            class="mappers-audit-quiz-section-foot-btn mappers-btn"
+          >
+            <span>{{ meta?.strings?.next_question }}</span>
+            <svg class="mappers-icon"><use xlink:href="#icon-arrow-right" /></svg>
+          </button>
+        </nav>
       </Transition>
     </div>
   </div>
@@ -153,5 +231,86 @@ const tabs = ['intro', 'questions'] as const;
 
 .mappers-audit-quiz-section-foot-btn {
   margin-left: auto;
+}
+
+.mappers-audit-quiz-section-foot-nav {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  flex: auto;
+  min-width: 0;
+}
+
+.mappers-audit-quiz-pagination {
+  align-self: center;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mappers-audit-quiz-pagination-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 24px;
+  border-radius: 6px;
+  border: solid 1px @border;
+  color: @link;
+  font-size: 12px;
+  transition:
+    color 0.4s,
+    border-color 0.4s,
+    background-color 0.4s;
+  pointer-events: none;
+  position: relative;
+  i {
+    position: absolute;
+    --width: 16px;
+    left: calc(100% - 0.5 * var(--width));
+    bottom: calc(100% - 0.5 * var(--width));
+    width: var(--width);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    color: @white;
+    background-color: #27b680;
+    display: grid;
+    place-items: center;
+    opacity: 0;
+    transition: opacity 0.4s;
+    svg {
+      --size: 12px;
+    }
+  }
+  &.mappers-done {
+    pointer-events: auto;
+    background-color: #27b680;
+    border-color: #27b680;
+    color: @white;
+    i {
+      opacity: 1;
+    }
+  }
+  &.mappers-active {
+    background-color: @link;
+    border-color: @link;
+    color: @white;
+    pointer-events: none;
+    i {
+      opacity: 0;
+    }
+  }
+  &.mappers-enabled {
+    pointer-events: auto;
+    &:hover {
+      border-color: @link;
+      &.mappers-done {
+        border-color: #27b680;
+      }
+    }
+    &.mappers-active {
+      pointer-events: none;
+    }
+  }
 }
 </style>

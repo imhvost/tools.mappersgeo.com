@@ -9,6 +9,10 @@ import { checkSectionCondition, checkQuestionCondition } from '@/utils';
 
 const { audit, auditIsLoad, sections, meta } = useGlobalState();
 
+const sectionsList = computed(() =>
+  sections.value.filter(o => checkSectionCondition(o, sections.value)),
+);
+
 const activeSectionId = ref<number>();
 
 watch(auditIsLoad, () => {
@@ -44,9 +48,19 @@ const goToSectionById = (id: number) => {
 };
 
 const goToSectionByIndex = (index: number) => {
-  const id = sections.value[index]?.id;
+  const id = sectionsList.value[index]?.id;
   if (id) {
     goToSectionById(id);
+  }
+};
+
+const goToNextSection = () => {
+  const activeIndex = sectionsList.value.findIndex(o => o.id === activeSectionId.value);
+  if (activeIndex !== -1) {
+    const nextSection = sectionsList.value[activeIndex + 1];
+    if (nextSection) {
+      goToSectionById(nextSection.id);
+    }
   }
 };
 
@@ -55,7 +69,7 @@ const isSectionDone = (sectionId: number) => {
   if (!auditSection) {
     return false;
   }
-  const section = sections.value.find(o => o.id === sectionId);
+  const section = sectionsList.value.find(o => o.id === sectionId);
   if (!section) {
     return false;
   }
@@ -65,36 +79,55 @@ const isSectionDone = (sectionId: number) => {
         continue;
       }
     }
-    if (auditSection[item.name] === undefined) {
+    const auditAnswer = auditSection.find(o => o.name === item.name);
+    if (!auditAnswer) {
+      return false;
+    }
+    if (auditAnswer.val === undefined) {
       return false;
     }
   }
   return true;
+};
+
+const isSectionEnabled = (sectionId: number) => {
+  const activeIndex = sectionsList.value.findIndex(o => o.id === sectionId);
+  if (activeIndex !== -1) {
+    const prevSection = sectionsList.value[activeIndex - 1];
+    if (prevSection) {
+      return isSectionDone(prevSection.id);
+    }
+  }
+  return false;
 };
 </script>
 
 <template>
   <div class="mappers-audit-quiz-container mappers-container">
     <div
-      v-if="sections.length && auditIsLoad"
+      v-if="sectionsList.length && auditIsLoad"
       class="mappers-audit-quiz"
     >
       <nav class="mappers-audit-quiz-nav">
         <ul class="mappers-audit-quiz-menu">
           <template
-            v-for="(item, index) in sections"
+            v-for="(item, index) in sectionsList"
             :key="item.id"
           >
-            <li v-if="checkSectionCondition(item, sections)">
+            <li>
               <button
                 class="mappers-audit-quiz-nav-btn mappers-h3"
                 :class="{
                   'mappers-active': item.id === activeSectionId,
                   'mappers-done': isSectionDone(item.id),
+                  'mappers-enabled': isSectionEnabled(item.id),
                 }"
-                @click="isSectionDone(item.id) && goToSectionById(item.id)"
+                @click="
+                  (isSectionDone(item.id) || isSectionEnabled(item.id)) && goToSectionById(item.id)
+                "
               >
                 <i>
+                  <span>{{ index + 1 }}</span>
                   <svg class="mappers-icon"><use xlink:href="#icon-check" /></svg>
                 </i>
                 <span>{{ item.title }}</span>
@@ -104,10 +137,7 @@ const isSectionDone = (sectionId: number) => {
         </ul>
       </nav>
       <div class="mappers-audit-quiz-body">
-        <Transition
-          name="mappers-fade"
-          mode="out-in"
-        >
+        <Transition name="mappers-fade">
           <QuizInfo
             v-if="isEnd"
             type="finish"
@@ -117,9 +147,11 @@ const isSectionDone = (sectionId: number) => {
             type="start"
             @start="goToSectionByIndex(0)"
           ></QuizInfo>
-          <div
-            class="mappers-audit-quiz-sections"
+          <TransitionGroup
             v-else
+            tag="div"
+            name="mappers-fade"
+            class="mappers-audit-quiz-sections"
           >
             <template
               v-for="(item, index) in sections"
@@ -127,11 +159,13 @@ const isSectionDone = (sectionId: number) => {
             >
               <QuizSection
                 v-if="activeSectionId === item.id"
+                :key="item.id"
                 :section="item"
                 :is-done="isSectionDone(item.id)"
+                @next="goToNextSection"
               ></QuizSection>
             </template>
-          </div>
+          </TransitionGroup>
         </Transition>
       </div>
     </div>
@@ -167,7 +201,6 @@ const isSectionDone = (sectionId: number) => {
 }
 
 .mappers-audit-quiz-menu {
-  counter-reset: counter;
   li {
     display: flex;
     border-bottom: solid 1px @border;
@@ -185,6 +218,7 @@ const isSectionDone = (sectionId: number) => {
   gap: 10px;
   pointer-events: none;
   color: @title;
+  transition: color 0.4s;
   i {
     flex: none;
     width: 40px;
@@ -198,9 +232,7 @@ const isSectionDone = (sectionId: number) => {
     transition:
       color 0.4s,
       background-color 0.4s;
-    &:before {
-      content: counter(counter);
-      counter-increment: counter;
+    span {
       position: absolute;
       inset: 0;
       display: grid;
@@ -212,13 +244,18 @@ const isSectionDone = (sectionId: number) => {
       transition: opacity 0.4s;
     }
   }
+  &:hover {
+    color: @link;
+  }
   &.mappers-active {
+    color: @link;
+    pointer-events: none;
     i {
       color: @white;
       background-color: @link;
     }
   }
-  &.mappest-done {
+  &.mappers-done {
     pointer-events: auto;
     i {
       color: @white;
@@ -229,6 +266,12 @@ const isSectionDone = (sectionId: number) => {
       svg {
         opacity: 1;
       }
+    }
+  }
+  &.mappers-enabled {
+    pointer-events: auto;
+    &.mappers-active {
+      pointer-events: none;
     }
   }
 }

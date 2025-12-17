@@ -1,53 +1,46 @@
 <script setup lang="ts">
-import type { Answer, InputType } from '@/types';
-import { onMounted, ref, watch } from 'vue';
-import { useGlobalState } from '@/store';
+import type { Question } from '@/types';
 
 const props = defineProps<{
-  answers: Answer[];
-  inputType: InputType;
-  questionName: string;
-  sectionId: number;
+  question: Question;
 }>();
 
-const { audit, updateAudit } = useGlobalState();
-
-const model = ref<string | undefined>();
-
-onMounted(() => {
-  if (audit.value[props.sectionId]?.[props.questionName]) {
-    model.value = audit.value[props.sectionId]?.[props.questionName];
-  } else {
-    if (props.inputType === 'radio') {
-      model.value = props.answers[0]?.val;
-    }
-  }
-});
-
-watch(model, () => {
-  updateAudit(props.sectionId, props.questionName, model.value);
-});
+const model = defineModel();
 </script>
 
 <template>
   <div class="mappers-audit-quiz-answer">
     <div
-      v-if="inputType === 'radio'"
+      v-if="question.input_type === 'radio'"
       class="mappers-audit-quiz-answer-radios"
     >
       <label
-        v-for="item in answers"
+        v-for="item in question.answers"
         :key="item.val"
         class="mappers-audit-quiz-radio mappers-radio"
       >
         <input
           type="radio"
-          :name="questionName"
+          :name="question.name"
           :value="item.val"
           v-model="model"
         />
         <i></i>
         <span>{{ item.answer }}</span>
+      </label>
+    </div>
+    <div
+      v-if="question.input_type === 'checkbox'"
+      class="mappers-audit-quiz-answer-checkbox"
+    >
+      <label class="mappers-audit-quiz-checkbox mappers-checkbox">
+        <input
+          type="checkbox"
+          :name="question.name"
+          v-model="model"
+        />
+        <i></i>
+        <span>{{ question.question }}</span>
       </label>
     </div>
   </div>
