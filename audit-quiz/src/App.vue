@@ -10,14 +10,14 @@ import { checkSectionCondition, checkQuestionCondition } from '@/utils';
 const { audit, auditIsLoad, sections, meta } = useGlobalState();
 
 const sectionsList = computed(() =>
-  sections.value.filter(o => checkSectionCondition(o, sections.value)),
+  sections.value.filter(o => checkSectionCondition(o, audit.value)),
 );
 
-const activeSectionId = ref<number>();
+const activeSectionName = ref<string>();
 
 watch(auditIsLoad, () => {
   if (Object.keys(audit.value).length) {
-    activeSectionId.value = Number(Object.keys(audit.value).pop());
+    activeSectionName.value = Object.keys(audit.value).pop();
   }
 });
 
@@ -43,39 +43,39 @@ onMounted(async () => {
   }
 });
 
-const goToSectionById = (id: number) => {
-  activeSectionId.value = id;
+const goToSectionByName = (name: string) => {
+  activeSectionName.value = name;
 };
 
 const goToSectionByIndex = (index: number) => {
-  const id = sectionsList.value[index]?.id;
-  if (id) {
-    goToSectionById(id);
+  const name = sectionsList.value[index]?.name;
+  if (name) {
+    goToSectionByName(name);
   }
 };
 
 const goToNextSection = () => {
-  const activeIndex = sectionsList.value.findIndex(o => o.id === activeSectionId.value);
+  const activeIndex = sectionsList.value.findIndex(o => o.name === activeSectionName.value);
   if (activeIndex !== -1) {
     const nextSection = sectionsList.value[activeIndex + 1];
     if (nextSection) {
-      goToSectionById(nextSection.id);
+      goToSectionByName(nextSection.name);
     }
   }
 };
 
-const isSectionDone = (sectionId: number) => {
-  const auditSection = audit.value[sectionId];
+const isSectionDone = (sectionName: string) => {
+  const auditSection = audit.value[sectionName];
   if (!auditSection) {
     return false;
   }
-  const section = sectionsList.value.find(o => o.id === sectionId);
+  const section = sectionsList.value.find(o => o.name === sectionName);
   if (!section) {
     return false;
   }
   for (const item of section.quiz) {
     if (item.condition) {
-      if (!checkQuestionCondition(item, sections.value)) {
+      if (!checkQuestionCondition(item, section.name, audit.value)) {
         continue;
       }
     }
@@ -90,12 +90,12 @@ const isSectionDone = (sectionId: number) => {
   return true;
 };
 
-const isSectionEnabled = (sectionId: number) => {
-  const activeIndex = sectionsList.value.findIndex(o => o.id === sectionId);
+const isSectionEnabled = (sectionName: string) => {
+  const activeIndex = sectionsList.value.findIndex(o => o.name === sectionName);
   if (activeIndex !== -1) {
     const prevSection = sectionsList.value[activeIndex - 1];
     if (prevSection) {
-      return isSectionDone(prevSection.id);
+      return isSectionDone(prevSection.name);
     }
   }
   return false;
@@ -118,12 +118,13 @@ const isSectionEnabled = (sectionId: number) => {
               <button
                 class="mappers-audit-quiz-nav-btn mappers-h3"
                 :class="{
-                  'mappers-active': item.id === activeSectionId,
-                  'mappers-done': isSectionDone(item.id),
-                  'mappers-enabled': isSectionEnabled(item.id),
+                  'mappers-active': item.name === activeSectionName,
+                  'mappers-done': isSectionDone(item.name),
+                  'mappers-enabled': isSectionEnabled(item.name),
                 }"
                 @click="
-                  (isSectionDone(item.id) || isSectionEnabled(item.id)) && goToSectionById(item.id)
+                  (isSectionDone(item.name) || isSectionEnabled(item.name)) &&
+                  goToSectionByName(item.name)
                 "
               >
                 <i>
@@ -143,7 +144,7 @@ const isSectionEnabled = (sectionId: number) => {
             type="finish"
           ></QuizInfo>
           <QuizInfo
-            v-else-if="activeSectionId === undefined"
+            v-else-if="activeSectionName === undefined"
             type="start"
             @start="goToSectionByIndex(0)"
           ></QuizInfo>
@@ -158,10 +159,10 @@ const isSectionEnabled = (sectionId: number) => {
               :key="item.id"
             >
               <QuizSection
-                v-if="activeSectionId === item.id"
+                v-if="activeSectionName === item.name"
                 :key="item.id"
                 :section="item"
-                :is-done="isSectionDone(item.id)"
+                :is-done="isSectionDone(item.name)"
                 @next="goToNextSection"
               ></QuizSection>
             </template>

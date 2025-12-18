@@ -6,23 +6,30 @@ import { ref } from 'vue';
 export const useGlobalState = createGlobalState(() => {
   const { data: audit, isFinished: auditIsLoad } = useIDBKeyval<Audit>('audit', {});
 
-  const updateAuditQuestion = (sectionId: number, questionName: string, value?: string) => {
-    if (!audit.value[sectionId]) {
-      audit.value[sectionId] = [];
+  const updateAuditQuestion = (sectionName: string, questionName: string, value?: string) => {
+    if (!audit.value[sectionName]) {
+      audit.value[sectionName] = [];
     }
-    audit.value[sectionId].push({
-      name: questionName,
-      val: value,
-    });
+
+    const answer = audit.value[sectionName].find(o => o.name === questionName);
+
+    if (answer) {
+      answer.val = value;
+    } else {
+      audit.value[sectionName].push({
+        name: questionName,
+        val: value,
+      });
+    }
   };
 
   const updateAuditSubQuestion = (
-    sectionId: number,
+    sectionName: string,
     questionName: string,
     subQuestionName: string,
     subQuestionValue?: string,
   ) => {
-    if (!audit.value[sectionId]) return;
+    if (!audit.value[sectionName]) return;
 
     const updateSub = (answers: AuditAnswer[]) => {
       for (const answer of answers) {
@@ -52,7 +59,7 @@ export const useGlobalState = createGlobalState(() => {
       return false;
     };
 
-    updateSub(audit.value[sectionId]);
+    updateSub(audit.value[sectionName]);
   };
 
   const sections = ref<Section[]>([]);

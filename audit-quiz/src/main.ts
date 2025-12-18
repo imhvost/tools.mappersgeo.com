@@ -1,5 +1,7 @@
 import { createApp } from 'vue';
 import App from './App.vue';
+import VueTippy from 'vue-tippy';
+import 'tippy.js/dist/tippy.css';
 
 if (import.meta.env.DEV) {
   const link = document.createElement('link');
@@ -8,4 +10,16 @@ if (import.meta.env.DEV) {
   document.head.appendChild(link);
 }
 
-createApp(App).mount('#app');
+const app = createApp(App);
+app.use(VueTippy, {
+  defaultProps: {
+    theme: 'mappers',
+    maxWidth: 436,
+    trigger: 'click',
+    touch: ['click', 0],
+    hideOnClick: true,
+    allowHTML: true,
+  },
+});
+
+app.mount('#app');

@@ -40,7 +40,7 @@ export interface AuditAnswer {
 }
 
 export interface Audit {
-  [key: number]: AuditAnswer[];
+  [key: string]: AuditAnswer[];
 }
 
 export interface QuizMeta {

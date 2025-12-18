@@ -13,13 +13,13 @@ const props = defineProps<{
 const { meta, sections, audit } = useGlobalState();
 
 const quiz = computed(() =>
-  props.section.quiz.filter(o => checkQuestionCondition(o, sections.value)),
+  props.section.quiz.filter(o => checkQuestionCondition(o, props.section.name, audit.value)),
 );
 
 const tab = ref<'intro' | 'questions'>('intro');
 const activeQuestionName = ref<string>();
 
-const auditSection = computed(() => audit.value[props.section.id]);
+const auditSection = computed(() => audit.value[props.section.name]);
 
 onMounted(() => {
   activeQuestionName.value =
@@ -38,7 +38,7 @@ const goToNextQuestion = () => {
   const activeIndex = quiz.value.findIndex(o => o.name === activeQuestionName.value);
   if (activeIndex !== -1) {
     const nextQuestion = quiz.value[activeIndex + 1];
-    if (nextQuestion) {
+    if (nextQuestion && isQuestionEnabled(nextQuestion.name)) {
       goToQuestionByName(nextQuestion.name);
     }
   }
@@ -113,7 +113,7 @@ const isQuestionEnabled = (name: string) => {
               v-if="activeQuestionName === item.name"
               :question="item"
               :index="index"
-              :section-id="section.id"
+              :section-name="section.name"
             ></QuizQuestion>
           </template>
         </TransitionGroup>
@@ -149,9 +149,6 @@ const isQuestionEnabled = (name: string) => {
                 goToQuestionByName(item.name)
               "
             >
-              <i>
-                <svg class="mappers-icon"><use xlink:href="#icon-check" /></svg>
-              </i>
               {{ index + 1 }}
             </button>
           </div>
@@ -224,7 +221,7 @@ const isQuestionEnabled = (name: string) => {
 
 .mappers-audit-quiz-section-foot {
   flex: none;
-  padding: 40px;
+  padding: 24px 40px;
   border-top: solid 1px @border;
   display: flex;
 }
@@ -256,7 +253,6 @@ const isQuestionEnabled = (name: string) => {
   height: 24px;
   border-radius: 6px;
   border: solid 1px @border;
-  color: @link;
   font-size: 12px;
   transition:
     color 0.4s,
@@ -302,14 +298,19 @@ const isQuestionEnabled = (name: string) => {
   }
   &.mappers-enabled {
     pointer-events: auto;
+    color: @link;
     &:hover {
       border-color: @link;
-      &.mappers-done {
+    }
+    &.mappers-done {
+      color: @white;
+      &:hover {
         border-color: #27b680;
       }
     }
     &.mappers-active {
       pointer-events: none;
+      color: @white;
     }
   }
 }

@@ -1,4 +1,4 @@
-import type { Section, Question, Operator, ParsedCondition } from '@/types';
+import type { Section, Question, Operator, ParsedCondition, Audit } from '@/types';
 
 const parsePrimitive = (value: string): string | number => {
   if (!isNaN(Number(value))) {
@@ -60,8 +60,15 @@ export const parseCondition = (condition: string): ParsedCondition => {
   };
 };
 
-export const getValueByPath = (obj: any, fieldPath: string[]) => {
-  return fieldPath.reduce((acc, key) => acc?.[key], obj);
+export const getAuditConditionValue = (audit: Audit, fieldPath: string[]) => {
+  const [sectionName, questionName] = fieldPath;
+  if (sectionName && questionName && audit[sectionName]) {
+    const question = audit[sectionName].find(o => o.name === questionName);
+    if (question) {
+      return question.val;
+    }
+  }
+  return undefined;
 };
 
 export const evaluateConditionValue = (
@@ -91,31 +98,29 @@ export const evaluateConditionValue = (
   }
 };
 
-export const checkSectionCondition = (section: Section, sections: Section[]): boolean => {
+export const checkSectionCondition = (section: Section, audit: Audit): boolean => {
   if (!section.condition) {
     return true;
   }
   const { operator, fieldPath, value } = parseCondition(section.condition);
-  const conditionSection = sections.find(o => o.name === fieldPath[0]);
-  if (!conditionSection) {
-    return false;
-  }
-  const conditionValue = getValueByPath(conditionSection, fieldPath);
+
+  const conditionValue = getAuditConditionValue(audit, fieldPath);
   return evaluateConditionValue(conditionValue, operator, value);
 };
 
-export const checkQuestionCondition = (question: Question, sections: Section[]): boolean => {
+export const checkQuestionCondition = (
+  question: Question,
+  sectionName: string,
+  audit: Audit,
+): boolean => {
   if (!question.condition) {
     return true;
   }
   const { operator, fieldPath, value } = parseCondition(question.condition);
   if (fieldPath.length !== 2) {
-    fieldPath.unshift(question.name);
+    fieldPath.unshift(sectionName);
   }
-  const conditionSection = sections.find(o => o.name === fieldPath[0]);
-  if (!conditionSection) {
-    return false;
-  }
-  const conditionValue = getValueByPath(conditionSection, fieldPath);
+
+  const conditionValue = getAuditConditionValue(audit, fieldPath);
   return evaluateConditionValue(conditionValue, operator, value);
 };

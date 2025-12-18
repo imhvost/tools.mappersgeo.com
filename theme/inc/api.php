@@ -109,6 +109,7 @@ function mappers_get_mappers_audit_quiz_meta() {
 		$data['strings']['intro_label']       = esc_html( carbon_get_post_meta( $audit_page_id, 'mappers_intro_label' ) );
 		$data['strings']['go_to_questions']   = esc_html( carbon_get_post_meta( $audit_page_id, 'mappers_go_to_questions' ) );
 		$data['strings']['do']                = esc_html( carbon_get_post_meta( $audit_page_id, 'mappers_do' ) );
+		$data['strings']['desc_info']         = esc_html( carbon_get_post_meta( $audit_page_id, 'desc_info' ) );
 		$data['strings']['next_question']     = esc_html( carbon_get_post_meta( $audit_page_id, 'mappers_next_question' ) );
 		$data['strings']['next_section']      = esc_html( carbon_get_post_meta( $audit_page_id, 'mappers_next_section' ) );
 		$data['strings']['finish_label']      = esc_html( carbon_get_post_meta( $audit_page_id, 'mappers_finish_label' ) );

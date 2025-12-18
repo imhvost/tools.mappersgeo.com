@@ -440,22 +440,65 @@
 	}
 }
 
-.mappers-checkbox-label {
+.mappers-checkbox {
 	display: inline-flex;
 	cursor: pointer;
 	user-select: none;
 	position: relative;
 	gap: 8px;
 	align-self: flex-start;
-	input:checked {
-		& ~ .mappers-checkbox-label-icon {
-			&:before {
-				border-color: @title;
-				background-color: @title;
+	font-size: 18px;
+	font-weight: 600;
+	line-height: 1.333;
+	color: @title;
+	input {
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 24px;
+		height: 24px;
+		opacity: 0;
+		cursor: pointer;
+		border-radius: 4px;
+	}
+	input {
+		&:checked {
+			& ~ i {
+				&:before {
+					border-color: @link;
+					background-color: @link;
+				}
+				svg {
+					opacity: 1;
+				}
 			}
-			svg {
-				opacity: 1;
-			}
+		}
+	}
+	& > i {
+		flex: none;
+		width: 24px;
+		height: 24px;
+		border-radius: 4px;
+		display: grid;
+		place-items: center;
+		color: @white;
+		position: relative;
+		&:before {
+			content: '';
+			position: absolute;
+			border-radius: inherit;
+			border: solid 2px @border;
+			transition:
+				background-color 0.4s,
+				border-color 0.4s;
+			inset: 3px;
+		}
+		svg {
+			--size: 16px;
+			opacity: 0;
+			transition: opacity 0.4s;
+			position: relative;
+			z-index: 1;
 		}
 	}
 }
@@ -521,47 +564,6 @@
 			transition: opacity 0.4s;
 		}
 	}
-}
-
-.mappers-checkbox-label-icon {
-	flex: none;
-	width: 24px;
-	height: 24px;
-	border-radius: 6px;
-	display: grid;
-	place-items: center;
-	color: @white;
-	position: relative;
-	&:before {
-		content: '';
-		position: absolute;
-		border-radius: inherit;
-		border: solid 1px @border;
-		transition:
-			background-color 0.4s,
-			border-color 0.4s,
-			box-shadow 0.4s;
-		inset: 0;
-		box-shadow: 0 0 0 4px fade(@outline, 0%);
-	}
-	svg {
-		--size: 20px;
-		opacity: 0;
-		transition: opacity 0.4s;
-		position: relative;
-		z-index: 1;
-	}
-}
-
-.mappers-checkbox-input {
-	position: absolute;
-	left: 0;
-	top: 0;
-	width: 24px;
-	height: 24px;
-	opacity: 0;
-	cursor: pointer;
-	border-radius: 4px;
 }
 
 .mappers-slider-nav {
@@ -756,8 +758,10 @@
 	padding: 64px 0 80px;
 }
 
-.mappers-fade-leave-active {
-	display: none;
+.mappers-fade-leave-from,
+.mappers-fade-leave-active,
+.mappers-fade-leave-to {
+	display: none !important;
 }
 
 .mappers-fade-enter-active {
