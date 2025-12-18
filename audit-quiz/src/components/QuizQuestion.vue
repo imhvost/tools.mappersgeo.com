@@ -64,7 +64,7 @@ onMounted(() => {
       :question="question"
       :section-name="props.sectionName"
     ></QuizAnswer>
-    <Transition name="mappers-fade">
+    <Transition name="mappers-tab-fade">
       <div
         v-if="selectedValue && subQuestions[selectedValue]"
         class="mappers-audit-quiz-sub-questions"

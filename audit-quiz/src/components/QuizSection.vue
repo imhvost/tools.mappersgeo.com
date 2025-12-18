@@ -10,7 +10,7 @@ const props = defineProps<{
   isDone: boolean;
 }>();
 
-const { meta, sections, audit } = useGlobalState();
+const { meta, audit } = useGlobalState();
 
 const quiz = computed(() =>
   props.section.quiz.filter(o => checkQuestionCondition(o, props.section.name, audit.value)),
@@ -79,7 +79,7 @@ const isQuestionEnabled = (name: string) => {
       </button>
     </nav>
     <div class="mappers-audit-quiz-section-body">
-      <Transition name="mappers-fade">
+      <Transition name="mappers-tab-fade">
         <div
           v-if="tab === 'intro'"
           class="mappers-audit-quiz-section-intro"
@@ -102,7 +102,7 @@ const isQuestionEnabled = (name: string) => {
         <TransitionGroup
           v-else-if="quiz"
           tag="div"
-          name="mappers-fade"
+          name="mappers-tab-fade"
           class="mappers-audit-quiz-section-questions"
         >
           <template
@@ -120,7 +120,7 @@ const isQuestionEnabled = (name: string) => {
       </Transition>
     </div>
     <div class="mappers-audit-quiz-section-foot">
-      <Transition name="mappers-fade">
+      <Transition name="mappers-tab-fade">
         <button
           v-if="tab === 'intro'"
           @click="tab = 'questions'"

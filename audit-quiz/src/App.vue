@@ -21,9 +21,7 @@ watch(auditIsLoad, () => {
   }
 });
 
-const isEnd = computed(() => {
-  return false;
-});
+const showEnd = ref<boolean>(false);
 
 onMounted(async () => {
   const { data: auditQuizMeta } = await useFetch<Record<string, string>>(
@@ -109,38 +107,40 @@ const isSectionEnabled = (sectionName: string) => {
       class="mappers-audit-quiz"
     >
       <nav class="mappers-audit-quiz-nav">
-        <ul class="mappers-audit-quiz-menu">
-          <template
+        <TransitionGroup
+          name="mappers-tab-fade"
+          tag="ul"
+          class="mappers-audit-quiz-menu"
+        >
+          <li
             v-for="(item, index) in sectionsList"
             :key="item.id"
           >
-            <li>
-              <button
-                class="mappers-audit-quiz-nav-btn mappers-h3"
-                :class="{
-                  'mappers-active': item.name === activeSectionName,
-                  'mappers-done': isSectionDone(item.name),
-                  'mappers-enabled': isSectionEnabled(item.name),
-                }"
-                @click="
-                  (isSectionDone(item.name) || isSectionEnabled(item.name)) &&
-                  goToSectionByName(item.name)
-                "
-              >
-                <i>
-                  <span>{{ index + 1 }}</span>
-                  <svg class="mappers-icon"><use xlink:href="#icon-check" /></svg>
-                </i>
-                <span>{{ item.title }}</span>
-              </button>
-            </li>
-          </template>
-        </ul>
+            <button
+              class="mappers-audit-quiz-nav-btn mappers-h3"
+              :class="{
+                'mappers-active': item.name === activeSectionName,
+                'mappers-done': isSectionDone(item.name),
+                'mappers-enabled': isSectionEnabled(item.name),
+              }"
+              @click="
+                (isSectionDone(item.name) || isSectionEnabled(item.name)) &&
+                goToSectionByName(item.name)
+              "
+            >
+              <i>
+                <span>{{ index + 1 }}</span>
+                <svg class="mappers-icon"><use xlink:href="#icon-check" /></svg>
+              </i>
+              <span>{{ item.title }}</span>
+            </button>
+          </li>
+        </TransitionGroup>
       </nav>
       <div class="mappers-audit-quiz-body">
-        <Transition name="mappers-fade">
+        <Transition name="mappers-tab-fade">
           <QuizInfo
-            v-if="isEnd"
+            v-if="showEnd"
             type="finish"
           ></QuizInfo>
           <QuizInfo
@@ -151,7 +151,7 @@ const isSectionEnabled = (sectionName: string) => {
           <TransitionGroup
             v-else
             tag="div"
-            name="mappers-fade"
+            name="mappers-tab-fade"
             class="mappers-audit-quiz-sections"
           >
             <template

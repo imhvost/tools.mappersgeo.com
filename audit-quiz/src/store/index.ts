@@ -1,7 +1,8 @@
 import { createGlobalState } from '@vueuse/core';
 import { useIDBKeyval } from '@vueuse/integrations/useIDBKeyval';
 import type { Audit, AuditAnswer, Section, QuizMeta } from '@/types';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
+import { checkSectionCondition, checkQuestionCondition } from '@/utils';
 
 export const useGlobalState = createGlobalState(() => {
   const { data: audit, isFinished: auditIsLoad } = useIDBKeyval<Audit>('audit', {});
@@ -64,6 +65,17 @@ export const useGlobalState = createGlobalState(() => {
 
   const sections = ref<Section[]>([]);
   const meta = ref<QuizMeta>({} as QuizMeta);
+
+  const isEnd = computed(() => {
+    const questionsCount = sections.value
+      .filter(o => checkSectionCondition(o, audit.value))
+      .reduce((accumulator, section) => {
+        accumulator += section.quiz.filter(o =>
+          checkQuestionCondition(o, section.name, audit.value),
+        ).length;
+        return accumulator;
+      }, 0);
+  });
 
   return {
     audit,

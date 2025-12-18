@@ -758,16 +758,26 @@
 	padding: 64px 0 80px;
 }
 
-.mappers-fade-leave-from,
-.mappers-fade-leave-active,
-.mappers-fade-leave-to {
+.mappers-tab-fade-leave-from,
+.mappers-tab-fade-leave-active,
+.mappers-tab-fade-leave-to {
 	display: none !important;
 }
 
-.mappers-fade-enter-active {
+.mappers-tab-fade-enter-active {
 	transition: opacity 0.4s;
 }
 
-.mappers-fade-enter-from {
+.mappers-tab-fade-enter-from {
+	opacity: 0;
+}
+
+.mappers-fade-enter-active,
+.mappers-fade-leave-active {
+	transition: opacity 0.4s;
+}
+
+.mappers-fade-enter-from,
+.mappers-fade-leave-to {
 	opacity: 0;
 }
