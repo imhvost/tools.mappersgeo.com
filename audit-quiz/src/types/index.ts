@@ -19,6 +19,7 @@ export interface Question {
   auditor_note?: string;
   desc?: string;
   condition?: string;
+  val?: string;
 }
 
 export interface Section {
@@ -31,16 +32,6 @@ export interface Section {
   condition_alert?: string;
   condition_ok?: string;
   initial_score?: number;
-}
-
-export interface AuditAnswer {
-  name: string;
-  val?: string;
-  sub_questions?: AuditAnswer[];
-}
-
-export interface Audit {
-  [key: string]: AuditAnswer[];
 }
 
 export interface QuizMeta {

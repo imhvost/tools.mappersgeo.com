@@ -28,7 +28,10 @@ const subQuestions = computed(() => {
 });
 
 const selectedValue = computed<string | undefined>(
-  () => audit.value[props.sectionName]?.find(o => o.name === props.question.name)?.val,
+  () =>
+    audit.value
+      .find(o => o.name === props.sectionName)
+      ?.quiz.find(o => o.name === props.question.name)?.val,
 );
 
 onMounted(() => {

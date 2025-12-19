@@ -6,13 +6,27 @@ import type { Question } from '@/types';
 import QuizInfo from '@/components/QuizInfo.vue';
 import QuizSection from '@/components/QuizSection.vue';
 
-const { audit, auditIsLoad, sections, filteredSections, filteredAudit, meta } = useGlobalState();
+const { audit, auditIsLoad, sections, meta } = useGlobalState();
 
 const activeSectionName = ref<string>();
 
-watch(auditIsLoad, () => {
-  if (Object.keys(audit.value).length) {
-    activeSectionName.value = Object.keys(audit.value).pop();
+watch(auditIsLoad, async () => {
+  if (!Object.keys(audit.value).length) {
+    const { data: auditQuiz } = await useFetch<Question[]>(
+      `${import.meta.env.VITE_WP_URI}${import.meta.env.VITE_WP_API_BASE}/mappers-audit-quiz/`,
+    ).json();
+
+    if (auditQuiz.value) {
+      audit.value = auditQuiz.value;
+    }
+  }
+  for (const section of [...audit.value].reverse()) {
+    for (const question of section.quiz) {
+      if (question.val !== undefined) {
+        activeSectionName.value = section.name;
+        return;
+      }
+    }
   }
 });
 
@@ -26,14 +40,6 @@ onMounted(async () => {
   if (auditQuizMeta.value) {
     meta.value = auditQuizMeta.value;
   }
-
-  const { data: auditQuiz } = await useFetch<Question[]>(
-    `${import.meta.env.VITE_WP_URI}${import.meta.env.VITE_WP_API_BASE}/mappers-audit-quiz/`,
-  ).json();
-
-  if (auditQuiz.value) {
-    sections.value = auditQuiz.value;
-  }
 });
 
 const goToSectionByName = (name: string) => {
@@ -41,16 +47,16 @@ const goToSectionByName = (name: string) => {
 };
 
 const goToSectionByIndex = (index: number) => {
-  const name = filteredSections.value[index]?.name;
+  const name = sections.value[index]?.name;
   if (name) {
     goToSectionByName(name);
   }
 };
 
 const goToNextSection = () => {
-  const activeIndex = filteredSections.value.findIndex(o => o.name === activeSectionName.value);
+  const activeIndex = sections.value.findIndex(o => o.name === activeSectionName.value);
   if (activeIndex !== -1) {
-    const nextSection = filteredSections.value[activeIndex + 1];
+    const nextSection = sections.value[activeIndex + 1];
     if (nextSection) {
       goToSectionByName(nextSection.name);
     }
@@ -58,20 +64,20 @@ const goToNextSection = () => {
 };
 
 const isSectionDone = (sectionName: string) => {
-  const auditSection = audit.value[sectionName];
+  const auditSection = audit.value.find(o => o.name === sectionName);
   if (!auditSection) {
     return false;
   }
-  const section = filteredSections.value.find(o => o.name === sectionName);
+  const section = sections.value.find(o => o.name === sectionName);
   if (!section) {
     return false;
   }
   for (const item of section.quiz) {
-    const auditAnswer = auditSection.find(o => o.name === item.name);
-    if (!auditAnswer) {
+    const auditQuestion = auditSection.quiz.find(o => o.name === item.name);
+    if (!auditQuestion) {
       return false;
     }
-    if (auditAnswer.val === undefined) {
+    if (auditQuestion.val === undefined) {
       return false;
     }
   }
@@ -79,9 +85,9 @@ const isSectionDone = (sectionName: string) => {
 };
 
 const isSectionEnabled = (sectionName: string) => {
-  const activeIndex = filteredSections.value.findIndex(o => o.name === sectionName);
+  const activeIndex = sections.value.findIndex(o => o.name === sectionName);
   if (activeIndex !== -1) {
-    const prevSection = filteredSections.value[activeIndex - 1];
+    const prevSection = sections.value[activeIndex - 1];
     if (prevSection) {
       return isSectionDone(prevSection.name);
     }
@@ -93,7 +99,7 @@ const isSectionEnabled = (sectionName: string) => {
 <template>
   <div class="mappers-audit-quiz-container mappers-container">
     <div
-      v-if="filteredSections.length && auditIsLoad"
+      v-if="sections.length && auditIsLoad"
       class="mappers-audit-quiz"
     >
       <nav class="mappers-audit-quiz-nav">
@@ -103,7 +109,7 @@ const isSectionEnabled = (sectionName: string) => {
           class="mappers-audit-quiz-menu"
         >
           <li
-            v-for="(item, index) in filteredSections"
+            v-for="(item, index) in sections"
             :key="item.id"
           >
             <button
@@ -145,7 +151,7 @@ const isSectionEnabled = (sectionName: string) => {
             class="mappers-audit-quiz-sections"
           >
             <template
-              v-for="item in filteredSections"
+              v-for="item in sections"
               :key="item.id"
             >
               <QuizSection

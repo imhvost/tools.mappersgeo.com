@@ -14,11 +14,20 @@ const { meta, audit } = useGlobalState();
 const tab = ref<'intro' | 'questions'>('intro');
 const activeQuestionName = ref<string>();
 
-const auditSection = computed(() => audit.value[props.section.name]);
+const auditSection = computed(() => audit.value.find(o => o.name === props.section.name));
 
 onMounted(() => {
-  activeQuestionName.value =
-    auditSection.value?.[auditSection.value.length - 1]?.name || props.section.quiz[0]?.name || '';
+  if (auditSection.value) {
+    for (const question of [...auditSection.value.quiz].reverse()) {
+      if (question.val) {
+        activeQuestionName.value = question.name;
+        break;
+      }
+    }
+  }
+  if (!activeQuestionName.value) {
+    activeQuestionName.value = props.section.quiz[0]?.name || '';
+  }
 });
 
 const tabs = ['intro', 'questions'] as const;
@@ -43,8 +52,8 @@ const isQuestionDone = (name: string) => {
   if (!auditSection.value) {
     return false;
   }
-  const auditAnswer = auditSection.value.find(o => o.name === name);
-  return auditAnswer && auditAnswer.val !== undefined;
+  const auditQuestion = auditSection.value.quiz.find(o => o.name === name);
+  return auditQuestion && auditQuestion.val !== undefined;
 };
 
 const isQuestionEnabled = (name: string) => {

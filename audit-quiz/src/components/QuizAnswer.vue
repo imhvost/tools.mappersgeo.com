@@ -13,13 +13,26 @@ const props = defineProps<{
 const model = defineModel<string | undefined>({
   get() {
     if (props.parentName) {
-      return audit.value[props.sectionName]
-        ?.find(o => o.name === props.parentName)
-        ?.sub_questions?.find(sq => sq.name === props.question.name)?.val;
+      const question = audit.value
+        .find(o => o.name === props.sectionName)
+        ?.quiz.find(o => o.name === props.sectionName);
+      if (!question) {
+        return;
+      }
+      question.answers.forEach(el => {
+        const subQuestion = el.sub_questions?.find(o => o.name === props.question.name);
+        if (subQuestion) {
+          return subQuestion.val;
+        }
+      });
     }
-    return audit.value[props.sectionName]?.find(o => o.name === props.question.name)?.val;
+    return audit.value
+      ?.find(o => o.name === props.sectionName)
+      ?.quiz.find(o => o.name === props.question.name)?.val;
   },
   set(value) {
+    console.log(value);
+
     if (props.parentName) {
       updateAuditSubQuestion(props.sectionName, props.parentName, props.question.name, value);
     } else {
@@ -31,6 +44,7 @@ const model = defineModel<string | undefined>({
 
 <template>
   <div class="mappers-audit-quiz-answer">
+    {{ model }}
     <div
       v-if="question.input_type === 'radio'"
       class="mappers-audit-quiz-answer-radios"

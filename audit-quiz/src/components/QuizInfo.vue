@@ -11,9 +11,12 @@ const emit = defineEmits(['start']);
 </script>
 
 <template>
-  <div class="mappers-audit-quiz-info">
+  <div
+    v-if="meta.strings"
+    class="mappers-audit-quiz-info"
+  >
     <div
-      v-if="meta?.strings[`${props.type}_label`]"
+      v-if="meta.strings[`${props.type}_label`]"
       class="mappers-audit-quiz-info-label mappers-label"
     >
       {{ meta.strings[`${props.type}_label`] }}
@@ -25,7 +28,7 @@ const emit = defineEmits(['start']);
       {{ meta.strings[`${props.type}_title`] }}
     </div>
     <div
-      v-if="meta?.strings[`${props.type}_desc`]"
+      v-if="meta.strings[`${props.type}_desc`]"
       class="mappers-audit-quiz-info-desc"
       v-html="meta.strings[`${props.type}_desc`]"
     ></div>
@@ -35,7 +38,7 @@ const emit = defineEmits(['start']);
           @click="emit('start')"
           class="mappers-btn"
         >
-          <span>{{ meta?.strings?.start_btn }}</span>
+          <span>{{ meta.strings.start_btn }}</span>
           <svg class="mappers-icon"><use xlink:href="#icon-arrow-right" /></svg>
         </button>
       </template>
@@ -45,14 +48,14 @@ const emit = defineEmits(['start']);
           :href="meta?.urls?.audits"
           class="mappers-btn mappers-btn-border"
         >
-          {{ meta?.strings?.finish_btn_list }}
+          {{ meta.strings.finish_btn_list }}
         </a>
         <a
           v-if="meta?.urls?.audit"
           :href="meta?.urls?.audit"
           class="mappers-btn"
         >
-          <span>{{ meta?.strings?.finish_btn_result }}</span>
+          <span>{{ meta.strings.finish_btn_result }}</span>
           <svg class="mappers-icon"><use xlink:href="#icon-arrow-top-right" /></svg>
         </a>
       </template>

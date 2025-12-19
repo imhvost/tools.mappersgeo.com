@@ -1,4 +1,4 @@
-import type { Section, Question, Operator, ParsedCondition, Audit } from '@/types';
+import type { Section, Question, Operator, ParsedCondition } from '@/types';
 
 const parsePrimitive = (value: string): string | number => {
   if (!isNaN(Number(value))) {
@@ -60,12 +60,15 @@ export const parseCondition = (condition: string): ParsedCondition => {
   };
 };
 
-export const getAuditConditionValue = (audit: Audit, fieldPath: string[]) => {
+export const getAuditConditionValue = (audit: Section[], fieldPath: string[]) => {
   const [sectionName, questionName] = fieldPath;
-  if (sectionName && questionName && audit[sectionName]) {
-    const question = audit[sectionName].find(o => o.name === questionName);
-    if (question) {
-      return question.val;
+  if (sectionName && questionName) {
+    const section = audit.find(o => o.name === sectionName);
+    if (section) {
+      const question = section.quiz.find(o => o.name === questionName);
+      if (question) {
+        return question.val;
+      }
     }
   }
   return undefined;
@@ -98,7 +101,7 @@ export const evaluateConditionValue = (
   }
 };
 
-export const checkSectionCondition = (section: Section, audit: Audit): boolean => {
+export const checkSectionCondition = (section: Section, audit: Section[]): boolean => {
   if (!section.condition) {
     return true;
   }
@@ -111,7 +114,7 @@ export const checkSectionCondition = (section: Section, audit: Audit): boolean =
 export const checkQuestionCondition = (
   question: Question,
   sectionName: string,
-  audit: Audit,
+  audit: Section[],
 ): boolean => {
   if (!question.condition) {
     return true;
