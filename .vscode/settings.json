@@ -9,19 +9,22 @@
 		"node_modules": true,
 		"**/plugins/**": true,
 		"**/vendor/**": true,
-		"**/dist/**": true
+		"**/dist/**": true,
+		"theme/audit-quiz/": true
 	},
 	"search.exclude": {
 		"node_modules": true,
 		"**/plugins/**": true,
 		"**/vendor/**": true,
-		"**/dist/**": true
+		"**/dist/**": true,
+		"theme/audit-quiz/": true
 	},
 	"files.watcherExclude": {
 		"node_modules": true,
 		"**/plugins/**": true,
 		"**/vendor/**": true,
-		"**/dist/**": true
+		"**/dist/**": true,
+		"theme/audit-quiz/": true
 	},
 	"files.eol": "\n",
 	"editor.codeActionsOnSave": {

@@ -68,13 +68,18 @@ const emit = defineEmits(['start']);
 
 <style lang="less">
 .mappers-audit-quiz-info {
-  padding: 40px;
+  @media @md {
+    padding-top: 24px;
+  }
   margin: auto;
   display: flex;
   flex-direction: column;
   gap: 24px;
   text-align: center;
   max-width: 682px;
+  @media @md_ {
+    padding: 40px;
+  }
 }
 
 .mappers-audit-quiz-info-label {

@@ -1,31 +1,15 @@
 import { fileURLToPath, URL } from 'node:url';
-import { defineConfig, loadEnv } from 'vite';
+import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import path from 'path';
 import pxtorem from 'postcss-pxtorem';
 
 export default defineConfig(({ command, mode }) => {
   const isDev = command === 'serve';
-  const env = loadEnv(mode, process.cwd(), '');
 
   return {
     plugins: [vue()],
     base: isDev ? '/' : '/work/fl/mappersgeo/wp-content/themes/mappersgeo/src/audit-quiz/',
-    server: {
-      port: 5173,
-      proxy: {
-        '/wp-json': {
-          target: env.VITE_WP_URI,
-          changeOrigin: true,
-          secure: false,
-        },
-        '/wp-content/themes/mappers/fonts': {
-          target: env.VITE_WP_URI,
-          changeOrigin: true,
-          secure: false,
-        },
-      },
-    },
     resolve: {
       alias: {
         '@': fileURLToPath(new URL('./src', import.meta.url)),
