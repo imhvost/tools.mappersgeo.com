@@ -18,10 +18,14 @@ const auditSection = computed(() => audit.value.find(o => o.name === props.secti
 
 onMounted(() => {
   if (auditSection.value) {
-    for (const question of [...auditSection.value.quiz].reverse()) {
-      if (question.val) {
-        activeQuestionName.value = question.name;
-        break;
+    if (isEnd.value) {
+      activeQuestionName.value = auditSection.value.quiz[0]?.name;
+    } else {
+      for (const question of [...auditSection.value.quiz].reverse()) {
+        if (question.val) {
+          activeQuestionName.value = question.name;
+          break;
+        }
       }
     }
   }
@@ -188,34 +192,41 @@ const isQuestionEnabled = (name: string) => {
 
 <style lang="less">
 .mappers-audit-quiz-section {
-  min-height: 480px;
-  flex: auto;
-  overflow: hidden;
-  border-radius: 0 16px 16px 0;
   display: flex;
   flex-direction: column;
+  @media @md_ {
+    min-height: 480px;
+    flex: auto;
+    overflow: hidden;
+    border-radius: 0 16px 16px 0;
+  }
 }
 
 .mappers-audit-quiz-section-nav {
-  padding: 40px 40px 0;
-  flex: none;
-  background-color: @white;
   border-bottom: solid 1px @border;
   display: flex;
+  @media @md_ {
+    padding: 40px 40px 0;
+    flex: none;
+    background-color: @white;
+  }
 }
 
 .mappers-audit-quiz-section-nav-btn {
-  padding: 8px 24px;
+  padding: 8px 16px;
   display: flex;
   margin-bottom: -1px;
   border-bottom: solid 1px fade(@link, 0%);
   color: @title;
-  font-size: 18px;
   font-weight: 600;
   line-height: 1;
   transition:
     border-bottom-color 0.4s,
     color 0.4s;
+  @media @md_ {
+    font-size: 18px;
+    padding: 8px 24px;
+  }
   &:hover {
     color: @link;
   }
@@ -226,28 +237,42 @@ const isQuestionEnabled = (name: string) => {
 }
 
 .mappers-audit-quiz-section-body {
-  flex: auto;
-  overflow: hidden auto;
-  padding: 40px;
+  padding: 24px 0;
+  @media @md_ {
+    flex: auto;
+    overflow: hidden auto;
+    padding: 40px;
+  }
 }
 
 .mappers-audit-quiz-section-foot {
   flex: none;
-  padding: 24px 40px;
+  padding-top: 24px;
   border-top: solid 1px @border;
   display: flex;
+  flex-direction: column;
+  @media @md_ {
+    padding: 24px 40px;
+    flex-direction: row;
+  }
 }
 
 .mappers-audit-quiz-section-foot-btn {
-  margin-left: auto;
+  @media @md_ {
+    margin-left: auto;
+  }
 }
 
 .mappers-audit-quiz-section-foot-nav {
   display: flex;
-  align-items: flex-start;
+  flex-direction: column;
   gap: 16px;
   flex: auto;
   min-width: 0;
+  @media @md_ {
+    align-items: flex-start;
+    flex-direction: row;
+  }
 }
 
 .mappers-audit-quiz-pagination {
@@ -255,6 +280,7 @@ const isQuestionEnabled = (name: string) => {
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-wrap: wrap;
 }
 
 .mappers-audit-quiz-pagination-btn {

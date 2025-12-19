@@ -105,11 +105,16 @@ const model = defineModel<string | undefined>({
   display: flex;
   align-items: flex-start;
   flex-wrap: wrap;
-  gap: 24px 28px;
-  padding: 0 28px;
+  gap: 16px;
+  @media @md_ {
+    gap: 24px 28px;
+    padding: 0 28px;
+  }
 }
 
 .mappers-audit-quiz-answer-checkbox {
-  padding: 0 28px;
+  @media @md_ {
+    padding: 0 28px;
+  }
 }
 </style>

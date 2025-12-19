@@ -8,17 +8,20 @@
 	"files.exclude": {
 		"node_modules": true,
 		"**/plugins/**": true,
-		"**/vendor/**": true
+		"**/vendor/**": true,
+		"**/dist/**": true
 	},
 	"search.exclude": {
 		"node_modules": true,
 		"**/plugins/**": true,
-		"**/vendor/**": true
+		"**/vendor/**": true,
+		"**/dist/**": true
 	},
 	"files.watcherExclude": {
 		"node_modules": true,
 		"**/plugins/**": true,
-		"**/vendor/**": true
+		"**/vendor/**": true,
+		"**/dist/**": true
 	},
 	"files.eol": "\n",
 	"editor.codeActionsOnSave": {

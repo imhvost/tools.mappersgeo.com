@@ -2,6 +2,7 @@ import { fileURLToPath, URL } from 'node:url';
 import { defineConfig, loadEnv } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import path from 'path';
+import pxtorem from 'postcss-pxtorem';
 
 export default defineConfig(({ command, mode }) => {
   const isDev = command === 'serve';
@@ -42,6 +43,18 @@ export default defineConfig(({ command, mode }) => {
       },
     },
     css: {
+      postcss: {
+        plugins: [
+          pxtorem({
+            rootValue: 16,
+            propList: ['*'],
+            selectorBlackList: [],
+            replace: !isDev,
+            mediaQuery: false,
+            minPixelValue: 1,
+          }),
+        ],
+      },
       preprocessorOptions: {
         less: {
           additionalData:

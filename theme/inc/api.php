@@ -80,7 +80,7 @@ function mappers_get_audit_quiz( WP_REST_Request $request ) {
 	$data = array();
 
 	if ( $id ) {
-		$posts = get_posts(
+		$posts   = get_posts(
 			array(
 				'post_type'      => 'mappers-audit',
 				'post_status'    => 'publish',
@@ -94,8 +94,8 @@ function mappers_get_audit_quiz( WP_REST_Request $request ) {
 				),
 			)
 		);
-
 		$post_id = $posts ? $posts[0] : null;
+
 		if ( $post_id ) {
 			$audit_json = carbon_get_post_meta( $post_id, 'mappers_audit' );
 			$audit      = array();
@@ -159,16 +159,33 @@ function mappers_get_audit_quiz( WP_REST_Request $request ) {
 function mappers_save_audit_quiz( WP_REST_Request $request ) {
 	$params = $request->get_json_params();
 
-	$post_id = ! empty( $params['id'] ) ? absint( $params['id'] ) : 0;
-	$audit   = $params['audit'] ?? array();
+	$id    = empty( $params['id'] ) ? 0 : $params['id'];
+	$audit = $params['audit'] ?? array();
 
 	$audit = wp_json_encode( $audit, JSON_UNESCAPED_UNICODE );
 
-	$id = null;
+	$mappers_id = null;
 	// Створення або оновлення
-	if ( $post_id && 'publish' === get_post_status( $post_id ) ) {
-		carbon_set_post_meta( $post_id, 'mappers_audit', $audit );
-		$id = carbon_get_post_meta( $post_id, 'mappers_id' );
+	if ( $id ) {
+		$posts   = get_posts(
+			array(
+				'post_type'      => 'mappers-audit',
+				'post_status'    => 'publish',
+				'posts_per_page' => 1,
+				'fields'         => 'ids',
+				'meta_query'     => array(
+					array(
+						'key'   => '_mappers_id',
+						'value' => $id,
+					),
+				),
+			)
+		);
+		$post_id = $posts ? $posts[0] : null;
+		if ( $post_id ) {
+			carbon_set_post_meta( $post_id, 'mappers_audit', $audit );
+			$mappers_id = carbon_get_post_meta( $post_id, 'mappers_id' );
+		}
 	} else {
 		$slug      = wp_unique_post_slug(
 			wp_generate_uuid4(),
@@ -187,11 +204,11 @@ function mappers_save_audit_quiz( WP_REST_Request $request ) {
 		if ( ! is_wp_error( $post_id ) ) {
 			carbon_set_post_meta( $post_id, 'mappers_audit', $audit );
 			carbon_set_post_meta( $post_id, 'mappers_id', $slug );
-			$id = $slug;
+			$mappers_id = $slug;
 		}
 	}
 
-	if ( ! $id ) {
+	if ( ! $mappers_id ) {
 		return rest_ensure_response(
 			array(
 				'success' => false,
@@ -202,7 +219,7 @@ function mappers_save_audit_quiz( WP_REST_Request $request ) {
 	return rest_ensure_response(
 		array(
 			'success' => true,
-			'id'      => $id,
+			'id'      => $mappers_id,
 			'url'     => esc_url( get_the_permalink( $post_id ) ),
 		)
 	);

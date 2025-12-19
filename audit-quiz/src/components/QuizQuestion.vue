@@ -141,6 +141,9 @@ onMounted(() => {
   display: flex;
   align-items: flex-start;
   gap: 16px;
+  @media @md {
+    gap: 8px;
+  }
   .mappers-audit-quiz-question-title {
     align-self: center;
   }
@@ -171,6 +174,12 @@ onMounted(() => {
   place-items: center;
   color: @title;
   transition: color 0.4s;
+  @media @md {
+    width: 24px;
+    svg {
+      --size: 20px;
+    }
+  }
   &:hover {
     color: @link;
   }
@@ -191,19 +200,28 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding: 0 28px;
+  padding: 0 8px;
+  @media @md_ {
+    padding: 0 28px;
+  }
 }
 
 .mappers-audit-quiz-question-do {
   display: flex;
   align-items: flex-start;
   gap: 8px;
+  @media @md {
+    flex-direction: column;
+  }
 }
 
 .mappers-audit-quiz-do-title {
   flex: none;
-  max-width: 25%;
+
   font-weight: 600;
+  @media @md_ {
+    max-width: 25%;
+  }
 }
 
 .mappers-audit-quiz-question-do-desc {
@@ -216,5 +234,8 @@ onMounted(() => {
   background-color: @bg;
   border-left: solid 4px fade(@link, 25%);
   color: @title;
+  @media @md {
+    background-color: @white;
+  }
 }
 </style>

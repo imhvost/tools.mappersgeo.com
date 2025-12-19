@@ -6,7 +6,7 @@ import type { Question } from '@/types';
 import QuizInfo from '@/components/QuizInfo.vue';
 import QuizSection from '@/components/QuizSection.vue';
 
-const { audit, audits, auditsIsLoad, auditId, sections, meta } = useGlobalState();
+const { audit, audits, auditsIsLoad, auditId, sections, meta, isEnd } = useGlobalState();
 
 const activeSectionName = ref<string>();
 
@@ -19,9 +19,8 @@ watch(auditsIsLoad, async isLoaded => {
   const id = url.searchParams.get('id');
   if (id) {
     auditId.value = id;
+    await nextTick();
   }
-
-  console.log(auditId.value);
 
   if (!Object.keys(audit.value).length) {
     const { data } = await useFetch<Question[]>(
@@ -33,6 +32,11 @@ watch(auditsIsLoad, async isLoaded => {
     }
   }
 
+  if (auditId.value === 0) {
+    url.searchParams.delete('id');
+    window.history.replaceState(null, '', url.toString());
+  }
+
   const { data: auditQuizMeta } = await useFetch<Record<string, string>>(
     `${import.meta.env.VITE_WP_URI}${import.meta.env.VITE_WP_API_BASE}/audit-quiz-meta/`,
   ).json();
@@ -41,11 +45,13 @@ watch(auditsIsLoad, async isLoaded => {
     meta.value = auditQuizMeta.value;
   }
 
-  for (const section of [...audit.value].reverse()) {
-    for (const question of section.quiz) {
-      if (question.val !== undefined) {
-        activeSectionName.value = section.name;
-        return;
+  if (!isEnd.value) {
+    for (const section of [...audit.value].reverse()) {
+      for (const question of section.quiz) {
+        if (question.val !== undefined) {
+          activeSectionName.value = section.name;
+          break;
+        }
       }
     }
   }
@@ -147,7 +153,6 @@ const endAudit = async () => {
 
 <template>
   <div class="mappers-audit-quiz-container mappers-container">
-    {{ auditId }}
     <div
       v-if="sections.length && auditsIsLoad"
       class="mappers-audit-quiz"
@@ -229,48 +234,73 @@ const endAudit = async () => {
 }
 .mappers-audit-quiz {
   display: flex;
-  flex: auto;
-  border-radius: 16px;
-  background-color: @white;
-  min-height: 0;
+  @media @md_ {
+    flex: auto;
+    border-radius: 16px;
+    background-color: @white;
+    min-height: 0;
+  }
+  @media @md {
+    flex-direction: column;
+    gap: 32px;
+  }
 }
 
 .mappers-audit-quiz-nav {
-  flex: none;
-  width: 350px;
-  display: flex;
-  flex-direction: column;
-  padding: 24px 0;
-  border-radius: 16px 10px 10px 16px;
-  box-shadow: 2px 2px 20px 0px #52422f1f;
-  position: relative;
-  z-index: 1;
-  border: solid 1px @border;
+  @media @md_ {
+    display: flex;
+    flex: none;
+    width: 350px;
+    flex-direction: column;
+    padding: 24px 0;
+    border-radius: 16px 10px 10px 16px;
+    box-shadow: 2px 2px 20px 0px #52422f1f;
+    position: relative;
+    z-index: 1;
+    border: solid 1px @border;
+  }
 }
 
 .mappers-audit-quiz-menu {
+  @media @md {
+    overflow: hidden;
+    margin: 0 calc(-1 * var(--mappers-container-padding)) -16px;
+    padding: 0 var(--mappers-container-padding) 16px;
+    overflow-x: auto;
+    display: flex;
+    white-space: nowrap;
+    gap: 16px;
+  }
   li {
     display: flex;
-    border-bottom: solid 1px @border;
-    &:last-child {
-      border-bottom: 0;
+    @media @md_ {
+      border-bottom: solid 1px @border;
+      &:last-child {
+        border-bottom: 0;
+      }
     }
   }
 }
 
 .mappers-audit-quiz-nav-btn {
-  padding: 24px;
-  width: 100%;
   display: flex;
   align-items: center;
-  gap: 10px;
   pointer-events: none;
   color: @title;
+  gap: 8px;
   transition: color 0.4s;
+  @media @md_ {
+    padding: 24px;
+    width: 100%;
+    gap: 10px;
+  }
+  @media @md {
+    font-size: 16px !important;
+  }
   i {
     flex: none;
     width: 40px;
-    height: 40px;
+    aspect-ratio: 1;
     border-radius: 50%;
     background-color: #ededed;
     display: grid;
@@ -280,6 +310,9 @@ const endAudit = async () => {
     transition:
       color 0.4s,
       background-color 0.4s;
+    @media @md {
+      width: 24px;
+    }
     span {
       position: absolute;
       inset: 0;
@@ -290,6 +323,9 @@ const endAudit = async () => {
     svg {
       opacity: 0;
       transition: opacity 0.4s;
+      @media @md {
+        --size: 20px;
+      }
     }
   }
   &:hover {
