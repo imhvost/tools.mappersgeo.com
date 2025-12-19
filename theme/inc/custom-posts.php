@@ -13,7 +13,7 @@ add_action(
 	'carbon_fields_register_fields',
 	function () {
 
-		$page_audits = mappers_get_page_id_by_template( 'page-audits.php' );
+		$page_audit = mappers_get_page_id_by_template( 'page-audit.php' );
 		register_post_type(
 			'mappers-audit',
 			array(
@@ -25,8 +25,8 @@ add_action(
 				'public'        => true,
 				'menu_icon'     => 'dashicons-book',
 				'menu_position' => 5,
-				'rewrite'       => $page_audits ? array(
-					'slug'       => get_page_uri( $page_audits ),
+				'rewrite'       => $page_audit ? array(
+					'slug'       => get_page_uri( $page_audit ),
 					'with_front' => false,
 				) : true,
 				'supports'      => array( 'title' ),

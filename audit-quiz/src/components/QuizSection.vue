@@ -9,7 +9,7 @@ const props = defineProps<{
   isDone: boolean;
 }>();
 
-const { meta, audit } = useGlobalState();
+const { meta, audit, isEnd } = useGlobalState();
 
 const tab = ref<'intro' | 'questions'>('intro');
 const activeQuestionName = ref<string>();
@@ -32,7 +32,7 @@ onMounted(() => {
 
 const tabs = ['intro', 'questions'] as const;
 
-const emit = defineEmits(['next']);
+const emit = defineEmits(['next', 'end']);
 
 const goToQuestionByName = (name: string) => {
   activeQuestionName.value = name;
@@ -157,7 +157,15 @@ const isQuestionEnabled = (name: string) => {
             </button>
           </div>
           <button
-            v-if="isDone"
+            v-if="isEnd"
+            @click="emit('end')"
+            class="mappers-audit-quiz-section-foot-btn mappers-btn"
+          >
+            <span>{{ meta?.strings?.end }}</span>
+            <svg class="mappers-icon"><use xlink:href="#icon-arrow-right" /></svg>
+          </button>
+          <button
+            v-else-if="isDone"
             @click="emit('next')"
             class="mappers-audit-quiz-section-foot-btn mappers-btn"
           >

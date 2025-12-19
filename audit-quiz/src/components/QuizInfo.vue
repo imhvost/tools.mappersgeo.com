@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import { useGlobalState } from '@/store';
+import { computed } from 'vue';
 
 const props = defineProps<{
   type: 'start' | 'finish';
 }>();
 
-const { meta } = useGlobalState();
+const { meta, auditId, audits } = useGlobalState();
+
+const auditUrl = computed(() => audits.value.find(o => o.id === auditId.value)?.url);
 
 const emit = defineEmits(['start']);
 </script>
@@ -44,15 +47,15 @@ const emit = defineEmits(['start']);
       </template>
       <template v-if="props.type === 'finish'">
         <a
-          v-if="meta?.urls?.audits"
-          :href="meta?.urls?.audits"
+          v-if="meta?.urls?.audit_page"
+          :href="meta?.urls?.audit_page"
           class="mappers-btn mappers-btn-border"
         >
           {{ meta.strings.finish_btn_list }}
         </a>
         <a
-          v-if="meta?.urls?.audit"
-          :href="meta?.urls?.audit"
+          v-if="auditUrl"
+          :href="auditUrl"
           class="mappers-btn"
         >
           <span>{{ meta.strings.finish_btn_result }}</span>

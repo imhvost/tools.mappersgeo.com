@@ -1,11 +1,16 @@
 import { createGlobalState } from '@vueuse/core';
 import { useIDBKeyval } from '@vueuse/integrations/useIDBKeyval';
-import type { Section, QuizMeta } from '@/types';
+import type { Section, QuizMeta, Audits } from '@/types';
 import { computed, ref } from 'vue';
 import { checkSectionCondition, checkQuestionCondition } from '@/utils';
 
 export const useGlobalState = createGlobalState(() => {
-  const { data: audit, isFinished: auditIsLoad } = useIDBKeyval<Section[]>('audit', []);
+  const { data: audits, isFinished: auditsIsLoad } = useIDBKeyval<Audits[]>('audits', []);
+
+  const auditId = ref<number | string>(0);
+  const audit = computed<Section[]>(() => {
+    return audits.value.find(o => o.id === auditId.value)?.audit || [];
+  });
 
   const updateAuditQuestion = (sectionName: string, questionName: string, value?: string) => {
     const question = audit.value
@@ -50,22 +55,18 @@ export const useGlobalState = createGlobalState(() => {
   });
 
   const isEnd = computed(() => {
-    const questionsCount = sections.value
-      .filter(o => checkSectionCondition(o, audit.value))
-      .reduce((accumulator, section) => {
-        accumulator += section.quiz.filter(o =>
-          checkQuestionCondition(o, section.name, audit.value),
-        ).length;
-        return accumulator;
-      }, 0);
+    return sections.value.every(section => section.quiz.every(o => o.val));
   });
 
   return {
+    audits,
     audit,
+    auditId,
     updateAuditQuestion,
     updateAuditSubQuestion,
-    auditIsLoad,
+    auditsIsLoad,
     sections,
     meta,
+    isEnd,
   };
 });

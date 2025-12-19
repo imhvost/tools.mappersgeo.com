@@ -109,6 +109,8 @@ add_action(
 			->add_tab(
 				__( 'Строки для аудиту', 'mappers' ),
 				array(
+					Field::make( 'text', 'mappers_version', __( 'Версія', 'mappers' ) ),
+
 					Field::make( 'text', 'mappers_start_label', __( 'Старт - етикетка', 'mappers' ) ),
 					Field::make( 'text', 'mappers_start_title', __( 'Старт - заголовок', 'mappers' ) ),
 					Field::make( 'textarea', 'mappers_start_desc', __( 'Старт - опис', 'mappers' ) )
@@ -131,6 +133,16 @@ add_action(
 						->set_rows( 3 ),
 					Field::make( 'text', 'mappers_finish_btn_list', __( 'Фініш - кнопка список', 'mappers' ) ),
 					Field::make( 'text', 'mappers_finish_btn_result', __( 'Фініш - кнопка результат', 'mappers' ) ),
+				),
+			);
+
+		/* audit */
+		Container::make( 'post_meta', __( 'Поля', 'mappers' ) )
+			->where( 'post_type', '=', 'mappers-audit' )
+			->add_fields(
+				array(
+					Field::make( 'text', 'mappers_id', __( 'Аудит', 'mappers' ) ),
+					Field::make( 'textarea', 'mappers_audit', __( 'Аудит', 'mappers' ) ),
 				),
 			);
 

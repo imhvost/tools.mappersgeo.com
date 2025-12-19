@@ -19,20 +19,36 @@ add_action(
 	function () {
 		register_rest_route(
 			'mappers/v1',
-			'/mappers-audit-quiz',
+			'/audit-quiz',
 			array(
 				'methods'             => 'GET',
-				'callback'            => 'mappers_get_mappers_audit_quiz',
+				'callback'            => 'mappers_get_audit_quiz',
+				'permission_callback' => 'mappers_rest_only_logged_users',
+				'args'                => array(
+					'id' => array(
+						'default'           => 0,
+						'sanitize_callback' => 'sanitize_text_field',
+					),
+				),
+			)
+		);
+
+		register_rest_route(
+			'mappers/v1',
+			'/audit-quiz',
+			array(
+				'methods'             => 'POST',
+				'callback'            => 'mappers_save_audit_quiz',
 				'permission_callback' => 'mappers_rest_only_logged_users',
 			)
 		);
 
 		register_rest_route(
 			'mappers/v1',
-			'/mappers-audit-quiz-meta',
+			'/audit-quiz-meta',
 			array(
 				'methods'             => 'GET',
-				'callback'            => 'mappers_get_mappers_audit_quiz_meta',
+				'callback'            => 'mappers_get_audit_quiz_meta',
 				'permission_callback' => 'mappers_rest_only_logged_users',
 			)
 		);
@@ -54,9 +70,52 @@ function mappers_rest_only_logged_users() {
 /**
  * Get mappers-audit-quiz
  *
+ * @param WP_REST_Request $request REST request.
+ *
  * @return WP_REST_Response
  */
-function mappers_get_mappers_audit_quiz() {
+function mappers_get_audit_quiz( WP_REST_Request $request ) {
+	$id = $request->get_param( 'id' );
+
+	$data = array();
+
+	if ( $id ) {
+		$posts = get_posts(
+			array(
+				'post_type'      => 'mappers-audit',
+				'post_status'    => 'publish',
+				'posts_per_page' => 1,
+				'fields'         => 'ids',
+				'meta_query'     => array(
+					array(
+						'key'   => '_mappers_id',
+						'value' => $id,
+					),
+				),
+			)
+		);
+
+		$post_id = $posts ? $posts[0] : null;
+		if ( $post_id ) {
+			$audit_json = carbon_get_post_meta( $post_id, 'mappers_audit' );
+			$audit      = array();
+
+			if ( ! empty( $audit_json ) ) {
+				$audit = json_decode( $audit_json, true );
+			}
+
+			if ( json_last_error() !== JSON_ERROR_NONE ) {
+				$audit = array();
+			}
+
+			$data[] = array(
+				'id'    => carbon_get_post_meta( $post_id, 'mappers_id' ),
+				'audit' => $audit,
+				'url'   => esc_url( get_the_permalink( $post_id ) ),
+			);
+			return rest_ensure_response( $data );
+		}
+	}
 
 	$query = new WP_Query(
 		array(
@@ -67,10 +126,10 @@ function mappers_get_mappers_audit_quiz() {
 		)
 	);
 
-	$data = array();
+	$audit = array();
 
 	foreach ( $query->posts as $post_id ) {
-		$data[] = array(
+		$audit[] = array(
 			'id'              => $post_id,
 			'title'           => esc_html( get_the_title( $post_id ) ),
 			'name'            => esc_attr( carbon_get_post_meta( $post_id, 'mappers_name' ) ),
@@ -82,8 +141,71 @@ function mappers_get_mappers_audit_quiz() {
 			'initial_score'   => (int) carbon_get_post_meta( $post_id, 'mappers_initial_score' ),
 		);
 	}
+	$data[] = array(
+		'id'    => 0,
+		'audit' => $audit,
+	);
 
 	return rest_ensure_response( $data );
+}
+
+/**
+ * Save or update mappers-audit-quiz post
+ *
+ * @param WP_REST_Request $request REST request.
+ *
+ * @return WP_REST_Response
+ */
+function mappers_save_audit_quiz( WP_REST_Request $request ) {
+	$params = $request->get_json_params();
+
+	$post_id = ! empty( $params['id'] ) ? absint( $params['id'] ) : 0;
+	$audit   = $params['audit'] ?? array();
+
+	$audit = wp_json_encode( $audit, JSON_UNESCAPED_UNICODE );
+
+	$id = null;
+	// Створення або оновлення
+	if ( $post_id && 'publish' === get_post_status( $post_id ) ) {
+		carbon_set_post_meta( $post_id, 'mappers_audit', $audit );
+		$id = carbon_get_post_meta( $post_id, 'mappers_id' );
+	} else {
+		$slug      = wp_unique_post_slug(
+			wp_generate_uuid4(),
+			0,
+			'publish',
+			'post',
+			0
+		);
+		$post_data = array(
+			'post_type'   => 'mappers-audit',
+			'post_title'  => $slug,
+			'post_status' => 'publish',
+			'post_name'   => $slug,
+		);
+		$post_id   = wp_insert_post( $post_data );
+		if ( ! is_wp_error( $post_id ) ) {
+			carbon_set_post_meta( $post_id, 'mappers_audit', $audit );
+			carbon_set_post_meta( $post_id, 'mappers_id', $slug );
+			$id = $slug;
+		}
+	}
+
+	if ( ! $id ) {
+		return rest_ensure_response(
+			array(
+				'success' => false,
+			)
+		);
+	}
+
+	return rest_ensure_response(
+		array(
+			'success' => true,
+			'id'      => $id,
+			'url'     => esc_url( get_the_permalink( $post_id ) ),
+		)
+	);
 }
 
 /**
@@ -91,7 +213,7 @@ function mappers_get_mappers_audit_quiz() {
  *
  * @return WP_REST_Response
  */
-function mappers_get_mappers_audit_quiz_meta() {
+function mappers_get_audit_quiz_meta() {
 
 	$data = array(
 		'strings' => array(),
@@ -100,6 +222,8 @@ function mappers_get_mappers_audit_quiz_meta() {
 
 	$audit_page_id = mappers_get_page_id_by_template( 'page-audit.php' );
 	if ( $audit_page_id ) {
+		$data['version'] = esc_html( carbon_get_post_meta( $audit_page_id, 'mappers_version' ) );
+
 		$data['strings']['start_label']       = esc_html( carbon_get_post_meta( $audit_page_id, 'mappers_start_label' ) );
 		$data['strings']['start_title']       = esc_html( carbon_get_post_meta( $audit_page_id, 'mappers_start_title' ) );
 		$data['strings']['start_desc']        = wp_kses_post( carbon_get_post_meta( $audit_page_id, 'mappers_start_desc' ) );
@@ -120,9 +244,9 @@ function mappers_get_mappers_audit_quiz_meta() {
 		$data['strings']['finish_btn_result'] = esc_html( carbon_get_post_meta( $audit_page_id, 'mappers_finish_btn_result' ) );
 	}
 
-	$audits_page_id = mappers_get_page_id_by_template( 'page-audits.php' );
-	if ( $audits_page_id ) {
-		$data['urls']['audits'] = esc_url( get_the_permalink( $audits_page_id ) );
+	$audit_page_id = mappers_get_page_id_by_template( 'page-audit.php' );
+	if ( $audit_page_id ) {
+		$data['urls']['audit_page'] = esc_url( get_the_permalink( $audit_page_id ) );
 	}
 
 	return rest_ensure_response( $data );

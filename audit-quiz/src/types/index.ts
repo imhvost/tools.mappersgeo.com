@@ -34,6 +34,13 @@ export interface Section {
   initial_score?: number;
 }
 
+export interface Audits {
+  id: number | string;
+  url?: string;
+  audit: Section[];
+}
+[];
+
 export interface QuizMeta {
   strings: Record<string, string>;
   urls: Record<string, string>;

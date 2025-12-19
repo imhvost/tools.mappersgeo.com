@@ -15,24 +15,22 @@ const model = defineModel<string | undefined>({
     if (props.parentName) {
       const question = audit.value
         .find(o => o.name === props.sectionName)
-        ?.quiz.find(o => o.name === props.sectionName);
+        ?.quiz.find(o => o.name === props.parentName);
       if (!question) {
         return;
       }
-      question.answers.forEach(el => {
-        const subQuestion = el.sub_questions?.find(o => o.name === props.question.name);
+      for (const answer of question.answers) {
+        const subQuestion = answer.sub_questions?.find(o => o.name === props.question.name);
         if (subQuestion) {
-          return subQuestion.val;
+          return subQuestion?.val;
         }
-      });
+      }
     }
     return audit.value
       ?.find(o => o.name === props.sectionName)
       ?.quiz.find(o => o.name === props.question.name)?.val;
   },
   set(value) {
-    console.log(value);
-
     if (props.parentName) {
       updateAuditSubQuestion(props.sectionName, props.parentName, props.question.name, value);
     } else {
@@ -44,7 +42,6 @@ const model = defineModel<string | undefined>({
 
 <template>
   <div class="mappers-audit-quiz-answer">
-    {{ model }}
     <div
       v-if="question.input_type === 'radio'"
       class="mappers-audit-quiz-answer-radios"
@@ -72,8 +69,8 @@ const model = defineModel<string | undefined>({
         <input
           type="checkbox"
           :name="question.name"
-          :true-value="question.answers[0]?.answer"
-          :false-value="question.answers[1]?.answer"
+          :true-value="question.answers[0]?.val"
+          :false-value="question.answers[1]?.val"
           v-model="model"
         />
         <i>

@@ -1,25 +1,46 @@
 <script setup lang="ts">
 import { useFetch } from '@vueuse/core';
-import { onMounted, ref, watch } from 'vue';
+import { ref, watch, toRaw, nextTick } from 'vue';
 import { useGlobalState } from '@/store';
 import type { Question } from '@/types';
 import QuizInfo from '@/components/QuizInfo.vue';
 import QuizSection from '@/components/QuizSection.vue';
 
-const { audit, auditIsLoad, sections, meta } = useGlobalState();
+const { audit, audits, auditsIsLoad, auditId, sections, meta } = useGlobalState();
 
 const activeSectionName = ref<string>();
 
-watch(auditIsLoad, async () => {
-  if (!Object.keys(audit.value).length) {
-    const { data: auditQuiz } = await useFetch<Question[]>(
-      `${import.meta.env.VITE_WP_URI}${import.meta.env.VITE_WP_API_BASE}/mappers-audit-quiz/`,
-    ).json();
+watch(auditsIsLoad, async isLoaded => {
+  if (!isLoaded) {
+    return;
+  }
 
-    if (auditQuiz.value) {
-      audit.value = auditQuiz.value;
+  const url = new URL(window.location.href);
+  const id = url.searchParams.get('id');
+  if (id) {
+    auditId.value = id;
+  }
+
+  console.log(auditId.value);
+
+  if (!Object.keys(audit.value).length) {
+    const { data } = await useFetch<Question[]>(
+      `${import.meta.env.VITE_WP_URI}${import.meta.env.VITE_WP_API_BASE}/audit-quiz/${id ? `?id=${id}` : ''}`,
+    ).json();
+    if (Array.isArray(data.value)) {
+      audits.value = data.value;
+      auditId.value = data.value?.[0]?.id || 0;
     }
   }
+
+  const { data: auditQuizMeta } = await useFetch<Record<string, string>>(
+    `${import.meta.env.VITE_WP_URI}${import.meta.env.VITE_WP_API_BASE}/audit-quiz-meta/`,
+  ).json();
+
+  if (auditQuizMeta.value) {
+    meta.value = auditQuizMeta.value;
+  }
+
   for (const section of [...audit.value].reverse()) {
     for (const question of section.quiz) {
       if (question.val !== undefined) {
@@ -32,18 +53,9 @@ watch(auditIsLoad, async () => {
 
 const showEnd = ref<boolean>(false);
 
-onMounted(async () => {
-  const { data: auditQuizMeta } = await useFetch<Record<string, string>>(
-    `${import.meta.env.VITE_WP_URI}${import.meta.env.VITE_WP_API_BASE}/mappers-audit-quiz-meta/`,
-  ).json();
-
-  if (auditQuizMeta.value) {
-    meta.value = auditQuizMeta.value;
-  }
-});
-
 const goToSectionByName = (name: string) => {
   activeSectionName.value = name;
+  showEnd.value = false;
 };
 
 const goToSectionByIndex = (index: number) => {
@@ -94,12 +106,50 @@ const isSectionEnabled = (sectionName: string) => {
   }
   return false;
 };
+
+const endAudit = async () => {
+  showEnd.value = true;
+  activeSectionName.value = undefined;
+
+  const { data } = await useFetch(
+    `${import.meta.env.VITE_WP_URI}${import.meta.env.VITE_WP_API_BASE}/audit-quiz/`,
+  )
+    .post({
+      id: auditId.value,
+      audit: audit.value,
+    })
+    .json();
+
+  if (!data.value?.success || !data.value.id) {
+    return;
+  }
+
+  if (auditId.value === 0) {
+    const rawAudit = structuredClone(toRaw(audit.value));
+
+    audits.value.push({
+      id: data.value.id,
+      audit: rawAudit,
+      url: data.value.url,
+    });
+
+    auditId.value = data.value.id;
+
+    audits.value = audits.value.filter(o => o.id === data.value.id);
+
+    const url = new URL(window.location.href);
+    url.searchParams.set('id', String(data.value.id));
+
+    window.history.replaceState(null, '', url.toString());
+  }
+};
 </script>
 
 <template>
   <div class="mappers-audit-quiz-container mappers-container">
+    {{ auditId }}
     <div
-      v-if="sections.length && auditIsLoad"
+      v-if="sections.length && auditsIsLoad"
       class="mappers-audit-quiz"
     >
       <nav class="mappers-audit-quiz-nav">
@@ -160,6 +210,7 @@ const isSectionEnabled = (sectionName: string) => {
                 :section="item"
                 :is-done="isSectionDone(item.name)"
                 @next="goToNextSection"
+                @end="endAudit"
               ></QuizSection>
             </template>
           </TransitionGroup>
