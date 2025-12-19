@@ -3,7 +3,6 @@ import type { Section } from '@/types';
 import { ref, computed, onMounted } from 'vue';
 import QuizQuestion from '@/components/QuizQuestion.vue';
 import { useGlobalState } from '@/store';
-import { checkQuestionCondition } from '@/utils';
 
 const props = defineProps<{
   section: Section;
@@ -12,10 +11,6 @@ const props = defineProps<{
 
 const { meta, audit } = useGlobalState();
 
-const quiz = computed(() =>
-  props.section.quiz.filter(o => checkQuestionCondition(o, props.section.name, audit.value)),
-);
-
 const tab = ref<'intro' | 'questions'>('intro');
 const activeQuestionName = ref<string>();
 
@@ -23,7 +18,7 @@ const auditSection = computed(() => audit.value[props.section.name]);
 
 onMounted(() => {
   activeQuestionName.value =
-    auditSection.value?.[auditSection.value.length - 1]?.name || quiz.value[0]?.name || '';
+    auditSection.value?.[auditSection.value.length - 1]?.name || props.section.quiz[0]?.name || '';
 });
 
 const tabs = ['intro', 'questions'] as const;
@@ -35,9 +30,9 @@ const goToQuestionByName = (name: string) => {
 };
 
 const goToNextQuestion = () => {
-  const activeIndex = quiz.value.findIndex(o => o.name === activeQuestionName.value);
+  const activeIndex = props.section.quiz.findIndex(o => o.name === activeQuestionName.value);
   if (activeIndex !== -1) {
-    const nextQuestion = quiz.value[activeIndex + 1];
+    const nextQuestion = props.section.quiz[activeIndex + 1];
     if (nextQuestion && isQuestionEnabled(nextQuestion.name)) {
       goToQuestionByName(nextQuestion.name);
     }
@@ -53,11 +48,11 @@ const isQuestionDone = (name: string) => {
 };
 
 const isQuestionEnabled = (name: string) => {
-  const activeIndex = quiz.value.findIndex(o => o.name === name);
+  const activeIndex = props.section.quiz.findIndex(o => o.name === name);
   if (activeIndex === -1) {
     return false;
   }
-  const prevQuestion = quiz.value[activeIndex - 1];
+  const prevQuestion = props.section.quiz[activeIndex - 1];
   if (!prevQuestion) {
     return false;
   }
@@ -100,13 +95,13 @@ const isQuestionEnabled = (name: string) => {
           ></div>
         </div>
         <TransitionGroup
-          v-else-if="quiz"
+          v-else-if="section.quiz"
           tag="div"
           name="mappers-tab-fade"
           class="mappers-audit-quiz-section-questions"
         >
           <template
-            v-for="(item, index) in quiz"
+            v-for="(item, index) in section.quiz"
             :key="item.name"
           >
             <QuizQuestion
@@ -135,7 +130,7 @@ const isQuestionEnabled = (name: string) => {
         >
           <div class="mappers-audit-quiz-pagination">
             <button
-              v-for="(item, index) in quiz"
+              v-for="(item, index) in section.quiz"
               :key="item.name"
               class="mappers-audit-quiz-pagination-btn"
               :class="{

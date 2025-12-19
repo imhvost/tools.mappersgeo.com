@@ -1,17 +1,12 @@
 <script setup lang="ts">
 import { useFetch } from '@vueuse/core';
-import { computed, onMounted, ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { useGlobalState } from '@/store';
 import type { Question } from '@/types';
 import QuizInfo from '@/components/QuizInfo.vue';
 import QuizSection from '@/components/QuizSection.vue';
-import { checkSectionCondition, checkQuestionCondition } from '@/utils';
 
-const { audit, auditIsLoad, sections, meta } = useGlobalState();
-
-const sectionsList = computed(() =>
-  sections.value.filter(o => checkSectionCondition(o, audit.value)),
-);
+const { audit, auditIsLoad, sections, filteredSections, filteredAudit, meta } = useGlobalState();
 
 const activeSectionName = ref<string>();
 
@@ -46,16 +41,16 @@ const goToSectionByName = (name: string) => {
 };
 
 const goToSectionByIndex = (index: number) => {
-  const name = sectionsList.value[index]?.name;
+  const name = filteredSections.value[index]?.name;
   if (name) {
     goToSectionByName(name);
   }
 };
 
 const goToNextSection = () => {
-  const activeIndex = sectionsList.value.findIndex(o => o.name === activeSectionName.value);
+  const activeIndex = filteredSections.value.findIndex(o => o.name === activeSectionName.value);
   if (activeIndex !== -1) {
-    const nextSection = sectionsList.value[activeIndex + 1];
+    const nextSection = filteredSections.value[activeIndex + 1];
     if (nextSection) {
       goToSectionByName(nextSection.name);
     }
@@ -67,16 +62,11 @@ const isSectionDone = (sectionName: string) => {
   if (!auditSection) {
     return false;
   }
-  const section = sectionsList.value.find(o => o.name === sectionName);
+  const section = filteredSections.value.find(o => o.name === sectionName);
   if (!section) {
     return false;
   }
   for (const item of section.quiz) {
-    if (item.condition) {
-      if (!checkQuestionCondition(item, section.name, audit.value)) {
-        continue;
-      }
-    }
     const auditAnswer = auditSection.find(o => o.name === item.name);
     if (!auditAnswer) {
       return false;
@@ -89,9 +79,9 @@ const isSectionDone = (sectionName: string) => {
 };
 
 const isSectionEnabled = (sectionName: string) => {
-  const activeIndex = sectionsList.value.findIndex(o => o.name === sectionName);
+  const activeIndex = filteredSections.value.findIndex(o => o.name === sectionName);
   if (activeIndex !== -1) {
-    const prevSection = sectionsList.value[activeIndex - 1];
+    const prevSection = filteredSections.value[activeIndex - 1];
     if (prevSection) {
       return isSectionDone(prevSection.name);
     }
@@ -103,7 +93,7 @@ const isSectionEnabled = (sectionName: string) => {
 <template>
   <div class="mappers-audit-quiz-container mappers-container">
     <div
-      v-if="sectionsList.length && auditIsLoad"
+      v-if="filteredSections.length && auditIsLoad"
       class="mappers-audit-quiz"
     >
       <nav class="mappers-audit-quiz-nav">
@@ -113,7 +103,7 @@ const isSectionEnabled = (sectionName: string) => {
           class="mappers-audit-quiz-menu"
         >
           <li
-            v-for="(item, index) in sectionsList"
+            v-for="(item, index) in filteredSections"
             :key="item.id"
           >
             <button
@@ -155,7 +145,7 @@ const isSectionEnabled = (sectionName: string) => {
             class="mappers-audit-quiz-sections"
           >
             <template
-              v-for="(item, index) in sections"
+              v-for="item in filteredSections"
               :key="item.id"
             >
               <QuizSection
