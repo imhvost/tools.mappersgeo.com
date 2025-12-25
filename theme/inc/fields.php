@@ -141,8 +141,20 @@ add_action(
 			->where( 'post_type', '=', 'mappers-audit' )
 			->add_fields(
 				array(
-					Field::make( 'text', 'mappers_id', __( 'Аудит', 'mappers' ) ),
+					Field::make( 'text', 'mappers_id', __( 'ID', 'mappers' ) ),
+					Field::make( 'text', 'mappers_company', __( 'Компанія', 'mappers' ) ),
+					Field::make( 'text', 'mappers_address', __( 'Адреса', 'mappers' ) ),
 					Field::make( 'textarea', 'mappers_audit', __( 'Аудит', 'mappers' ) ),
+					Field::make( 'association', 'mappers_user', __( 'Користувач', 'mappers' ) )
+						->set_types(
+							array(
+								array(
+									'type'      => 'user',
+									'post_type' => 'user',
+								),
+							)
+						)
+						->set_max( 1 ),
 				),
 			);
 

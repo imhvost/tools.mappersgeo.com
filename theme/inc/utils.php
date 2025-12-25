@@ -343,19 +343,13 @@ function mappers_check_text_fields( $fields = array(), $is_all_required = true, 
 	}
 
 	$array_type = strtoupper( $array_type );
-	$source     = $_POST;
-	if ( 'GET' === $array_type ) {
-		$source = $_GET;
-	}
-	if ( 'SERVER' === $array_type ) {
-		$source = $_SERVER;
-	}
-	if ( 'COOKIE' === $array_type ) {
-		$source = $_COOKIE;
-	}
-	if ( 'REQUEST' === $array_type ) {
-		$source = $_REQUEST;
-	}
+	$source     = match ( $array_type ) {
+		'GET'     => $_GET,
+		'SERVER'  => $_SERVER,
+		'COOKIE'  => $_COOKIE,
+		'REQUEST' => $_REQUEST,
+		default   => $_POST,
+	};
 
 	$output = array();
 

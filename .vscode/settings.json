@@ -7,22 +7,22 @@
 	"less.hover.references": false,
 	"files.exclude": {
 		"node_modules": true,
-		"**/plugins/**": true,
-		"**/vendor/**": true,
+		"plugins": true,
+		"vendor": true,
 		"**/dist/**": true,
 		"theme/audit-quiz/": true
 	},
 	"search.exclude": {
 		"node_modules": true,
-		"**/plugins/**": true,
-		"**/vendor/**": true,
+		"plugins": true,
+		"vendor": true,
 		"**/dist/**": true,
 		"theme/audit-quiz/": true
 	},
 	"files.watcherExclude": {
 		"node_modules": true,
-		"**/plugins/**": true,
-		"**/vendor/**": true,
+		"plugins": true,
+		"vendor": true,
 		"**/dist/**": true,
 		"theme/audit-quiz/": true
 	},
@@ -62,6 +62,7 @@
 	"intelephense.format.enable": true,
 	// "intelephense.format.braces": "k&r",
 	"intelephense.diagnostics.undefinedMethods": false,
+	"intelephense.diagnostics.undefinedVariables": false,
 	"intelephense.stubs": [
 		"Core",
 		"date",
@@ -83,6 +84,6 @@
 		"wordpress"
 	],
 	"intelephense.environment.includePaths": [
-		"x:\\xampp\\htdocs\\work\\fl\\lac\\wp-content\\themes\\lac\\src\\theme\\vendor\\carbon-fields\\"
+		"x:\\xampp\\htdocs\\work\\fl\\lac\\wp-content\\themes\\lac\\src\\plugins\\htmlburger\\carbon-fields\\"
 	]
 }

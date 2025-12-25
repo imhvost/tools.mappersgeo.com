@@ -606,3 +606,145 @@ a.mappers-profile-menu-link {
 		overflow: hidden;
 	}
 }
+
+.single-mappers-audit {
+	background-color: @white;
+}
+
+.mappers-audit-hero {
+	margin: 0 16px;
+	border-radius: 16px;
+	background:
+		url(../img/audit-hero-decor.svg) top -485px left -232px / 815px 815px no-repeat,
+		url(../img/audit-hero-decor.svg) bottom -485px right -232px / 815px 815px no-repeat,
+		#fff4f1;
+	padding-top: 46px;
+	.mappers-container {
+		display: flex;
+		flex-direction: column;
+		gap: 40px;
+		align-items: center;
+	}
+}
+
+.mappers-audit-date {
+	padding: 8px 24px;
+	border-radius: 32px;
+	background-color: @link;
+	color: @white;
+	font-size: 14px;
+}
+
+.mappers-audit-title {
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	line-height: 1.2;
+	font-size: 57px;
+	font-weight: 400;
+}
+
+.mappers-audit-company {
+	color: @link;
+	font-family: @ff_;
+	font-size: 96px;
+	line-height: 1;
+	font-weight: 700;
+}
+
+.mappers-audit-hello {
+	margin: 12px 0 -124px;
+	border-radius: 16px;
+	border: solid 1px fade(@link, 10%);
+	.mappers-shadow;
+	min-height: 224px;
+	width: 1040px;
+	max-width: 100%;
+	padding: 16px 40px;
+	background-color: @white;
+	display: flex;
+	align-items: center;
+	position: relative;
+	z-index: 1;
+}
+
+.mappers-audit-hello-icon {
+	flex: none;
+	padding-right: 32px;
+	margin-right: 40px;
+	position: relative;
+	display: flex;
+	svg {
+		color: #dee2e6;
+		--size: 192px;
+	}
+	&:after {
+		content: '';
+		position: absolute;
+		--height: 140px;
+		left: 100%;
+		top: calc(50% - 0.5 * var(--height));
+		height: var(--height);
+		border-right: solid 1px @border;
+	}
+}
+
+.mappers-audit-hello-body {
+	flex: auto;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	padding: 24px 0;
+	span {
+		text-decoration: underline;
+		color: @title;
+	}
+}
+
+.mappers-audit-main {
+	flex: auto;
+	padding: 144px 0 112px;
+	background-color: @white;
+	.mappers-container {
+		display: flex;
+		flex-direction: column;
+		gap: 64px;
+	}
+}
+
+.mappers-audit-section {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.mappers-audit-section-title {
+	display: flex;
+	align-items: flex-start;
+	gap: 16px;
+	font-size: 40px;
+	font-weight: 700;
+	color: @link;
+	line-height: 1;
+	font-family: @ff_;
+	&:after {
+		content: '';
+		flex: auto;
+		min-width: 32px;
+		border-top: dashed 2px;
+		margin-top: calc(0.5lh + 2px);
+	}
+}
+
+.mappers-audit-section-body {
+	display: flex;
+	gap: 120px;
+	align-items: flex-start;
+}
+
+.mappers-audit-section-chart {
+	flex: none;
+	width: 264px;
+}

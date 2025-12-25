@@ -165,7 +165,6 @@ function mappers_save_audit_quiz( WP_REST_Request $request ) {
 	$audit = wp_json_encode( $audit, JSON_UNESCAPED_UNICODE );
 
 	$mappers_id = null;
-	// Створення або оновлення
 	if ( $id ) {
 		$posts   = get_posts(
 			array(
