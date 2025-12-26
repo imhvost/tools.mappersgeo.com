@@ -3,21 +3,26 @@
 	<description>Generally-applicable sniffs for WordPress plugins.</description>
 
 	<!-- What to scan -->
+	<!-- What to scan -->
 	<file>./theme/</file>
-	<exclude-pattern>plugins/*</exclude-pattern>
-	<exclude-pattern>theme/css/*</exclude-pattern>
-	<exclude-pattern>theme/fonts/*</exclude-pattern>
-	<exclude-pattern>theme/vendor/*</exclude-pattern>
-	<exclude-pattern>theme/img/*</exclude-pattern>
-	<exclude-pattern>theme/js/*</exclude-pattern>
-	<exclude-pattern>theme/languages/*</exclude-pattern>
-	<exclude-pattern>theme/*.less</exclude-pattern>
-	<exclude-pattern>theme/*.css</exclude-pattern>
-	<exclude-pattern>theme/*.png</exclude-pattern>
-	<exclude-pattern>theme/*.json</exclude-pattern>
-	<exclude-pattern>theme/*.md</exclude-pattern>
 
-	<config name="php_memory_limit" value="512M"/>
+	<!-- Folders -->
+	<exclude-pattern>*/css/*</exclude-pattern>
+	<exclude-pattern>*/fonts/*</exclude-pattern>
+	<exclude-pattern>*/img/*</exclude-pattern>
+	<exclude-pattern>*/js/*</exclude-pattern>
+	<exclude-pattern>*/languages/*</exclude-pattern>
+	<exclude-pattern>*/audit-quiz/*</exclude-pattern>
+
+	<!-- Files -->
+	<exclude-pattern>*.json</exclude-pattern>
+	<exclude-pattern>*.lock</exclude-pattern>
+	<exclude-pattern>*.md</exclude-pattern>
+	<exclude-pattern>*.less</exclude-pattern>
+	<exclude-pattern>*.css</exclude-pattern>
+	<exclude-pattern>*.png</exclude-pattern>
+
+	<config name="php_memory_limit" value="1024M"/>
 
 	<!-- How to scan -->
 	<!-- Usage instructions: https://github.com/squizlabs/PHP_CodeSniffer/wiki/Usage -->

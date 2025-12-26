@@ -40,7 +40,6 @@
 	"window.zoomLevel": -1,
 	"editor.occurrencesHighlight": "off",
 	// "editor.matchBrackets": "never",
-	"security.workspace.trust.untrustedFiles": "open",
 
 	"[html]": {
 		"editor.defaultFormatter": "esbenp.prettier-vscode",
@@ -56,8 +55,6 @@
 	},
 
 	"phpsab.standard": "WordPress",
-	"phpsab.snifferEnabled": true,
-	"phpsab.beautifierEnabled": false,
 
 	"intelephense.format.enable": true,
 	// "intelephense.format.braces": "k&r",

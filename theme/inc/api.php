@@ -68,7 +68,7 @@ function mappers_rest_only_logged_users() {
 }
 
 /**
- * Get mappers-audit-quiz
+ * Get mappers-audit
  *
  * @param WP_REST_Request $request REST request.
  *
@@ -117,6 +117,22 @@ function mappers_get_audit_quiz( WP_REST_Request $request ) {
 		}
 	}
 
+	$audit = mappers_get_audit_sections();
+
+	$data[] = array(
+		'id'    => 0,
+		'audit' => $audit,
+	);
+
+	return rest_ensure_response( $data );
+}
+
+/**
+ * Get audit sections
+ *
+ * @return array
+ */
+function mappers_get_audit_sections() {
 	$query = new WP_Query(
 		array(
 			'post_type'      => 'mappers-audit-quiz',
@@ -126,10 +142,10 @@ function mappers_get_audit_quiz( WP_REST_Request $request ) {
 		)
 	);
 
-	$audit = array();
+	$sections = array();
 
 	foreach ( $query->posts as $post_id ) {
-		$audit[] = array(
+		$sections[] = array(
 			'id'              => $post_id,
 			'title'           => esc_html( get_the_title( $post_id ) ),
 			'name'            => esc_attr( carbon_get_post_meta( $post_id, 'mappers_name' ) ),
@@ -141,12 +157,8 @@ function mappers_get_audit_quiz( WP_REST_Request $request ) {
 			'initial_score'   => (int) carbon_get_post_meta( $post_id, 'mappers_initial_score' ),
 		);
 	}
-	$data[] = array(
-		'id'    => 0,
-		'audit' => $audit,
-	);
 
-	return rest_ensure_response( $data );
+	return $sections;
 }
 
 /**
