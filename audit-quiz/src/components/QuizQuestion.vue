@@ -56,6 +56,7 @@ onMounted(() => {
         v-if="question.desc"
         v-tippy="{
           content: question.desc,
+          zIndex: 66,
         }"
         class="mappers-audit-quiz-question-desc"
         :aria-label="meta.strings.desc_info"

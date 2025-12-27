@@ -172,6 +172,13 @@ add_action(
 						'custom'   => 'custom',
 					)
 				),
+
+		);
+
+		$quiz_question_info_fields = array(
+			Field::make( 'rich_text', 'do', __( 'Що зробити', 'mappers' ) ),
+			Field::make( 'rich_text', 'auditor_note', __( 'Ремарка для аудитора', 'mappers' ) ),
+			Field::make( 'rich_text', 'desc', __( 'Опис', 'mappers' ) ),
 		);
 
 		$quiz_answer_fields = array(
@@ -210,6 +217,7 @@ add_action(
 				array(
 					Field::make( 'text', 'mappers_name', __( 'name', 'mappers' ) ),
 					Field::make( 'rich_text', 'mappers_introduction', __( 'Вступ', 'mappers' ) ),
+					Field::make( 'rich_text', 'mappers_report', __( 'Пояснення для звіту', 'mappers' ) ),
 					Field::make( 'complex', 'mappers_quiz', __( 'Питання', 'mappers' ) )
 						->set_collapsed( true )
 						->set_layout( 'tabbed-vertical' )
@@ -241,7 +249,9 @@ add_action(
 																		->set_default_value(
 																			$default_answer_value
 																		),
-																)
+
+																),
+																$quiz_question_info_fields,
 															)
 														)
 														->set_header_template( '<small><%= ($_index + 1) %>.</small> <%= question %>' ),
@@ -252,11 +262,11 @@ add_action(
 										->set_default_value(
 											$default_answer_value
 										),
-									Field::make( 'rich_text', 'do', __( 'Що зробити', 'mappers' ) ),
-									Field::make( 'rich_text', 'auditor_note', __( 'Ремарка для аудитора', 'mappers' ) ),
-									Field::make( 'rich_text', 'desc', __( 'Опис', 'mappers' ) ),
+								),
+								$quiz_question_info_fields,
+								array(
 									Field::make( 'text', 'condition', __( 'Умова відображення', 'mappers' ) ),
-								)
+								),
 							)
 						)
 						->set_header_template( '<small><%= ($_index + 1) %>.</small> <%= question %>' ),

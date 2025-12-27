@@ -48,11 +48,11 @@ function mappers_get_max_question_score( $question ) {
 	$max_score = 0;
 
 	if ( 'custom' === $question['input_type'] ) {
-		if ( 'catalogs_count' === $question['name'] ) {
+		if ( 'photos_content' === $question['name'] ) {
 			foreach ( $question['answers'] as $answer ) {
-				if ( 'yes' === $answer['val'] ) {
-					if ( ! empty( $answer['sub_questions'] ) ) {
-						$max_score = $answer['sub_questions'][0]['val'] ?? 0;
+				if ( ! empty( $answer['sub_questions'] ) ) {
+					foreach ( $answer['sub_questions'] as $sub_question ) {
+						$max_score += mappers_get_max_question_score( $sub_question );
 					}
 				}
 			}
@@ -96,6 +96,85 @@ function mappers_get_max_question_score( $question ) {
 	}
 
 	return $max_score;
+}
+
+/**
+ * Get audit score for question.
+ *
+ * @param array $question Question data.
+ *
+ * @return int
+ */
+function mappers_get_audit_score( $question ) {
+	$score = 0;
+
+	$val = $question['val'] ?? null;
+	if ( ! $val ) {
+		return $score;
+	}
+
+	$answers = $question['answers'] ?? array();
+	$answer  = array_find( $answers, fn( $item ) => $item['val'] === $val );
+
+	if ( 'custom' === $question['input_type'] ) {
+		if ( 'photos_content' === $question['name'] ) {
+			$answer_yes = array_find( $answers, fn( $item ) => 'yes' === $item['val'] );
+			$answer_no  = array_find( $answers, fn( $item ) => 'no' === $item['val'] );
+			if ( $answer_yes && ! empty( $answer_yes['sub_questions'] ) ) {
+				foreach ( $answer_yes['sub_questions'] as $sub_question ) {
+					$score += mappers_get_max_question_score( $sub_question );
+				}
+			}
+			if ( ! $score ) {
+				$score = $answer_no['points'] ?? 0;
+			}
+		}
+		if ( 'catalogs_count' === $question['name'] ) {
+			$answer_yes = array_find( $answers, fn( $item ) => 'yes' === $item['val'] );
+			if ( $answer_yes && ! empty( $answer_yes['sub_questions'] ) ) {
+				$score = $answer_yes['sub_questions'][1]['val'] ?? 0;
+			}
+		}
+	} elseif ( $answer ) {
+		$score = $answer['points'] ?? 0;
+		if ( ! empty( $answer['sub_questions'] ) ) {
+			foreach ( $answer['sub_questions'] as $sub_question ) {
+				$score += mappers_get_max_question_score( $sub_question );
+			}
+		}
+	}
+
+	return $score;
+}
+
+/**
+ * Render result for question.
+ *
+ * @param array $question Question data.
+ */
+function mappers_the_audit_result( $question ) {
+
+	$val = $question['val'] ?? null;
+	if ( ! $val ) {
+		return;
+	}
+
+	$answers = $question['answers'] ?? array();
+	$answer  = array_find( $answers, fn( $item ) => $item['val'] === $val );
+
+	if ( 'custom' === $question['input_type'] ) {
+		if ( 'photos_content' === $question['name'] ) {
+		}
+		if ( 'catalogs_count' === $question['name'] ) {
+		}
+	} elseif ( $answer ) {
+		get_template_part( 'template_parts/audit', 'result', array( 'answer' => $answer ) );
+		if ( ! empty( $answer['sub_questions'] ) ) {
+			foreach ( $answer['sub_questions'] as $sub_question ) {
+				mappers_the_audit_result( $sub_question );
+			}
+		}
+	}
 }
 
 /**
