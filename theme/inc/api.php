@@ -150,6 +150,7 @@ function mappers_get_audit_sections() {
 			'title'           => esc_html( get_the_title( $post_id ) ),
 			'name'            => esc_attr( carbon_get_post_meta( $post_id, 'mappers_name' ) ),
 			'introduction'    => wp_kses_post( carbon_get_post_meta( $post_id, 'mappers_introduction' ) ),
+			'report'          => wp_kses_post( carbon_get_post_meta( $post_id, 'mappers_report' ) ),
 			'quiz'            => mappers_sanitize_api_data( carbon_get_post_meta( $post_id, 'mappers_quiz' ) ),
 			'condition'       => esc_attr( carbon_get_post_meta( $post_id, 'mappers_condition' ) ),
 			'condition_alert' => esc_html( carbon_get_post_meta( $post_id, 'mappers_condition_alert' ) ),

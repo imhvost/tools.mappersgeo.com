@@ -59,6 +59,7 @@ const model = defineModel<string | undefined>({
         />
         <i></i>
         <span>{{ item.answer }}</span>
+        {{ item?.points }}
       </label>
     </div>
     <div
@@ -77,6 +78,7 @@ const model = defineModel<string | undefined>({
           <svg class="mappers-icon"><use xlink:href="#icon-check" /></svg>
         </i>
         <span>{{ question.question }}</span>
+        {{ question.answers[0]?.points }}/{{ question.answers[1]?.points }}
       </label>
     </div>
     <template v-if="question.input_type === 'custom'">

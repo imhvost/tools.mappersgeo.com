@@ -27,6 +27,7 @@ export interface Section {
   title: string;
   name: string;
   introduction?: string;
+  report?: string;
   quiz: Question[];
   condition?: string;
   condition_alert?: string;

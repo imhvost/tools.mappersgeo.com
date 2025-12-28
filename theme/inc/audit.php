@@ -122,7 +122,7 @@ function mappers_get_audit_score( $question ) {
 			$answer_no  = array_find( $answers, fn( $item ) => 'no' === $item['val'] );
 			if ( $answer_yes && ! empty( $answer_yes['sub_questions'] ) ) {
 				foreach ( $answer_yes['sub_questions'] as $sub_question ) {
-					$score += mappers_get_max_question_score( $sub_question );
+					$score += mappers_get_audit_score( $sub_question );
 				}
 			}
 			if ( ! $score ) {
@@ -139,9 +139,14 @@ function mappers_get_audit_score( $question ) {
 		$score = $answer['points'] ?? 0;
 		if ( ! empty( $answer['sub_questions'] ) ) {
 			foreach ( $answer['sub_questions'] as $sub_question ) {
-				$score += mappers_get_max_question_score( $sub_question );
+				$score += mappers_get_audit_score( $sub_question );
 			}
 		}
+	}
+
+	$score = (int) $score;
+	if ( $score < 0 ) {
+		$score = 0;
 	}
 
 	return $score;
@@ -151,30 +156,72 @@ function mappers_get_audit_score( $question ) {
  * Render result for question.
  *
  * @param array $question Question data.
+ * @param bool  $is_sub_question Is sub question.
  */
-function mappers_the_audit_result( $question ) {
+function mappers_the_audit_result( $question, $is_sub_question = false ) {
+
+	if ( ! $is_sub_question && ! ( $question['check_condition'] ?? null ) ) {
+		return;
+	}
 
 	$val = $question['val'] ?? null;
-	if ( ! $val ) {
-		return;
+
+	if ( 'checkbox' === $question['input_type'] && ! $val ) {
+		$val = 'no';
 	}
 
 	$answers = $question['answers'] ?? array();
 	$answer  = array_find( $answers, fn( $item ) => $item['val'] === $val );
+
+	$report = '';
+	$color  = '';
+	$icon   = '';
 
 	if ( 'custom' === $question['input_type'] ) {
 		if ( 'photos_content' === $question['name'] ) {
 		}
 		if ( 'catalogs_count' === $question['name'] ) {
 		}
-	} elseif ( $answer ) {
-		get_template_part( 'template_parts/audit', 'result', array( 'answer' => $answer ) );
-		if ( ! empty( $answer['sub_questions'] ) ) {
-			foreach ( $answer['sub_questions'] as $sub_question ) {
-				mappers_the_audit_result( $sub_question );
+	} else {
+		if ( 'radio' === $question['input_type'] ) {
+			if ( 'not' === $val ) {
+				return;
+			}
+			if ( ! $answer ) {
+				return;
 			}
 		}
+
+		$report = $answer['report'] ?? '';
+		$color  = $answer['report_color'] ?? '';
+
+		$points = $answer['points'] ?? 0;
+
+		$is_ok = (int) $points > 0;
+		if ( $is_sub_question ) {
+			$icon = $is_ok ? 'check' : 'close';
+		} else {
+			$icon = $is_ok ? 'like' : 'dislike';
+		}
+
+		if ( $answer && ( $answer['sub_questions'] ?? null ) ) {
+			echo '<div class="mappers-audit-section-list-sub">';
+			foreach ( $answer['sub_questions'] as $sub_question ) {
+				mappers_the_audit_result( $sub_question, true );
+			}
+			echo '</div>';
+		}
 	}
+
+	get_template_part(
+		'template-parts/audit',
+		'result',
+		array(
+			'report' => $report,
+			'color'  => $color,
+			'icon'   => $icon,
+		)
+	);
 }
 
 /**

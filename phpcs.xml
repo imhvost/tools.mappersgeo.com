@@ -62,8 +62,7 @@
 			<property name="blank_line_check" value="true"/>
 		</properties>
 	</rule>
-	
-	<rule ref="Squiz.Commenting.InlineComment.InvalidEndChar">
-		<severity>0</severity>
-	</rule>
+
+	<exclude name="Generic.Commenting.CommentedOutCode"/>
+	<exclude name="Squiz.Commenting.CommentedOutCode"/>
 </ruleset>

@@ -9,14 +9,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$answer = $args['answer'] ?? null;
+if ( $args ) :
 
-if ( $answer ) :
+	[
+	'report' => $report,
+	'color'  => $color,
+	'icon'     => $icon,
+	] = wp_parse_args(
+		$args,
+		array(
+			'report' => '',
+			'color'  => '',
+			'icon'   => '',
+		)
+	);
 
-
-
-if ( $report ) :
-	?>
+	if ( $report ) :
+		?>
 	<div class="mappers-audit-result <?php echo $color ? 'mappers-audit-result-' . esc_attr( $color ) : ''; ?>">
 		<?php if ( $icon ) : ?>
 			<div class="mappers-audit-result-icon">
@@ -24,7 +33,8 @@ if ( $report ) :
 			</div>
 		<?php endif; ?>
 		<div class="mappers-audit-report">
-		<?php echo wp_kses_post( nl2br( $report ) ); ?>
+			<?php echo wp_kses_post( nl2br( $report ) ); ?>
 		</div>
 	</div>
 		<?php endif; ?>
+<?php endif; ?>

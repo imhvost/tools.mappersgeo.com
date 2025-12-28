@@ -27,16 +27,11 @@ if ( json_last_error() !== JSON_ERROR_NONE ) {
 	mappers_force_404();
 }
 
-$audit_sections = mappers_get_audit_sections();
-
-if ( ! $audit_sections ) {
-	mappers_force_404();
-}
-
 $not_used_questions = array();
 
-foreach ( $audit_sections as $audit_section ) {
-	foreach ( $audit_section['quiz'] as $question ) {
+foreach ( $mappers_audit as $audit_section ) {
+	$audit_quiz = $audit_section['quiz'] ?? array();
+	foreach ( $audit_quiz as $question ) {
 		if ( 'radio' === $question['input_type'] ) {
 			$has_not = array_find( $question['answers'], fn( $item ) => 'not' === $item['val'] );
 			if ( $has_not ) {
@@ -49,73 +44,70 @@ foreach ( $audit_sections as $audit_section ) {
 	}
 }
 
-foreach ( $audit_sections as $index => $audit_section ) {
+foreach ( $mappers_audit as $index => $audit_section ) {
 	$initial_score = $audit_section['initial_score'] ? (int) $audit_section['initial_score'] : 0;
 	$not_used_quiz = $not_used_questions[ $audit_section['name'] ] ?? null;
 
-	$mappers_audit_section = array_find( $mappers_audit, fn( $item ) => $item['name'] === $audit_section['name'] );
-	$mappers_audit_quiz    = $mappers_audit_section ? $mappers_audit_section['quiz'] : null;
+	$audit_quiz = $audit_section['quiz'] ?? array();
 
 	$max_score = array_reduce(
-		$audit_section['quiz'],
-		function ( $carry, $question ) use ( $mappers_audit_quiz, $not_used_quiz, $audit_section, $mappers_audit_section ) {
-			if ( $mappers_audit_quiz ) {
-				if ( $not_used_quiz ) {
-					if ( $question['condition'] ) {
-						$parsed_condition = mappers_parse_condition( $question['condition'] );
-						if ( $parsed_condition && ! empty( $parsed_condition['field_path'] ) ) {
-							$condition_question_name = end( $parsed_condition['field_path'] );
-							$condition_question      = array_find(
-								$audit_section['quiz'],
-								fn( $item ) => $item['name'] === $condition_question_name
+		$audit_quiz,
+		function ( $carry, $question ) use ( $not_used_quiz, $audit_quiz ) {
+			if ( $not_used_quiz ) {
+				if ( $question['condition'] ) {
+					$parsed_condition = mappers_parse_condition( $question['condition'] );
+					if ( $parsed_condition && ! empty( $parsed_condition['field_path'] ) ) {
+						$condition_question_name = end( $parsed_condition['field_path'] );
+						$condition_question      = array_find(
+							$audit_quiz,
+							fn( $item ) => $item['name'] === $condition_question_name
+						);
+
+						$has_not = in_array( $condition_question['name'], $not_used_quiz, true );
+						if ( $has_not ) {
+							$condition_audit_question = array_find(
+								$audit_quiz,
+								fn( $item ) => $item['name'] === $condition_question['name']
 							);
 
-							$has_not = in_array( $condition_question['name'], $not_used_quiz, true );
-							if ( $has_not ) {
-								$condition_audit_question = array_find(
-									$mappers_audit_quiz,
-									fn( $item ) => $item['name'] === $condition_question['name']
-								);
-
-								$val = $condition_audit_question['val'] ?? null;
-								if ( 'not' === $val ) {
-										// echo '1' . $mappers_audit_section['name'] . ':' . $question['name'] . ' - ' . $val . '<br>';
-										return $carry;
-								}
+							$val = $condition_audit_question['val'] ?? null;
+							if ( 'not' === $val ) {
+									// echo '1' . $mappers_audit_section['name'] . ':' . $question['name'] . ' - ' . $val . '<br>';
+									return $carry;
 							}
 						}
 					}
+				}
 
-					$has_not = in_array( $question['name'], $not_used_quiz, true );
-					if ( $has_not ) {
-						$mappers_audit_question = array_find(
-							$mappers_audit_quiz,
-							fn( $item ) => $item['name'] === $question['name']
-						);
+				$has_not = in_array( $question['name'], $not_used_quiz, true );
+				if ( $has_not ) {
+					$audit_question = array_find(
+						$audit_quiz,
+						fn( $item ) => $item['name'] === $question['name']
+					);
 
-						$val = $mappers_audit_question['val'] ?? null;
+					$val = $audit_question['val'] ?? null;
 
-						if ( 'not' === $val ) {
-							// echo '2' . $mappers_audit_section['name'] . ':' . $question['name'] . ' - ' . $val . '<br>';
-							return $carry;
-						}
+					if ( 'not' === $val ) {
+						// echo '2' . $mappers_audit_section['name'] . ':' . $question['name'] . ' - ' . $val . '<br>';
+						return $carry;
 					}
 				}
-				if ( 'custom' === $question['input_type'] ) {
-					if ( 'catalogs_count' === $question['name'] ) {
-						$mappers_audit_question = array_find(
-							$mappers_audit_quiz,
-							fn( $item ) => $item['name'] === $question['name']
-						);
-						if ( $mappers_audit_question ) {
-							foreach ( $mappers_audit_question['answers'] as $answer ) {
-								if ( 'yes' === $answer['val'] ) {
-									if ( ! empty( $answer['sub_questions'] ) ) {
-										$max_score = $answer['sub_questions'][0]['val'] ?? 0;
-										// var_dump( $max_score );
-										$carry += $max_score;
-										return $carry;
-									}
+			}
+			if ( 'custom' === $question['input_type'] ) {
+				if ( 'catalogs_count' === $question['name'] ) {
+					$audit_question = array_find(
+						$audit_quiz,
+						fn( $item ) => $item['name'] === $question['name']
+					);
+					if ( $audit_question ) {
+						foreach ( $audit_question['answers'] as $answer ) {
+							if ( 'yes' === $answer['val'] ) {
+								if ( ! empty( $answer['sub_questions'] ) ) {
+									$max_score = $answer['sub_questions'][0]['val'] ?? 0;
+									// var_dump( $max_score );
+									$carry += $max_score;
+									return $carry;
 								}
 							}
 						}
@@ -130,19 +122,27 @@ foreach ( $audit_sections as $index => $audit_section ) {
 	);
 
 	$audit_score = 0;
-	if ( $mappers_audit_quiz ) {
-		$audit_score = array_reduce(
-			$mappers_audit_quiz,
-			function ( $carry, $question ) {
-				$carry += mappers_get_audit_score( $question );
-				return $carry;
-			},
-			$initial_score
-		);
+
+	if ( mappers_check_section_condition( $audit_section, $mappers_audit ) ) {
+		$mappers_audit[ $index ]['check_condition'] = true;
+
+		$audit_score = $initial_score;
+
+		foreach ( $audit_quiz as $i => $question ) {
+			if ( mappers_check_question_condition( $question, $audit_section['name'], $mappers_audit ) ) {
+				$audit_score += mappers_get_audit_score( $question );
+
+				$mappers_audit[ $index ]['quiz'][ $i ]['check_condition'] = true;
+			} else {
+				$mappers_audit[ $index ]['quiz'][ $i ]['check_condition'] = false;
+			}
+		}
+	} else {
+		$mappers_audit[ $index ]['check_condition'] = false;
 	}
 
-	$audit_sections[ $index ]['max_score']   = $max_score;
-	$audit_sections[ $index ]['audit_score'] = $audit_score;
+	$mappers_audit[ $index ]['max_score']   = $max_score;
+	$mappers_audit[ $index ]['audit_score'] = $audit_score;
 }
 
 $mappers_company = carbon_get_the_post_meta( 'mappers_company' );
@@ -152,10 +152,10 @@ $user_name       = mappers_get_user_name( $user_id );
 ?>
 <?php get_header(); ?>
 <?php the_post(); ?>
-<div class="mappers-audit-hero">
+<div class="mappers-audit-hero"> 
 <pre style="font-size:10px;">
 <?php
-// print_r( $audit_sections );
+// print_r( $not_used_questions );
 ?>
 </pre>
 	<div class="mappers-container">
@@ -190,40 +190,56 @@ $user_name       = mappers_get_user_name( $user_id );
 </div>
 <main class="mappers-audit-main">
 	<div class="mappers-container">
-		<?php
-		foreach ( $audit_sections as $audit_section ) :
-			$mappers_audit_section = array_find( $mappers_audit, fn( $item ) => $item['name'] === $audit_section['name'] );
-			$mappers_audit_quiz    = $mappers_audit_section ? $mappers_audit_section['quiz'] : null;
-			?>
+		<?php foreach ( $mappers_audit as $audit_section ) : ?>
 			<div class="mappers-audit-section">
 				<h2 class="mappers-audit-section-title">
 					<span><?php echo esc_html( $audit_section['title'] ?? '' ); ?></span>
 				</h2>
 				<div class="mappers-audit-section-body">
-					<div class="mappers-audit-section-chart">
-						<div class="mappers-audit-section-chart-points">
-							<span><?php echo esc_html( $audit_section['max_score'] ); ?></span>
-							<span><?php echo esc_html( $audit_section['audit_score'] ); ?></span>
+					<?php if ( $audit_section['max_score'] ) : ?>
+						<div class="mappers-audit-section-chart">
+							<svg viewBox="0 0 264 264" style="--max: <?php echo esc_attr( $audit_section['max_score'] ); ?>; --val: <?php echo esc_attr( $audit_section['audit_score'] ); ?>;">
+								<defs>
+									<linearGradient id="mappers-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+										<stop offset="0%" stop-color="#7AD3FF"/>
+										<stop offset="100%" stop-color="#4FBAF0"/>
+									</linearGradient>
+								</defs>
+								<circle cx="132" cy="132" r="114" stroke="url(#mappers-gradient)"/>
+							</svg>
+							<div class="mappers-audit-section-chart-score">
+								<div class="audit-section-chart-percent">
+									<?php echo esc_html( round( ( $audit_section['audit_score'] / $audit_section['max_score'] ) * 100 ) ); ?>%
+								</div>
+								<div class="mappers-audit-section-chart-points">
+									<span><?php echo esc_html( $audit_section['max_score'] ); ?></span>
+									<span><?php echo esc_html( $audit_section['audit_score'] ); ?></span>
+								</div>
+							</div>
 						</div>
-						
-					</div>
+					<?php endif; ?>
 					<div class="mappers-audit-section-info">
-						<?php if ( $audit_section['introduction'] ) : ?>
+						<?php if ( $audit_section['report'] ?? null ) : ?>
 							<div class="mappers-audit-section-intro mappers-content-text">
 								<?php
 									// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-									echo apply_filters( 'the_content', $audit_section['introduction'] );
+									echo apply_filters( 'the_content', $audit_section['report'] );
 								?>
 							</div>
 						<?php endif; ?>
-						<?php if ( $mappers_audit_quiz ) : ?>
-							<div class="mappers-audit-section-list">
-								<?php
-								foreach ( $mappers_audit_quiz as $question ) {
-									mappers_the_audit_result( $question );
-								}
+						<?php
+						if ( $audit_section['check_condition'] ) :
+							if ( $audit_section['quiz'] ?? null ) :
 								?>
-							</div>
+								<div class="mappers-audit-section-list">
+									<?php
+									foreach ( $audit_section['quiz'] as $question ) {
+										mappers_the_audit_result( $question );
+									}
+									?>
+								</div>
+							<?php endif; ?>
+						<?php else : ?>
 						<?php endif; ?>
 					</div>
 				</div>
@@ -231,5 +247,5 @@ $user_name       = mappers_get_user_name( $user_id );
 			<?php endforeach; ?>
 	</div>
 </main>
-			<?php
-			get_footer();
+<?php
+get_footer();
