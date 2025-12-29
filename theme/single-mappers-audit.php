@@ -220,7 +220,7 @@ $user_name       = mappers_get_user_name( $user_id );
 					<?php endif; ?>
 					<div class="mappers-audit-section-info">
 						<?php if ( $audit_section['report'] ?? null ) : ?>
-							<div class="mappers-audit-section-intro mappers-content-text">
+							<div class="mappers-audit-section-report mappers-content-text">
 								<?php
 									// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 									echo apply_filters( 'the_content', $audit_section['report'] );

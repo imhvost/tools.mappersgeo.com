@@ -3,6 +3,7 @@
 	inset: var(--wp-admin--admin-bar--height, 0px) 0 auto;
 	z-index: 600;
 	background-color: @white;
+	box-shadow: 0 1px 1px fade(@border, 0%);
 	transition:
 		transform 0.4s,
 		box-shadow 0.4s;
@@ -10,6 +11,7 @@
 		transform: translateY(-101%);
 	}
 	&.mappers-fixed {
+		box-shadow: 0 1px 1px @border;
 	}
 	.mappers-container {
 		display: flex;
@@ -717,7 +719,7 @@ a.mappers-profile-menu-link {
 .mappers-audit-section {
 	display: flex;
 	flex-direction: column;
-	gap: 16px;
+	gap: 24px;
 }
 
 .mappers-audit-section-title {
@@ -748,7 +750,8 @@ a.mappers-profile-menu-link {
 	flex: none;
 	width: 264px;
 	display: flex;
-	position: relative;
+	position: sticky;
+	top: calc(var(--wp-admin--admin-bar--height, 0px) + var(--mappers-header-height, 0px) + 24px);
 	&:before {
 		content: '';
 		position: absolute;
@@ -798,11 +801,86 @@ a.mappers-profile-menu-link {
 
 .mappers-audit-section-chart-points {
 	font-size: 20px;
+	display: flex;
 	span {
 		&:not(:last-child) {
 			&:after {
 				content: '\\';
 			}
 		}
+	}
+}
+
+.mappers-audit-section-info {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+	font-size: 18px;
+	line-height: 1.33;
+}
+
+.mappers-audit-section-report {
+	--mappers-content-gap: 8px;
+}
+
+.mappers-audit-section-list {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.mappers-audit-result {
+	display: flex;
+	gap: 16px;
+	align-items: flex-start;
+}
+
+.mappers-audit-result-red {
+	.mappers-audit-result-icon {
+		color: #a73420;
+		background-color: #ffd3d3;
+	}
+}
+
+.mappers-audit-result-green {
+	.mappers-audit-result-icon {
+		color: #098a25;
+		background-color: #d6ffdf;
+	}
+}
+
+.mappers-audit-result-orange {
+	.mappers-audit-result-icon {
+		color: #b46000;
+		background-color: #ffe18f;
+	}
+}
+
+.mappers-audit-result-icon {
+	display: grid;
+	place-items: center;
+	width: 38px;
+	flex: none;
+	aspect-ratio: 1;
+	border-radius: 50%;
+}
+
+.mappers-audit-result-report {
+	align-self: center;
+}
+
+.mappers-audit-section-list-sub {
+	padding-left: 54px;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin-top: -8px;
+	.mappers-audit-result {
+		gap: 8px;
+	}
+	.mappers-audit-result-icon {
+		width: 24px;
+		border-radius: 0;
+		background: none;
 	}
 }

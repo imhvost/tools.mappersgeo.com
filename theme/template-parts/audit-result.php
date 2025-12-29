@@ -32,7 +32,7 @@ if ( $args ) :
 				<svg class="mappers-icon"><use xlink:href="#icon-<?php echo esc_attr( $icon ); ?>"/></svg>
 			</div>
 		<?php endif; ?>
-		<div class="mappers-audit-report">
+		<div class="mappers-audit-result-report">
 			<?php echo wp_kses_post( nl2br( $report ) ); ?>
 		</div>
 	</div>

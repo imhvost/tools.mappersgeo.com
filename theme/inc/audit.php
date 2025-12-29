@@ -179,8 +179,75 @@ function mappers_the_audit_result( $question, $is_sub_question = false ) {
 
 	if ( 'custom' === $question['input_type'] ) {
 		if ( 'photos_content' === $question['name'] ) {
+			$yes_answer    = $answers[0] ?? array();
+			$no_answer     = $answers[1] ?? array();
+			$sub_questions = $yes_answer['sub_questions'] ?? array();
+
+			$alerts = array();
+			foreach ( $sub_questions as $sub_question ) {
+				$sub_val = $sub_question['val'] ?? null;
+				if ( ! $sub_val || 'no' === $sub_val ) {
+					$sub_answers   = $sub_question['answers'] ?? array();
+					$sub_no_answer = $sub_answers[1] ?? array();
+					$alerts[]      = $sub_no_answer['report'] ?? '';
+				}
+			}
+			if ( $alerts ) {
+				$report = $no_answer['report'] ?? '';
+				$color  = 'red';
+				$icon   = 'dislike';
+			} else {
+				$report = $yes_answer['report'] ?? '';
+				$color  = 'green';
+				$icon   = 'like';
+			}
+
+			get_template_part(
+				'template-parts/audit',
+				'result',
+				array(
+					'report' => $report,
+					'color'  => $color,
+					'icon'   => $icon,
+				)
+			);
+
+			if ( $alerts ) {
+					echo '<div class="mappers-audit-section-list-sub">';
+				foreach ( $alerts as $alert ) {
+					get_template_part(
+						'template-parts/audit',
+						'result',
+						array(
+							'report' => $alert,
+							'color'  => 'red',
+							'icon'   => 'close',
+						)
+					);
+				}
+				echo '</div>';
+			}
+
+			return;
 		}
 		if ( 'catalogs_count' === $question['name'] ) {
+			$answer_yes = array_find( $answers, fn( $item ) => 'yes' === $item['val'] ) ?? array();
+			$answer_no  = array_find( $answers, fn( $item ) => 'no' === $item['val'] ) ?? array();
+			$total      = 0;
+			$actually   = 0;
+			if ( $answer_yes && ! empty( $answer_yes['sub_questions'] ) ) {
+				$total    = $answer_yes['sub_questions'][0]['val'] ?? 0;
+				$actually = $answer_yes['sub_questions'][1]['val'] ?? 0;
+			}
+			if ( $actually && $actually === $total ) {
+				$report = $answer_yes['report'] ?? '';
+				$color  = 'green';
+				$icon   = 'like';
+			} else {
+				$report = $answer_no['report'] ?? '';
+				$color  = 'red';
+				$icon   = 'dislike';
+			}
 		}
 	} else {
 		if ( 'radio' === $question['input_type'] ) {
@@ -198,18 +265,15 @@ function mappers_the_audit_result( $question, $is_sub_question = false ) {
 		$points = $answer['points'] ?? 0;
 
 		$is_ok = (int) $points > 0;
+
 		if ( $is_sub_question ) {
 			$icon = $is_ok ? 'check' : 'close';
 		} else {
 			$icon = $is_ok ? 'like' : 'dislike';
 		}
 
-		if ( $answer && ( $answer['sub_questions'] ?? null ) ) {
-			echo '<div class="mappers-audit-section-list-sub">';
-			foreach ( $answer['sub_questions'] as $sub_question ) {
-				mappers_the_audit_result( $sub_question, true );
-			}
-			echo '</div>';
+		if ( 'default' === $color ) {
+			$color = $is_ok ? 'green' : 'red';
 		}
 	}
 
@@ -222,6 +286,14 @@ function mappers_the_audit_result( $question, $is_sub_question = false ) {
 			'icon'   => $icon,
 		)
 	);
+
+	if ( $answer && ( $answer['sub_questions'] ?? null ) ) {
+			echo '<div class="mappers-audit-section-list-sub">';
+		foreach ( $answer['sub_questions'] as $sub_question ) {
+			mappers_the_audit_result( $sub_question, true );
+		}
+			echo '</div>';
+	}
 }
 
 /**

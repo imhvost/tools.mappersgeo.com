@@ -88,7 +88,7 @@ $(window).on('load scroll resize', mappersFixedHeader);
 
 function mappersFixedHeader() {
 	const header = $('.mappers-header');
-	if ($(window).scrollTop() >= top) {
+	if ($(window).scrollTop() > 0) {
 		header.addClass('mappers-fixed');
 	} else {
 		header.removeClass('mappers-fixed');
