@@ -69,8 +69,8 @@ class Group_Field {
 		$this->add_fields( $fields );
 
 		// Pick random ID
-		$random_string = md5( mt_rand() . $this->get_name() . $this->get_label() );
-		$random_string = substr( $random_string, 0, 5 ); // 5 chars should be enough
+		$random_string  = md5( mt_rand() . $this->get_name() . $this->get_label() );
+		$random_string  = substr( $random_string, 0, 5 ); // 5 chars should be enough
 		$this->group_id = 'carbon-group-' . $random_string;
 	}
 
@@ -129,11 +129,11 @@ class Group_Field {
 		}
 
 		$group_data = array(
-			'group_id' => $this->get_group_id(),
-			'name' => $this->get_name(),
-			'label' => $this->get_label(),
+			'group_id'       => $this->get_group_id(),
+			'name'           => $this->get_name(),
+			'label'          => $this->get_label(),
 			'label_template' => $this->get_label_template(),
-			'fields' => $fields_data,
+			'fields'         => $fields_data,
 		);
 
 		return $group_data;
@@ -231,8 +231,8 @@ class Group_Field {
 	/**
 	 * Assign a DataStore instance for all group fields.
 	 *
-	 * @param  Datastore_Interface  $datastore
-	 * @param  boolean $set_as_default
+	 * @param  Datastore_Interface $datastore
+	 * @param  boolean             $set_as_default
 	 * @return self    $this
 	 */
 	public function set_datastore( Datastore_Interface $datastore, $set_as_default = false ) {

@@ -24,9 +24,12 @@ class Oembed_Field extends Field {
 	public function to_json( $load ) {
 		$field_data = parent::to_json( $load );
 
-		$field_data = array_merge( $field_data, array(
-			'value' => $this->get_value(),
-		) );
+		$field_data = array_merge(
+			$field_data,
+			array(
+				'value' => $this->get_value(),
+			)
+		);
 
 		return $field_data;
 	}

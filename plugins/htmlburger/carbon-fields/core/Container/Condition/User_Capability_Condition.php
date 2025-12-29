@@ -12,7 +12,7 @@ class User_Capability_Condition extends Condition {
 	/**
 	 * Get user id from environment
 	 *
-	 * @param  array   $environment
+	 * @param  array $environment
 	 * @return integer
 	 */
 	protected function get_user_id( $environment ) {

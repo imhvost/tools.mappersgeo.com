@@ -57,7 +57,7 @@ abstract class Datastore implements Datastore_Interface {
 	 * @return Datastore_Interface
 	 */
 	public static function factory( $raw_type ) {
-		$type = Helper::normalize_type( $raw_type );
+		$type  = Helper::normalize_type( $raw_type );
 		$class = Helper::type_to_class( $type, __NAMESPACE__, '_Datastore' );
 		if ( ! class_exists( $class ) ) {
 			Incorrect_Syntax_Exception::raise( 'Unknown datastore type "' . $raw_type . '".' );

@@ -63,7 +63,7 @@ class Term_Condition extends Condition {
 	/**
 	 * Pluck term id from a full term descriptor
 	 *
-	 * @param  array   $full_term_descriptor
+	 * @param  array $full_term_descriptor
 	 * @return integer
 	 */
 	protected function get_term_id_from_full_term_descriptor( $full_term_descriptor ) {
@@ -73,7 +73,7 @@ class Term_Condition extends Condition {
 	/**
 	 * Pluck term ids from array of full term descriptors
 	 *
-	 * @param  array          $full_term_descriptors
+	 * @param  array $full_term_descriptors
 	 * @return array<integer>
 	 */
 	protected function get_term_ids_from_full_term_descriptors( $full_term_descriptors ) {

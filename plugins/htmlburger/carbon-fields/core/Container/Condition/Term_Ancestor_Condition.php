@@ -28,8 +28,8 @@ namespace Carbon_Fields\Container\Condition;
 class Term_Ancestor_Condition extends Term_Condition {
 
 	public function is_fulfilled( $environment ) {
-		$term_id = $environment['term_id'];
-		$term = $environment['term'];
+		$term_id   = $environment['term_id'];
+		$term      = $environment['term'];
 		$ancestors = array();
 
 		if ( $term ) {

@@ -2,54 +2,51 @@
 
 namespace Composer\Installers;
 
-class SyDESInstaller extends BaseInstaller
-{
-    /** @var array<string, string> */
-    protected $locations = array(
-        'module' => 'app/modules/{$name}/',
-        'theme'  => 'themes/{$name}/',
-    );
+class SyDESInstaller extends BaseInstaller {
 
-    /**
-     * Format module name.
-     *
-     * Strip `sydes-` prefix and a trailing '-theme' or '-module' from package name if present.
-     */
-    public function inflectPackageVars(array $vars): array
-    {
-        if ($vars['type'] == 'sydes-module') {
-            return $this->inflectModuleVars($vars);
-        }
+	/** @var array<string, string> */
+	protected $locations = array(
+		'module' => 'app/modules/{$name}/',
+		'theme'  => 'themes/{$name}/',
+	);
 
-        if ($vars['type'] === 'sydes-theme') {
-            return $this->inflectThemeVars($vars);
-        }
+	/**
+	 * Format module name.
+	 *
+	 * Strip `sydes-` prefix and a trailing '-theme' or '-module' from package name if present.
+	 */
+	public function inflectPackageVars( array $vars ): array {
+		if ( $vars['type'] == 'sydes-module' ) {
+			return $this->inflectModuleVars( $vars );
+		}
 
-        return $vars;
-    }
+		if ( $vars['type'] === 'sydes-theme' ) {
+			return $this->inflectThemeVars( $vars );
+		}
 
-    /**
-     * @param array<string, string> $vars
-     * @return array<string, string>
-     */
-    public function inflectModuleVars(array $vars): array
-    {
-        $vars['name'] = $this->pregReplace('/(^sydes-|-module$)/i', '', $vars['name']);
-        $vars['name'] = str_replace(array('-', '_'), ' ', $vars['name']);
-        $vars['name'] = str_replace(' ', '', ucwords($vars['name']));
+		return $vars;
+	}
 
-        return $vars;
-    }
+	/**
+	 * @param array<string, string> $vars
+	 * @return array<string, string>
+	 */
+	public function inflectModuleVars( array $vars ): array {
+		$vars['name'] = $this->pregReplace( '/(^sydes-|-module$)/i', '', $vars['name'] );
+		$vars['name'] = str_replace( array( '-', '_' ), ' ', $vars['name'] );
+		$vars['name'] = str_replace( ' ', '', ucwords( $vars['name'] ) );
 
-    /**
-     * @param array<string, string> $vars
-     * @return array<string, string>
-     */
-    protected function inflectThemeVars(array $vars): array
-    {
-        $vars['name'] = $this->pregReplace('/(^sydes-|-theme$)/', '', $vars['name']);
-        $vars['name'] = strtolower($vars['name']);
+		return $vars;
+	}
 
-        return $vars;
-    }
+	/**
+	 * @param array<string, string> $vars
+	 * @return array<string, string>
+	 */
+	protected function inflectThemeVars( array $vars ): array {
+		$vars['name'] = $this->pregReplace( '/(^sydes-|-theme$)/', '', $vars['name'] );
+		$vars['name'] = strtolower( $vars['name'] );
+
+		return $vars;
+	}
 }

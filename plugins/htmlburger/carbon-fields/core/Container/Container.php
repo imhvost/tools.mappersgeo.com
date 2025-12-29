@@ -38,7 +38,7 @@ abstract class Container implements Datastore_Holder_Interface {
 	 * Visual layout type constants
 	 */
 	const LAYOUT_TABBED_HORIZONTAL = 'tabbed-horizontal';
-	const LAYOUT_TABBED_VERTICAL = 'tabbed-vertical';
+	const LAYOUT_TABBED_VERTICAL   = 'tabbed-vertical';
 
 
 	/**
@@ -164,21 +164,21 @@ abstract class Container implements Datastore_Holder_Interface {
 	/**
 	 * Create a new container of type $type and name $name.
 	 *
-	 * @param  string    $raw_type
-	 * @param  string    $id        Unique id for the container. Optional
-	 * @param  string    $name      Human-readable name of the container
+	 * @param  string $raw_type
+	 * @param  string $id        Unique id for the container. Optional
+	 * @param  string $name      Human-readable name of the container
 	 * @return Container $container
 	 */
 	public static function factory( $raw_type, $id, $name = '' ) {
 		// no name provided - switch input around as the id is optionally generated based on the name
 		if ( $name === '' ) {
 			$name = $id;
-			$id = '';
+			$id   = '';
 		}
 
-		$type = Helper::normalize_type( $raw_type );
+		$type       = Helper::normalize_type( $raw_type );
 		$repository = Carbon_Fields::resolve( 'container_repository' );
-		$id = $repository->get_unique_container_id( ( $id !== '' ) ? $id : $name );
+		$id         = $repository->get_unique_container_id( ( $id !== '' ) ? $id : $name );
 
 		if ( ! Helper::is_valid_entity_id( $id ) ) {
 			Incorrect_Syntax_Exception::raise( 'Container IDs can only contain lowercase alphanumeric characters, dashes and underscores ("' . $id . '" passed).' );
@@ -192,11 +192,15 @@ abstract class Container implements Datastore_Holder_Interface {
 
 		$container = null;
 		if ( Carbon_Fields::has( $type, 'containers' ) ) {
-			$container = Carbon_Fields::resolve_with_arguments( $type, array(
-				'id' => $id,
-				'name' => $name,
-				'type' => $type,
-			), 'containers' );
+			$container = Carbon_Fields::resolve_with_arguments(
+				$type,
+				array(
+					'id'   => $id,
+					'name' => $name,
+					'type' => $type,
+				),
+				'containers'
+			);
 		} else {
 			// Fallback to class name-based resolution
 			$class = Helper::type_to_class( $type, __NAMESPACE__, '_Container' );
@@ -207,8 +211,8 @@ abstract class Container implements Datastore_Holder_Interface {
 			}
 
 			$fulfillable_collection = Carbon_Fields::resolve( 'container_condition_fulfillable_collection' );
-			$condition_translator = Carbon_Fields::resolve( 'container_condition_translator_json' );
-			$container = new $class( $id, $name, $type, $fulfillable_collection, $condition_translator );
+			$condition_translator   = Carbon_Fields::resolve( 'container_condition_translator_json' );
+			$container              = new $class( $id, $name, $type, $fulfillable_collection, $condition_translator );
 		}
 
 		$repository->register_container( $container );
@@ -229,10 +233,10 @@ abstract class Container implements Datastore_Holder_Interface {
 	/**
 	 * Create a new container
 	 *
-	 * @param string                 $id                   Unique id of the container
-	 * @param string                 $title                Title of the container
-	 * @param string                 $type                 Type of the container
-	 * @param Fulfillable_Collection $condition_collection
+	 * @param string                                                     $id                   Unique id of the container
+	 * @param string                                                     $title                Title of the container
+	 * @param string                                                     $type                 Type of the container
+	 * @param Fulfillable_Collection                                     $condition_collection
 	 * @param \Carbon_Fields\Container\Fulfillable\Translator\Translator $condition_translator
 	 */
 	public function __construct( $id, $title, $type, $condition_collection, $condition_translator ) {
@@ -242,9 +246,9 @@ abstract class Container implements Datastore_Holder_Interface {
 			Incorrect_Syntax_Exception::raise( 'Empty container title is not supported' );
 		}
 
-		$this->id = $id;
-		$this->title = $title;
-		$this->type = $type;
+		$this->id                   = $id;
+		$this->title                = $title;
+		$this->type                 = $type;
 		$this->condition_collection = $condition_collection;
 		$this->condition_collection->set_condition_type_list(
 			array_merge( $this->get_condition_types( true ), $this->get_condition_types( false ) ),
@@ -265,11 +269,11 @@ abstract class Container implements Datastore_Holder_Interface {
 	/**
 	 * Get array of all static condition types
 	 *
-	 * @param  boolean       $static
+	 * @param  boolean $static
 	 * @return array<string>
 	 */
 	protected function get_condition_types( $static ) {
-		$group = $static ? 'static' : 'dynamic';
+		$group          = $static ? 'static' : 'dynamic';
 		$container_type = Helper::class_to_type( get_class( $this ), '_Container' );
 
 		$condition_types = array();
@@ -309,7 +313,6 @@ abstract class Container implements Datastore_Holder_Interface {
 	 * Boot the container once it's attached.
 	 */
 	protected function boot() {
-
 	}
 
 	/**
@@ -355,7 +358,7 @@ abstract class Container implements Datastore_Holder_Interface {
 	 * @return bool
 	 */
 	final protected function _is_valid_save() {
-		$params = func_get_args();
+		$params        = func_get_args();
 		$is_valid_save = call_user_func_array( array( $this, 'is_valid_save' ), $params );
 		return apply_filters( 'carbon_fields_container_is_valid_save', $is_valid_save, $this );
 	}
@@ -425,7 +428,7 @@ abstract class Container implements Datastore_Holder_Interface {
 	 * @return bool
 	 */
 	protected function static_conditions_pass() {
-		$environment = $this->get_environment_for_request();
+		$environment                 = $this->get_environment_for_request();
 		$static_condition_collection = $this->condition_collection->evaluate(
 			$this->get_condition_types( false ),
 			true
@@ -521,7 +524,7 @@ abstract class Container implements Datastore_Holder_Interface {
 			\A
 			(?P<field_name>[' . $field_name_characters . ']+)
 			(?:\[(?P<group_index>\d+)\])?
-			(?:' .  preg_quote( static::HIERARCHY_GROUP_SEPARATOR, '/' ). '(?P<group_name>[' . $field_name_characters . ']+))?
+			(?:' . preg_quote( static::HIERARCHY_GROUP_SEPARATOR, '/' ) . '(?P<group_name>[' . $field_name_characters . ']+))?
 			\z
 		/x';
 		return $regex;
@@ -540,23 +543,23 @@ abstract class Container implements Datastore_Holder_Interface {
 	 */
 	public function get_field_by_name( $field_name ) {
 		$hierarchy = array_filter( explode( static::HIERARCHY_FIELD_SEPARATOR, $field_name ) );
-		$field = null;
+		$field     = null;
 
-		$field_group = $this->get_fields();
-		$hierarchy_left = $hierarchy;
+		$field_group         = $this->get_fields();
+		$hierarchy_left      = $hierarchy;
 		$field_pattern_regex = $this->get_field_pattern_regex();
-		$hierarchy_index = array();
+		$hierarchy_index     = array();
 
 		while ( ! empty( $hierarchy_left ) ) {
-			$segment = array_shift( $hierarchy_left );
+			$segment        = array_shift( $hierarchy_left );
 			$segment_pieces = array();
 			if ( ! preg_match( $field_pattern_regex, $segment, $segment_pieces ) ) {
 				return null;
 			}
 
-			$segment_field_name = $segment_pieces['field_name'];
+			$segment_field_name  = $segment_pieces['field_name'];
 			$segment_group_index = isset( $segment_pieces['group_index'] ) ? $segment_pieces['group_index'] : 0;
-			$segment_group_name = isset( $segment_pieces['group_name'] ) ? $segment_pieces['group_name'] : Group_Field::DEFAULT_GROUP_NAME;
+			$segment_group_name  = isset( $segment_pieces['group_name'] ) ? $segment_pieces['group_name'] : Group_Field::DEFAULT_GROUP_NAME;
 
 			foreach ( $field_group as $f ) {
 				if ( $f->get_base_name() !== $segment_field_name ) {
@@ -575,7 +578,7 @@ abstract class Container implements Datastore_Holder_Interface {
 					if ( ! $group ) {
 						return null;
 					}
-					$field_group = $group->get_fields();
+					$field_group       = $group->get_fields();
 					$hierarchy_index[] = $segment_group_index;
 				}
 				break;
@@ -622,7 +625,7 @@ abstract class Container implements Datastore_Holder_Interface {
 		if ( $set_as_default && ! $this->has_default_datastore() ) {
 			return $this; // datastore has been overriden with a custom one - abort changing to a default one
 		}
-		$this->datastore = $datastore;
+		$this->datastore             = $datastore;
 		$this->has_default_datastore = $set_as_default;
 
 		foreach ( $this->fields as $field ) {
@@ -664,8 +667,8 @@ abstract class Container implements Datastore_Holder_Interface {
 	 * @return bool
 	 */
 	protected function verified_nonce_in_request() {
-		$input = Helper::input();
-		$nonce_name = $this->get_nonce_name();
+		$input       = Helper::input();
+		$nonce_name  = $this->get_nonce_name();
 		$nonce_value = isset( $input[ $nonce_name ] ) ? $input[ $nonce_name ] : '';
 		return wp_verify_nonce( $nonce_value, $nonce_name );
 	}
@@ -674,8 +677,8 @@ abstract class Container implements Datastore_Holder_Interface {
 	 * Internal function that creates the tab and associates it with particular field set
 	 *
 	 * @param string $tab_name
-	 * @param array $fields
-	 * @param int $queue_end
+	 * @param array  $fields
+	 * @param int    $queue_end
 	 * @return object $this
 	 */
 	private function create_tab( $tab_name, $fields, $queue_end = self::TABS_TAIL ) {
@@ -685,7 +688,7 @@ abstract class Container implements Datastore_Holder_Interface {
 
 		if ( $queue_end === static::TABS_TAIL ) {
 			$this->tabs[ $tab_name ] = array();
-		} else if ( $queue_end === static::TABS_HEAD ) {
+		} elseif ( $queue_end === static::TABS_HEAD ) {
 			$this->tabs = array_merge(
 				array( $tab_name => array() ),
 				$this->tabs
@@ -693,7 +696,7 @@ abstract class Container implements Datastore_Holder_Interface {
 		}
 
 		foreach ( $fields as $field ) {
-			$field_name = $field->get_name();
+			$field_name                             = $field->get_name();
 			$this->tabs[ $tab_name ][ $field_name ] = $field;
 		}
 
@@ -720,9 +723,12 @@ abstract class Container implements Datastore_Holder_Interface {
 			$tabbed_fields_names = array_merge( $tabbed_fields_names, array_keys( $tab_fields ) );
 		}
 
-		$untabbed_fields = array_filter( $this->fields, function( $field ) use ( $tabbed_fields_names ) {
-			return ! in_array( $field->get_name(), $tabbed_fields_names );
-		} );
+		$untabbed_fields = array_filter(
+			$this->fields,
+			function ( $field ) use ( $tabbed_fields_names ) {
+				return ! in_array( $field->get_name(), $tabbed_fields_names );
+			}
+		);
 
 		return $untabbed_fields;
 	}
@@ -754,7 +760,7 @@ abstract class Container implements Datastore_Holder_Interface {
 	 */
 	protected function get_tabs_json() {
 		$tabs_json = array();
-		$tabs = $this->get_tabs();
+		$tabs      = $this->get_tabs();
 
 		foreach ( $tabs as $tab_name => $fields ) {
 			foreach ( $fields as $field_name => $field ) {
@@ -796,23 +802,23 @@ abstract class Container implements Datastore_Holder_Interface {
 		$conditions = $this->condition_translator->fulfillable_to_foreign( $conditions );
 
 		$container_data = array(
-			'id' => $this->get_id(),
-			'type' => $this->type,
-			'title' => $this->title,
-			'layout' => $this->layout,
-			'classes' => $this->get_classes(),
-			'settings' => $this->settings,
+			'id'         => $this->get_id(),
+			'type'       => $this->type,
+			'title'      => $this->title,
+			'layout'     => $this->layout,
+			'classes'    => $this->get_classes(),
+			'settings'   => $this->settings,
 			'conditions' => $conditions,
-			'fields' => array(),
-			'nonce' => array(
-				'name' => $this->get_nonce_name(),
+			'fields'     => array(),
+			'nonce'      => array(
+				'name'  => $this->get_nonce_name(),
 				'value' => $this->get_nonce_value(),
 			),
 		);
 
 		$fields = $this->get_fields();
 		foreach ( $fields as $field ) {
-			$field_data = $field->to_json( $load );
+			$field_data                 = $field->to_json( $load );
 			$container_data['fields'][] = $field_data;
 		}
 
@@ -860,7 +866,7 @@ abstract class Container implements Datastore_Holder_Interface {
 	 * Configuration function for adding tab with fields
 	 *
 	 * @param string $tab_name
-	 * @param array $fields
+	 * @param array  $fields
 	 * @return Container $this
 	 */
 	public function add_tab( $tab_name, $fields ) {
@@ -903,7 +909,7 @@ abstract class Container implements Datastore_Holder_Interface {
 			static::LAYOUT_TABBED_VERTICAL,
 		);
 
-		if ( ! in_array( $layout,  $available_layouts ) ) {
+		if ( ! in_array( $layout, $available_layouts ) ) {
 			$error_message = 'Incorrect layout ``' . $layout . '" specified. ' .
 				'Available layouts: ' . implode( ', ', $available_layouts );
 

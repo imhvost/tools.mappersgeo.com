@@ -4,7 +4,7 @@ namespace Carbon_Fields\Exception;
 
 class Incorrect_Syntax_Exception extends \Exception {
 
-	public static $errors = array();
+	public static $errors       = array();
 	public static $throw_errors = WP_DEBUG;
 
 	/**

@@ -2,61 +2,58 @@
 
 namespace Composer\Installers;
 
-class PxcmsInstaller extends BaseInstaller
-{
-    /** @var array<string, string> */
-    protected $locations = array(
-        'module' => 'app/Modules/{$name}/',
-        'theme' => 'themes/{$name}/',
-    );
+class PxcmsInstaller extends BaseInstaller {
 
-    /**
-     * Format package name.
-     */
-    public function inflectPackageVars(array $vars): array
-    {
-        if ($vars['type'] === 'pxcms-module') {
-            return $this->inflectModuleVars($vars);
-        }
+	/** @var array<string, string> */
+	protected $locations = array(
+		'module' => 'app/Modules/{$name}/',
+		'theme'  => 'themes/{$name}/',
+	);
 
-        if ($vars['type'] === 'pxcms-theme') {
-            return $this->inflectThemeVars($vars);
-        }
+	/**
+	 * Format package name.
+	 */
+	public function inflectPackageVars( array $vars ): array {
+		if ( $vars['type'] === 'pxcms-module' ) {
+			return $this->inflectModuleVars( $vars );
+		}
 
-        return $vars;
-    }
+		if ( $vars['type'] === 'pxcms-theme' ) {
+			return $this->inflectThemeVars( $vars );
+		}
 
-    /**
-     * For package type pxcms-module, cut off a trailing '-plugin' if present.
-     *
-     * @param array<string, string> $vars
-     * @return array<string, string>
-     */
-    protected function inflectModuleVars(array $vars): array
-    {
-        $vars['name'] = str_replace('pxcms-', '', $vars['name']);       // strip out pxcms- just incase (legacy)
-        $vars['name'] = str_replace('module-', '', $vars['name']);      // strip out module-
-        $vars['name'] = $this->pregReplace('/-module$/', '', $vars['name']);  // strip out -module
-        $vars['name'] = str_replace('-', '_', $vars['name']);           // make -'s be _'s
-        $vars['name'] = ucwords($vars['name']);                         // make module name camelcased
+		return $vars;
+	}
 
-        return $vars;
-    }
+	/**
+	 * For package type pxcms-module, cut off a trailing '-plugin' if present.
+	 *
+	 * @param array<string, string> $vars
+	 * @return array<string, string>
+	 */
+	protected function inflectModuleVars( array $vars ): array {
+		$vars['name'] = str_replace( 'pxcms-', '', $vars['name'] );       // strip out pxcms- just incase (legacy)
+		$vars['name'] = str_replace( 'module-', '', $vars['name'] );      // strip out module-
+		$vars['name'] = $this->pregReplace( '/-module$/', '', $vars['name'] );  // strip out -module
+		$vars['name'] = str_replace( '-', '_', $vars['name'] );           // make -'s be _'s
+		$vars['name'] = ucwords( $vars['name'] );                         // make module name camelcased
 
-    /**
-     * For package type pxcms-module, cut off a trailing '-plugin' if present.
-     *
-     * @param array<string, string> $vars
-     * @return array<string, string>
-     */
-    protected function inflectThemeVars(array $vars): array
-    {
-        $vars['name'] = str_replace('pxcms-', '', $vars['name']);       // strip out pxcms- just incase (legacy)
-        $vars['name'] = str_replace('theme-', '', $vars['name']);       // strip out theme-
-        $vars['name'] = $this->pregReplace('/-theme$/', '', $vars['name']);   // strip out -theme
-        $vars['name'] = str_replace('-', '_', $vars['name']);           // make -'s be _'s
-        $vars['name'] = ucwords($vars['name']);                         // make module name camelcased
+		return $vars;
+	}
 
-        return $vars;
-    }
+	/**
+	 * For package type pxcms-module, cut off a trailing '-plugin' if present.
+	 *
+	 * @param array<string, string> $vars
+	 * @return array<string, string>
+	 */
+	protected function inflectThemeVars( array $vars ): array {
+		$vars['name'] = str_replace( 'pxcms-', '', $vars['name'] );       // strip out pxcms- just incase (legacy)
+		$vars['name'] = str_replace( 'theme-', '', $vars['name'] );       // strip out theme-
+		$vars['name'] = $this->pregReplace( '/-theme$/', '', $vars['name'] );   // strip out -theme
+		$vars['name'] = str_replace( '-', '_', $vars['name'] );           // make -'s be _'s
+		$vars['name'] = ucwords( $vars['name'] );                         // make module name camelcased
+
+		return $vars;
+	}
 }

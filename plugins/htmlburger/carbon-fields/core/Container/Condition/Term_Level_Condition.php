@@ -16,7 +16,7 @@ class Term_Level_Condition extends Condition {
 	 * @return bool
 	 */
 	public function is_fulfilled( $environment ) {
-		$term = $environment['term'];
+		$term       = $environment['term'];
 		$term_level = 1;
 		if ( $term ) {
 			$term_level = count( get_ancestors( $term->term_id, $term->taxonomy, 'taxonomy' ) ) + 1;

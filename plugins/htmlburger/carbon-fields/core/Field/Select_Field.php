@@ -37,12 +37,15 @@ class Select_Field extends Predefined_Options_Field {
 		$field_data = parent::to_json( $load );
 
 		$options = $this->parse_options( $this->get_options(), true );
-		$value = strval( $this->get_formatted_value() );
+		$value   = strval( $this->get_formatted_value() );
 
-		$field_data = array_merge( $field_data, array(
-			'value' => strval( $value ),
-			'options' => $options,
-		) );
+		$field_data = array_merge(
+			$field_data,
+			array(
+				'value'   => strval( $value ),
+				'options' => $options,
+			)
+		);
 
 		return $field_data;
 	}

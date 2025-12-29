@@ -59,13 +59,16 @@ class Set_Field extends Predefined_Options_Field {
 		$field_data = parent::to_json( $load );
 
 		$options = $this->parse_options( $this->get_options(), true );
-		$value = array_map( 'strval', $this->get_formatted_value() );
+		$value   = array_map( 'strval', $this->get_formatted_value() );
 
-		$field_data = array_merge( $field_data, array(
-			'options' => $options,
-			'value' => $value,
-			'limit_options' => $this->limit_options,
-		) );
+		$field_data = array_merge(
+			$field_data,
+			array(
+				'options'       => $options,
+				'value'         => $value,
+				'limit_options' => $this->limit_options,
+			)
+		);
 
 		return $field_data;
 	}

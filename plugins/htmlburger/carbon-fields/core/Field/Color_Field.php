@@ -29,11 +29,14 @@ class Color_Field extends Field {
 	public function to_json( $load ) {
 		$field_data = parent::to_json( $load );
 
-		$field_data = array_merge( $field_data, array(
-			'value' => $this->get_value(),
-			'alphaEnabled' => $this->get_alpha_enabled(),
-			'palette' => $this->get_palette(),
-		) );
+		$field_data = array_merge(
+			$field_data,
+			array(
+				'value'        => $this->get_value(),
+				'alphaEnabled' => $this->get_alpha_enabled(),
+				'palette'      => $this->get_palette(),
+			)
+		);
 
 		return $field_data;
 	}

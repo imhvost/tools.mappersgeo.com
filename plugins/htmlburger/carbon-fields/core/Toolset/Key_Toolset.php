@@ -69,7 +69,7 @@ class Key_Toolset {
 	 * Get sanitized hierarchy index for hierarchy
 	 *
 	 * @param array<string> $full_hierarchy
-	 * @param array<int> $full_hierarchy_index
+	 * @param array<int>    $full_hierarchy_index
 	 * @return array<int>
 	 */
 	public function get_sanitized_hierarchy_index( $full_hierarchy, $full_hierarchy_index ) {
@@ -101,7 +101,7 @@ class Key_Toolset {
 	 */
 	protected function get_storage_key_root( $full_hierarchy ) {
 		$first_parent = array_shift( $full_hierarchy );
-		$storage_key = static::KEY_PREFIX . $first_parent . static::SEGMENT_GLUE;
+		$storage_key  = static::KEY_PREFIX . $first_parent . static::SEGMENT_GLUE;
 		return $storage_key;
 	}
 
@@ -110,13 +110,13 @@ class Key_Toolset {
 	 * Suitable for getting and deleting multiple values for a single field
 	 *
 	 * @param array<string> $full_hierarchy
-	 * @param array<int> $full_hierarchy_index
+	 * @param array<int>    $full_hierarchy_index
 	 * @return string
 	 */
 	protected function get_storage_key_prefix( $full_hierarchy, $full_hierarchy_index ) {
 		$full_hierarchy_index = $this->get_sanitized_hierarchy_index( $full_hierarchy, $full_hierarchy_index );
-		$parents = $full_hierarchy;
-		$first_parent = array_shift( $parents );
+		$parents              = $full_hierarchy;
+		$first_parent         = array_shift( $parents );
 
 		$storage_key = static::KEY_PREFIX .
 			$first_parent .
@@ -132,11 +132,11 @@ class Key_Toolset {
 	/**
 	 * Get a full storage key for a single field value
 	 *
-	 * @param bool $is_simple_root_field
+	 * @param bool          $is_simple_root_field
 	 * @param array<string> $full_hierarchy
-	 * @param array<int> $full_hierarchy_index
-	 * @param int $value_group_index
-	 * @param string $property
+	 * @param array<int>    $full_hierarchy_index
+	 * @param int           $value_group_index
+	 * @param string        $property
 	 * @return string
 	 */
 	public function get_storage_key( $is_simple_root_field, $full_hierarchy, $full_hierarchy_index, $value_group_index, $property ) {
@@ -151,10 +151,10 @@ class Key_Toolset {
 	/**
 	 * Get a full storage key with optional wildcards for entry and value indexes
 	 *
-	 * @param bool $is_simple_root_field
+	 * @param bool          $is_simple_root_field
 	 * @param array<string> $full_hierarchy
-	 * @param string $property
-	 * @param string $wildcard
+	 * @param string        $property
+	 * @param string        $wildcard
 	 * @return string
 	 */
 	public function get_storage_key_with_index_wildcards( $is_simple_root_field, $full_hierarchy, $property = Value_Set::VALUE_PROPERTY, $wildcard = '%' ) {
@@ -162,10 +162,10 @@ class Key_Toolset {
 			return $this->get_storage_key_for_simple_root_field( array_shift( $full_hierarchy ) );
 		}
 
-		$parents = $full_hierarchy;
-		$first_parent = array_shift( $parents );
-		$hierarchy = array_slice( $full_hierarchy, 0, -1 );
-		$hierarchy_index = ! empty( $hierarchy ) ? $wildcard : '';
+		$parents           = $full_hierarchy;
+		$first_parent      = array_shift( $parents );
+		$hierarchy         = array_slice( $full_hierarchy, 0, -1 );
+		$hierarchy_index   = ! empty( $hierarchy ) ? $wildcard : '';
 		$value_group_index = $wildcard;
 
 		$storage_key = static::KEY_PREFIX .
@@ -184,7 +184,7 @@ class Key_Toolset {
 	/**
 	 * Get an array of storage key patterns for use when getting values from storage
 	 *
-	 * @param bool $is_simple_root_field
+	 * @param bool          $is_simple_root_field
 	 * @param array<string> $full_hierarchy
 	 * @return array
 	 */
@@ -192,21 +192,21 @@ class Key_Toolset {
 		$patterns = array();
 
 		if ( $is_simple_root_field ) {
-			$key = $this->get_storage_key_for_simple_root_field( $full_hierarchy[ count( $full_hierarchy ) - 1 ] );
+			$key              = $this->get_storage_key_for_simple_root_field( $full_hierarchy[ count( $full_hierarchy ) - 1 ] );
 			$patterns[ $key ] = static::PATTERN_COMPARISON_EQUAL;
 		}
 
-		$parents = $full_hierarchy;
+		$parents      = $full_hierarchy;
 		$first_parent = array_shift( $parents );
 
 		$storage_key = static::KEY_PREFIX . $first_parent . static::SEGMENT_GLUE;
 		if ( empty( $parents ) ) {
 			$patterns[ $storage_key ] = static::PATTERN_COMPARISON_STARTS_WITH;
 		} else {
-			$key = $storage_key . implode( static::SEGMENT_VALUE_GLUE, $parents ) . static::SEGMENT_GLUE;
+			$key              = $storage_key . implode( static::SEGMENT_VALUE_GLUE, $parents ) . static::SEGMENT_GLUE;
 			$patterns[ $key ] = static::PATTERN_COMPARISON_STARTS_WITH;
 
-			$key = $storage_key . implode( static::SEGMENT_VALUE_GLUE, $parents ) . static::SEGMENT_VALUE_GLUE;
+			$key              = $storage_key . implode( static::SEGMENT_VALUE_GLUE, $parents ) . static::SEGMENT_VALUE_GLUE;
 			$patterns[ $key ] = static::PATTERN_COMPARISON_STARTS_WITH;
 		}
 
@@ -216,18 +216,18 @@ class Key_Toolset {
 	/**
 	 * Get an array of storage key patterns for use when deleting values from storage
 	 *
-	 * @param bool $is_complex_field
-	 * @param bool $is_simple_root_field
+	 * @param bool          $is_complex_field
+	 * @param bool          $is_simple_root_field
 	 * @param array<string> $full_hierarchy
-	 * @param array<int> $full_hierarchy_index
+	 * @param array<int>    $full_hierarchy_index
 	 * @return array
 	 */
 	public function get_storage_key_deleter_patterns( $is_complex_field, $is_simple_root_field, $full_hierarchy, $full_hierarchy_index ) {
 		$full_hierarchy_index = $this->get_sanitized_hierarchy_index( $full_hierarchy, $full_hierarchy_index );
-		$patterns = array();
+		$patterns             = array();
 
 		if ( $is_simple_root_field ) {
-			$key = $this->get_storage_key_for_simple_root_field( $full_hierarchy[ count( $full_hierarchy ) - 1 ] );
+			$key              = $this->get_storage_key_for_simple_root_field( $full_hierarchy[ count( $full_hierarchy ) - 1 ] );
 			$patterns[ $key ] = static::PATTERN_COMPARISON_EQUAL;
 		}
 
@@ -244,7 +244,7 @@ class Key_Toolset {
 	 * Convert an array of storage key patterns to a parentheses-enclosed sql comparison
 	 *
 	 * @param string $table_column
-	 * @param array $patterns
+	 * @param array  $patterns
 	 * @return string
 	 */
 	public function storage_key_patterns_to_sql( $table_column, $patterns ) {
@@ -276,7 +276,7 @@ class Key_Toolset {
 	 * Check if a storage key matches any pattern
 	 *
 	 * @param string $storage_key
-	 * @param array $patterns
+	 * @param array  $patterns
 	 * @return bool
 	 */
 	public function storage_key_matches_any_pattern( $storage_key, $patterns ) {
@@ -318,7 +318,7 @@ class Key_Toolset {
 	 * @return array<string>
 	 */
 	public function storage_key_to_segments_array( $storage_key ) {
-		$key = substr( $storage_key, strlen( static::KEY_PREFIX ) ); // drop the key prefix
+		$key      = substr( $storage_key, strlen( static::KEY_PREFIX ) ); // drop the key prefix
 		$segments = explode( static::SEGMENT_GLUE, $key );
 		return $segments;
 	}
@@ -330,7 +330,7 @@ class Key_Toolset {
 	 * @return array<mixed>
 	 */
 	public function segment_to_segment_values_array( $segment ) {
-		return explode( static::SEGMENT_VALUE_GLUE , $segment );
+		return explode( static::SEGMENT_VALUE_GLUE, $segment );
 	}
 
 	/**
@@ -341,11 +341,11 @@ class Key_Toolset {
 	 */
 	public function parse_storage_key( $storage_key ) {
 		$parsed = array(
-			'root' => '',
-			'hierarchy' => array(),
+			'root'            => '',
+			'hierarchy'       => array(),
 			'hierarchy_index' => array(),
-			'value_index' => 0,
-			'property' => Value_Set::VALUE_PROPERTY,
+			'value_index'     => 0,
+			'property'        => Value_Set::VALUE_PROPERTY,
 		);
 
 		$segments = $this->storage_key_to_segments_array( $storage_key );

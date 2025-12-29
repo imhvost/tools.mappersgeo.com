@@ -32,24 +32,24 @@ class Sidebar_Manager {
 	 */
 	public function action_handler() {
 		$response = array(
-			'success' => false,
-			'error' => null,
+			'success'   => false,
+			'error'     => null,
 			'errorCode' => null,
-			'data' => null,
+			'data'      => null,
 		);
 
-		$input = stripslashes_deep( $_POST );
+		$input  = stripslashes_deep( $_POST );
 		$action = isset( $input['action'] ) ? $input['action'] : '';
 
 		$result = $this->execute_action( $action, $input );
 
 		if ( is_wp_error( $result ) ) {
-			$response['success'] = false;
-			$response['error'] = $result->get_error_message();
+			$response['success']   = false;
+			$response['error']     = $result->get_error_message();
 			$response['errorCode'] = $result->get_error_code();
 		} else {
 			$response['success'] = true;
-			$response['data'] = $result;
+			$response['data']    = $result;
 		}
 
 		wp_send_json( $response );
@@ -60,7 +60,7 @@ class Sidebar_Manager {
 	 * Execute an action
 	 *
 	 * @param string $action
-	 * @param array $input
+	 * @param array  $input
 	 * @return mixed
 	 */
 	public function execute_action( $action, $input ) {
@@ -93,7 +93,7 @@ class Sidebar_Manager {
 	 */
 	public function add_sidebar( $name, $id = '' ) {
 		$registered_sidebars = $this->get_sidebars();
-		$id = $id ? $id : $name;
+		$id                  = $id ? $id : $name;
 
 		// Sanitize the sidebar ID the same way as dynamic_sidebar()
 		$id = sanitize_title( $id );
@@ -103,7 +103,7 @@ class Sidebar_Manager {
 		}
 
 		$registered_sidebars[ $id ] = array(
-			'id' => $id,
+			'id'   => $id,
 			'name' => $name,
 		);
 
@@ -113,7 +113,7 @@ class Sidebar_Manager {
 		}
 
 		return array(
-			'id' => $id,
+			'id'   => $id,
 			'name' => $name,
 		);
 	}
@@ -159,12 +159,12 @@ class Sidebar_Manager {
 	 */
 	public function register_sidebars() {
 		$registered_sidebars = $this->get_sidebars();
-		$default_options = apply_filters( 'carbon_fields_sidebar_default_options', array() );
+		$default_options     = apply_filters( 'carbon_fields_sidebar_default_options', array() );
 
 		foreach ( $registered_sidebars as $id => $options ) {
 			$options['class'] = 'carbon-sidebar';
-			$options = wp_parse_args( $options, $default_options );
-			$options = apply_filters( 'carbon_fields_sidebar_options', $options, $id );
+			$options          = wp_parse_args( $options, $default_options );
+			$options          = apply_filters( 'carbon_fields_sidebar_options', $options, $id );
 
 			register_sidebar( $options );
 		}
@@ -176,10 +176,12 @@ class Sidebar_Manager {
 	public function enqueue_scripts() {
 		wp_enqueue_style( 'carbon-sidebar-manager', \Carbon_Fields\URL . '/core/Libraries/Sidebar_Manager/assets/css/app.css', array(), \Carbon_Fields\VERSION );
 		wp_enqueue_script( 'carbon-sidebar-manager', \Carbon_Fields\URL . '/core/Libraries/Sidebar_Manager/assets/js/app.js', array(), \Carbon_Fields\VERSION );
-		wp_localize_script( 'carbon-sidebar-manager', 'crbSidebarl10n',
+		wp_localize_script(
+			'carbon-sidebar-manager',
+			'crbSidebarl10n',
 			array(
-				'add_sidebar' => __( 'Add Sidebar', 'carbon-fields' ),
-				'enter_name_of_new_sidebar' => __( 'Please enter the name of the new sidebar:', 'carbon-fields' ),
+				'add_sidebar'                 => __( 'Add Sidebar', 'carbon-fields' ),
+				'enter_name_of_new_sidebar'   => __( 'Please enter the name of the new sidebar:', 'carbon-fields' ),
 				'remove_sidebar_confirmation' => __( 'Are you sure you wish to remove this sidebar?', 'carbon-fields' ),
 			)
 		);

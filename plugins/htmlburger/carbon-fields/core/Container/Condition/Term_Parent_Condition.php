@@ -28,7 +28,7 @@ namespace Carbon_Fields\Container\Condition;
 class Term_Parent_Condition extends Term_Condition {
 
 	public function is_fulfilled( $environment ) {
-		$term = $environment['term'];
+		$term           = $environment['term'];
 		$parent_term_id = $term ? intval( $term->parent ) : 0;
 
 		$value = $this->get_value();

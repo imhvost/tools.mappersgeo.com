@@ -614,13 +614,15 @@ a.mappers-profile-menu-link {
 }
 
 .mappers-audit-hero {
-	margin: 0 16px;
-	border-radius: 16px;
 	background:
 		url(../img/audit-hero-decor.svg) top -485px left -232px / 815px 815px no-repeat,
 		url(../img/audit-hero-decor.svg) bottom -485px right -232px / 815px 815px no-repeat,
 		#fff4f1;
 	padding-top: 46px;
+	@media @md_ {
+		margin: 0 16px;
+		border-radius: 16px;
+	}
 	.mappers-container {
 		display: flex;
 		flex-direction: column;
@@ -645,6 +647,9 @@ a.mappers-profile-menu-link {
 	line-height: 1.2;
 	font-size: 57px;
 	font-weight: 400;
+	@media @md {
+		font-size: 32px;
+	}
 }
 
 .mappers-audit-company {
@@ -653,6 +658,9 @@ a.mappers-profile-menu-link {
 	font-size: 96px;
 	line-height: 1;
 	font-weight: 700;
+	@media @md {
+		font-size: 40px;
+	}
 }
 
 .mappers-audit-hello {
@@ -669,26 +677,40 @@ a.mappers-profile-menu-link {
 	align-items: center;
 	position: relative;
 	z-index: 1;
+	@media @md {
+		margin: 0 0 24px;
+		flex-direction: column;
+		text-align: center;
+		min-height: unset;
+		padding: 16px;
+		gap: 24px;
+	}
 }
 
 .mappers-audit-hello-icon {
 	flex: none;
-	padding-right: 32px;
-	margin-right: 40px;
+
 	position: relative;
 	display: flex;
+	@media @md_ {
+		padding-right: 32px;
+		margin-right: 40px;
+		&:after {
+			content: '';
+			position: absolute;
+			--height: 140px;
+			left: 100%;
+			top: calc(50% - 0.5 * var(--height));
+			height: var(--height);
+			border-right: solid 1px @border;
+		}
+	}
 	svg {
 		color: #dee2e6;
 		--size: 192px;
-	}
-	&:after {
-		content: '';
-		position: absolute;
-		--height: 140px;
-		left: 100%;
-		top: calc(50% - 0.5 * var(--height));
-		height: var(--height);
-		border-right: solid 1px @border;
+		@media @md {
+			--size: 40px;
+		}
 	}
 }
 
@@ -698,7 +720,9 @@ a.mappers-profile-menu-link {
 	display: flex;
 	flex-direction: column;
 	gap: 8px;
-	padding: 24px 0;
+	@media @md_ {
+		padding: 24px 0;
+	}
 	span {
 		text-decoration: underline;
 		color: @title;
@@ -709,10 +733,16 @@ a.mappers-profile-menu-link {
 	flex: auto;
 	padding: 144px 0 112px;
 	background-color: @white;
+	@media @md {
+		padding: 40px 0;
+	}
 	.mappers-container {
 		display: flex;
 		flex-direction: column;
 		gap: 64px;
+		@media @md {
+			gap: 32px;
+		}
 	}
 }
 
@@ -731,12 +761,19 @@ a.mappers-profile-menu-link {
 	color: @link;
 	line-height: 1;
 	font-family: @ff_;
+	@media @md {
+		font-size: 32px;
+		gap: 8px;
+	}
 	&:after {
 		content: '';
 		flex: auto;
 		min-width: 32px;
 		border-top: dashed 2px;
 		margin-top: calc(0.5lh + 2px);
+		@media @md {
+			min-width: 24px;
+		}
 	}
 }
 
@@ -744,6 +781,11 @@ a.mappers-profile-menu-link {
 	display: flex;
 	gap: 120px;
 	align-items: flex-start;
+	@media @md {
+		gap: 32px;
+		flex-direction: column;
+		align-items: unset;
+	}
 }
 
 .mappers-audit-section-chart {
@@ -752,6 +794,11 @@ a.mappers-profile-menu-link {
 	display: flex;
 	position: sticky;
 	top: calc(var(--wp-admin--admin-bar--height, 0px) + var(--mappers-header-height, 0px) + 24px);
+	@media @md {
+		position: relative;
+		margin: 0 auto;
+		top: unset;
+	}
 	&:before {
 		content: '';
 		position: absolute;
@@ -797,11 +844,17 @@ a.mappers-profile-menu-link {
 	font-size: 40px;
 	color: @title;
 	font-weight: 700;
+	@media @md {
+		font-size: 32px;
+	}
 }
 
 .mappers-audit-section-chart-points {
 	font-size: 20px;
 	display: flex;
+	@media @md {
+		font-size: 18px;
+	}
 	span {
 		&:not(:last-child) {
 			&:after {
@@ -815,8 +868,10 @@ a.mappers-profile-menu-link {
 	display: flex;
 	flex-direction: column;
 	gap: 24px;
-	font-size: 18px;
-	line-height: 1.33;
+	@media @md_ {
+		font-size: 18px;
+		line-height: 1.33;
+	}
 }
 
 .mappers-audit-section-report {
@@ -833,6 +888,9 @@ a.mappers-profile-menu-link {
 	display: flex;
 	gap: 16px;
 	align-items: flex-start;
+	@media @md {
+		gap: 8px;
+	}
 }
 
 .mappers-audit-result-red {
@@ -875,6 +933,9 @@ a.mappers-profile-menu-link {
 	flex-direction: column;
 	gap: 8px;
 	margin-top: -8px;
+	@media @md {
+		padding-left: 46px;
+	}
 	.mappers-audit-result {
 		gap: 8px;
 	}

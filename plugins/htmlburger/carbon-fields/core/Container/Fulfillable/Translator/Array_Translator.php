@@ -30,9 +30,9 @@ class Array_Translator extends Translator {
 	 */
 	protected function condition_to_foreign( Condition $condition ) {
 		return array(
-			'type' => $this->condition_factory->get_type( get_class( $condition ) ),
+			'type'    => $this->condition_factory->get_type( get_class( $condition ) ),
 			'compare' => $condition->get_comparison_operator(),
-			'value' => $condition->get_value(),
+			'value'   => $condition->get_value(),
 		);
 	}
 
@@ -51,7 +51,7 @@ class Array_Translator extends Translator {
 
 		$relations = array();
 		foreach ( $fulfillables as $fulfillable_tuple ) {
-			$comparison = $fulfillable_tuple['fulfillable_comparison'];
+			$comparison  = $fulfillable_tuple['fulfillable_comparison'];
 			$fulfillable = $fulfillable_tuple['fulfillable'];
 
 			if ( ! isset( $relations[ $comparison ] ) ) {
@@ -95,13 +95,13 @@ class Array_Translator extends Translator {
 	/**
 	 * Translate a Condition
 	 *
-	 * @param  array     $foreign
+	 * @param  array $foreign
 	 * @return Condition
 	 */
 	protected function foreign_to_native_condition( $foreign ) {
-		$condition_type = $foreign['type'];
+		$condition_type      = $foreign['type'];
 		$comparison_operator = isset( $foreign['compare'] ) ? $foreign['compare'] : '=';
-		$value = isset( $foreign['value'] ) ? $foreign['value'] : '';
+		$value               = isset( $foreign['value'] ) ? $foreign['value'] : '';
 
 		$condition = $this->condition_factory->make( $condition_type );
 		$condition->set_comparison_operator( $comparison_operator );
@@ -112,12 +112,12 @@ class Array_Translator extends Translator {
 	/**
 	 * Translate a Fulfillable_Collection
 	 *
-	 * @param  array                  $foreign
+	 * @param  array $foreign
 	 * @return Fulfillable_Collection
 	 */
 	protected function foreign_to_native_fulfillable_collection( $foreign ) {
 		$fulfillable_comparison = isset( $foreign['relation'] ) ? $foreign['relation'] : 'AND';
-		$collection = \Carbon_Fields\Carbon_Fields::resolve( 'container_condition_fulfillable_collection' );
+		$collection             = \Carbon_Fields\Carbon_Fields::resolve( 'container_condition_fulfillable_collection' );
 		foreach ( $foreign as $key => $value ) {
 			if ( $key === 'relation' ) {
 				continue; // ignore the relation key - we are only interested in condition definitions

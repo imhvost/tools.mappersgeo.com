@@ -52,7 +52,7 @@ class Widget_Datastore extends Key_Value_Datastore {
 		foreach ( $this->storage as $storage_key => $value ) {
 			if ( $this->key_toolset->storage_key_matches_any_pattern( $storage_key, $storage_key_patterns ) ) {
 				$storage_array[] = (object) array(
-					'key' => $storage_key,
+					'key'   => $storage_key,
 					'value' => $value,
 				);
 			}

@@ -10,8 +10,8 @@ class Revisions_Service extends Service {
 	protected function enabled() {
 		add_filter( 'carbon_get_post_meta_post_id', array( $this, 'update_post_id_on_preview' ), 10, 3 );
 		add_action( 'carbon_fields_post_meta_container_saved', array( $this, 'maybe_copy_meta_to_revision' ), 10, 2 );
-		add_filter('_wp_post_revision_fields', array( $this, 'maybe_save_revision' ), 10, 2 );
-		add_filter('_wp_post_revision_fields', array( $this, 'add_fields_to_revision' ), 10, 2 );
+		add_filter( '_wp_post_revision_fields', array( $this, 'maybe_save_revision' ), 10, 2 );
+		add_filter( '_wp_post_revision_fields', array( $this, 'add_fields_to_revision' ), 10, 2 );
 		add_action( 'wp_restore_post_revision', array( $this, 'restore_post_revision' ), 10, 2 );
 		add_filter( 'wp_save_post_revision_check_for_changes', array( $this, 'check_for_changes' ), 10, 3 );
 	}
@@ -19,8 +19,8 @@ class Revisions_Service extends Service {
 	protected function disabled() {
 		remove_filter( 'carbon_get_post_meta_post_id', array( $this, 'update_post_id_on_preview' ), 10 );
 		remove_action( 'carbon_fields_post_meta_container_saved', array( $this, 'maybe_copy_meta_to_revision' ), 10 );
-		remove_filter('_wp_post_revision_fields', array( $this, 'maybe_save_revision' ), 10 );
-		remove_filter('_wp_post_revision_fields', array( $this, 'add_fields_to_revision' ), 10 );
+		remove_filter( '_wp_post_revision_fields', array( $this, 'maybe_save_revision' ), 10 );
+		remove_filter( '_wp_post_revision_fields', array( $this, 'add_fields_to_revision' ), 10 );
 		remove_action( 'wp_restore_post_revision', array( $this, 'restore_post_revision' ), 10 );
 		remove_filter( 'wp_save_post_revision_check_for_changes', array( $this, 'check_for_changes' ), 10 );
 	}
@@ -62,7 +62,7 @@ class Revisions_Service extends Service {
 	}
 
 	/**
-	 * @param int $post_id
+	 * @param int                                          $post_id
 	 * @param \Carbon_Fields\Container\Post_Meta_Container $container
 	 */
 	public function maybe_copy_meta_to_revision( $post_id, $container ) {
@@ -104,11 +104,11 @@ class Revisions_Service extends Service {
 
 		$current_screen = get_current_screen();
 
-		$is_revision_screen = $current_screen && $current_screen->id === 'revision';
-		$is_doing_ajax = defined( 'DOING_AJAX' ) && DOING_AJAX;
-		$is_revision_action = ! empty( $_POST['action'] ) && $_POST['action'] === 'get-revision-diffs';
+		$is_revision_screen    = $current_screen && $current_screen->id === 'revision';
+		$is_doing_ajax         = defined( 'DOING_AJAX' ) && DOING_AJAX;
+		$is_revision_action    = ! empty( $_POST['action'] ) && $_POST['action'] === 'get-revision-diffs';
 		$is_revision_diff_ajax = $is_doing_ajax && $is_revision_action;
-		$is_restoring = ! empty( $_GET['action'] ) && $_GET['action'] === 'restore';
+		$is_restoring          = ! empty( $_GET['action'] ) && $_GET['action'] === 'restore';
 
 		// exit early if not on the revision screens or if a restore revision is in progress
 		if ( $is_restoring || ( ! $is_revision_screen && ! $is_revision_diff_ajax ) ) {
@@ -123,7 +123,7 @@ class Revisions_Service extends Service {
 		}
 
 		$revisioned_fields = $this->get_revisioned_fields();
-		$fields = array_merge( $fields, $revisioned_fields );
+		$fields            = array_merge( $fields, $revisioned_fields );
 		// this hook is used when displaying the field values
 		foreach ( $revisioned_fields as $name => $label ) {
 			add_filter( "_wp_post_revision_field_{$name}", array( $this, 'update_revision_field_value' ), 10, 4 );
@@ -133,10 +133,10 @@ class Revisions_Service extends Service {
 	}
 
 	/**
-	 * @param mixed $value
-	 * @param string $field_name
+	 * @param mixed    $value
+	 * @param string   $field_name
 	 * @param \WP_Post $post
-	 * @param bool $direction
+	 * @param bool     $direction
 	 *
 	 * @return int|mixed
 	 */
@@ -164,11 +164,14 @@ class Revisions_Service extends Service {
 	protected function get_revisioned_fields() {
 		$repository = Carbon_Fields::resolve( 'container_repository' );
 		$containers = $repository->get_containers( 'post_meta' );
-		$containers = array_filter( $containers, function( $container ) {
-			/** @var \Carbon_Fields\Container\Post_Meta_Container $container */
-			return !$container->get_revisions_disabled();
-		} );
-		$fields = array();
+		$containers = array_filter(
+			$containers,
+			function ( $container ) {
+				/** @var \Carbon_Fields\Container\Post_Meta_Container $container */
+				return ! $container->get_revisions_disabled();
+			}
+		);
+		$fields     = array();
 		foreach ( $containers as $container ) {
 			/** @var \Carbon_Fields\Container\Post_Meta_Container $container */
 			foreach ( $container->get_fields() as $field ) {
@@ -181,21 +184,21 @@ class Revisions_Service extends Service {
 
 	protected function get_latest_post_revision( $post_id ) {
 		$revisions = wp_get_post_revisions( $post_id );
-		$revision = array_shift($revisions);
+		$revision  = array_shift( $revisions );
 
 		return $revision;
 	}
 
 	protected function get_preview_id() {
-		if( isset( $_GET['preview_id'] ) ) {
+		if ( isset( $_GET['preview_id'] ) ) {
 			return intval( $_GET['preview_id'] );
 		}
 
-		if( isset( $_GET['p'] ) ) {
+		if ( isset( $_GET['p'] ) ) {
 			return intval( $_GET['p'] );
 		}
 
-		if( isset( $_GET['page_id'] ) ) {
+		if ( isset( $_GET['page_id'] ) ) {
 			return intval( $_GET['page_id'] );
 		}
 
@@ -203,30 +206,33 @@ class Revisions_Service extends Service {
 	}
 
 	protected function copy_meta( $from_id, $to_id ) {
-	    $repository = Carbon_Fields::resolve( 'container_repository' );
-	    $containers = $repository->get_containers( 'post_meta' );
-	    $containers = array_filter( $containers, function( $container ) {
-		    /** @var \Carbon_Fields\Container\Post_Meta_Container $container */
-	        return !$container->get_revisions_disabled();
-	    } );
+		$repository = Carbon_Fields::resolve( 'container_repository' );
+		$containers = $repository->get_containers( 'post_meta' );
+		$containers = array_filter(
+			$containers,
+			function ( $container ) {
+				/** @var \Carbon_Fields\Container\Post_Meta_Container $container */
+				return ! $container->get_revisions_disabled();
+			}
+		);
 
-	    $field_keys = array();
-	    foreach ( $containers as $container ) {
-		    /** @var \Carbon_Fields\Container\Post_Meta_Container $container */
-	        foreach ( $container->get_fields() as $field ) {
-	            $field_keys[] = $field->get_name();
-	        }
-	    }
+		$field_keys = array();
+		foreach ( $containers as $container ) {
+			/** @var \Carbon_Fields\Container\Post_Meta_Container $container */
+			foreach ( $container->get_fields() as $field ) {
+				$field_keys[] = $field->get_name();
+			}
+		}
 
-	    $meta = get_post_meta( $from_id );
-	    $meta_to_copy = $this->filter_meta_by_keys( $meta, $field_keys );
+		$meta         = get_post_meta( $from_id );
+		$meta_to_copy = $this->filter_meta_by_keys( $meta, $field_keys );
 
-	    if ( ! $meta_to_copy ) {
-	    	return;
-	    }
+		if ( ! $meta_to_copy ) {
+			return;
+		}
 
-	    $this->delete_old_meta( $to_id, $meta_to_copy );
-	    $this->insert_new_meta( $to_id, $meta_to_copy );
+		$this->delete_old_meta( $to_id, $meta_to_copy );
+		$this->insert_new_meta( $to_id, $meta_to_copy );
 	}
 
 	protected function meta_key_matches_names( $meta_key, $names ) {
@@ -259,7 +265,7 @@ class Revisions_Service extends Service {
 			return;
 		}
 
-		$keys = $this->get_keys_for_mysql( $meta_to_copy );
+		$keys         = $this->get_keys_for_mysql( $meta_to_copy );
 		$delete_query = $wpdb->prepare(
 			"DELETE FROM `{$wpdb->postmeta}` WHERE `meta_key` IN ({$keys}) AND `post_id` = %d",
 			$to_id
@@ -277,11 +283,11 @@ class Revisions_Service extends Service {
 		$values = array();
 		foreach ( $meta_to_copy as $meta_key => $meta_value ) {
 			$meta_value_string = ( is_array( $meta_value ) ) ? $meta_value[0] : $meta_value;
-			$value = '(';
-			$value .= intval( $to_id );
-			$value .= ", '" . esc_sql( $meta_key ) . "'";
-			$value .= ", '" . esc_sql( $meta_value_string ) . "'";
-			$value .= ')';
+			$value             = '(';
+			$value            .= intval( $to_id );
+			$value            .= ", '" . esc_sql( $meta_key ) . "'";
+			$value            .= ", '" . esc_sql( $meta_value_string ) . "'";
+			$value            .= ')';
 
 			$values[] = $value;
 		}
@@ -290,13 +296,13 @@ class Revisions_Service extends Service {
 
 		$sql = "INSERT INTO `{$wpdb->postmeta}`(post_id, meta_key, meta_value) VALUES " . $values_string;
 
-	    $wpdb->query( $sql );
+		$wpdb->query( $sql );
 	}
 
 	protected function get_keys_for_mysql( $meta_to_copy ) {
 		$keys = array_keys( $meta_to_copy );
 		$keys = array_map(
-			function( $item ) {
+			function ( $item ) {
 				$item = "'" . esc_sql( $item ) . "'";
 				return $item;
 			},

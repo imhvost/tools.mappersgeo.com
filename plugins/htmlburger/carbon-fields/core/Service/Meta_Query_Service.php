@@ -32,7 +32,7 @@ class Meta_Query_Service extends Service {
 
 	public function __construct( ContainerRepository $container_repository, Key_Toolset $key_toolset ) {
 		$this->container_repository = $container_repository;
-		$this->key_toolset = $key_toolset;
+		$this->key_toolset          = $key_toolset;
 	}
 
 	/**
@@ -79,12 +79,12 @@ class Meta_Query_Service extends Service {
 		}
 
 		$field_name = preg_replace( '/^_/', '', $condition['key'] );
-		$field = $this->container_repository->get_field_in_containers( $field_name, $container_type );
-		$property = isset( $condition['carbon_field_property'] ) ? $condition['carbon_field_property'] : Value_Set::VALUE_PROPERTY;
+		$field      = $this->container_repository->get_field_in_containers( $field_name, $container_type );
+		$property   = isset( $condition['carbon_field_property'] ) ? $condition['carbon_field_property'] : Value_Set::VALUE_PROPERTY;
 
 		// bail if we cannot find the field
 		if ( $field !== null ) {
-			$storage_key = $this->key_toolset->get_storage_key_with_index_wildcards(
+			$storage_key      = $this->key_toolset->get_storage_key_with_index_wildcards(
 				$field->is_simple_root_field(),
 				array_merge( $field->get_hierarchy(), array( $field->get_base_name() ) ),
 				$property
@@ -100,14 +100,14 @@ class Meta_Query_Service extends Service {
 	}
 
 	public function filter_get_meta_sql( $sql ) {
-        if ( strpos( $sql['where'], static::META_KEY_PREFIX ) !== false ) {
-            $sql['where'] = preg_replace( $this->get_meta_key_replace_regex(), '$1 LIKE $2', $sql['where'] );
-        }
-        if ( strpos( $sql['join'], static::META_KEY_PREFIX ) !== false ) {
-            $sql['join'] = str_replace( static::META_KEY_PREFIX, '', $sql['join'] );
-        }
-        return $sql;
-    }
+		if ( strpos( $sql['where'], static::META_KEY_PREFIX ) !== false ) {
+			$sql['where'] = preg_replace( $this->get_meta_key_replace_regex(), '$1 LIKE $2', $sql['where'] );
+		}
+		if ( strpos( $sql['join'], static::META_KEY_PREFIX ) !== false ) {
+			$sql['join'] = str_replace( static::META_KEY_PREFIX, '', $sql['join'] );
+		}
+		return $sql;
+	}
 
 	/**************************************************
 	 * WP_QUERY                                       *
@@ -138,7 +138,7 @@ class Meta_Query_Service extends Service {
 	public function hook_pre_get_terms( $query ) {
 		$meta_query = ! empty( $query->query_vars['meta_query'] ) ? $query->query_vars['meta_query'] : array();
 		if ( ! empty( $meta_query ) ) {
-			$meta_query = $this->filter_meta_query_array( $meta_query, 'term_meta' );
+			$meta_query                      = $this->filter_meta_query_array( $meta_query, 'term_meta' );
 			$query->query_vars['meta_query'] = $meta_query;
 		}
 	}

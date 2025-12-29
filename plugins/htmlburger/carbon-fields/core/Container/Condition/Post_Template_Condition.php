@@ -16,7 +16,7 @@ class Post_Template_Condition extends Condition {
 	 * @return bool
 	 */
 	public function is_fulfilled( $environment ) {
-		$post_id = $environment['post_id'];
+		$post_id           = $environment['post_id'];
 		$is_page_for_posts = intval( $post_id ) === intval( get_option( 'page_for_posts' ) );
 
 		$post_template = get_post_meta( $post_id, '_wp_page_template', true );

@@ -73,18 +73,18 @@ abstract class Widget extends \WP_Widget {
 
 		$this->register_widget_id( $widget_id );
 
-		# Generate Classes
+		// Generate Classes
 		if ( ! is_array( $classname ) ) {
 			$classname = (array) $classname;
 		}
 		$classname[] = $widget_id;
-		$classname = array_filter( $classname );
-		$classname = implode( ' ', $classname );
+		$classname   = array_filter( $classname );
+		$classname   = implode( ' ', $classname );
 
 		$widget_options = array(
 			'description' => $description,
-			'classname' => $classname,
-			'widget_ID' => $widget_id,
+			'classname'   => $classname,
+			'widget_ID'   => $widget_id,
 		);
 
 		parent::__construct( $widget_id, $title, $widget_options, $this->widget_control_options );
@@ -101,7 +101,7 @@ abstract class Widget extends \WP_Widget {
 	public function update( $new_instance, $old_instance ) {
 		// Support compacted input
 		$new_instance = Helper::expand_compacted_input( $new_instance );
-		$compact_key = 'widget-' . $this->id_base;
+		$compact_key  = 'widget-' . $this->id_base;
 		if ( ! empty( $new_instance[ $compact_key ][0] ) ) {
 			$new_instance = array_merge( $new_instance, $new_instance[ $compact_key ][0] );
 			unset( $new_instance[ $compact_key ] );
@@ -190,6 +190,7 @@ abstract class Widget extends \WP_Widget {
 	/**
 	 * The actual content of the widget.
 	 * Generally should be overriden by the specific widget classes.
+	 *
 	 * @param array $args     Display arguments including 'before_title', 'after_title',
 	 *                        'before_widget', and 'after_widget'.
 	 * @param array $instance The settings for the particular instance of the widget.

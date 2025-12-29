@@ -16,10 +16,10 @@ class Map_Field extends Field {
 	 */
 	protected $default_value = array(
 		Value_Set::VALUE_PROPERTY => '40.346544,-101.645507',
-		'lat' => 40.346544,
-		'lng' => -101.645507,
-		'zoom' => 10,
-		'address' => '',
+		'lat'                     => 40.346544,
+		'lng'                     => -101.645507,
+		'zoom'                    => 10,
+		'address'                 => '',
 	);
 
 	/**
@@ -30,7 +30,17 @@ class Map_Field extends Field {
 	 * @param string $label Field label
 	 */
 	public function __construct( $type, $name, $label ) {
-		$this->set_value_set( new Value_Set( Value_Set::TYPE_MULTIPLE_PROPERTIES, array( 'lat' => '', 'lng' => '', 'zoom' => '', 'address' => '' ) ) );
+		$this->set_value_set(
+			new Value_Set(
+				Value_Set::TYPE_MULTIPLE_PROPERTIES,
+				array(
+					'lat'     => '',
+					'lng'     => '',
+					'zoom'    => '',
+					'address' => '',
+				)
+			)
+		);
 		parent::__construct( $type, $name, $label );
 	}
 
@@ -40,7 +50,7 @@ class Map_Field extends Field {
 	 */
 	public static function admin_enqueue_scripts() {
 		$api_key = apply_filters( 'carbon_fields_map_field_api_key', false );
-		$url = apply_filters( 'carbon_fields_map_field_api_url', '//maps.googleapis.com/maps/api/js?' . ( $api_key ? 'key=' . $api_key : '' ), $api_key );
+		$url     = apply_filters( 'carbon_fields_map_field_api_url', '//maps.googleapis.com/maps/api/js?' . ( $api_key ? 'key=' . $api_key : '' ), $api_key );
 
 		wp_enqueue_script( 'carbon-google-maps', $url, array(), null );
 	}
@@ -65,9 +75,9 @@ class Map_Field extends Field {
 		}
 
 		$value_set = array(
-			'lat' => '',
-			'lng' => '',
-			'zoom' => '',
+			'lat'     => '',
+			'lng'     => '',
+			'zoom'    => '',
 			'address' => '',
 		);
 
@@ -77,9 +87,9 @@ class Map_Field extends Field {
 			}
 		}
 
-		$value_set['lat'] = (float) $value_set['lat'];
-		$value_set['lng'] = (float) $value_set['lng'];
-		$value_set['zoom'] = (int) $value_set['zoom'];
+		$value_set['lat']                       = (float) $value_set['lat'];
+		$value_set['lng']                       = (float) $value_set['lng'];
+		$value_set['zoom']                      = (int) $value_set['zoom'];
 		$value_set[ Value_Set::VALUE_PROPERTY ] = $this->lat_lng_to_latlng( $value_set['lat'], $value_set['lng'] );
 
 		$this->set_value( $value_set );
@@ -97,15 +107,18 @@ class Map_Field extends Field {
 
 		$value_set = $this->get_value();
 
-		$field_data = array_merge( $field_data, array(
-			'value' => array(
-				'lat' => floatval( $value_set['lat'] ),
-				'lng' => floatval( $value_set['lng'] ),
-				'zoom' => intval( $value_set['zoom'] ),
-				'address' => $value_set['address'],
-				'value' => $value_set[ Value_Set::VALUE_PROPERTY ],
-			),
-		) );
+		$field_data = array_merge(
+			$field_data,
+			array(
+				'value' => array(
+					'lat'     => floatval( $value_set['lat'] ),
+					'lng'     => floatval( $value_set['lng'] ),
+					'zoom'    => intval( $value_set['zoom'] ),
+					'address' => $value_set['address'],
+					'value'   => $value_set[ Value_Set::VALUE_PROPERTY ],
+				),
+			)
+		);
 
 		return $field_data;
 	}
@@ -119,14 +132,16 @@ class Map_Field extends Field {
 	 * @return $this
 	 */
 	public function set_position( $lat, $lng, $zoom ) {
-		return $this->set_default_value( array_merge(
-			$this->get_default_value(),
-			array(
-				Value_Set::VALUE_PROPERTY => $this->lat_lng_to_latlng( $lat, $lng ),
-				'lat' => $lat,
-				'lng' => $lng,
-				'zoom' => $zoom,
+		return $this->set_default_value(
+			array_merge(
+				$this->get_default_value(),
+				array(
+					Value_Set::VALUE_PROPERTY => $this->lat_lng_to_latlng( $lat, $lng ),
+					'lat'                     => $lat,
+					'lng'                     => $lng,
+					'zoom'                    => $zoom,
+				)
 			)
-		) );
+		);
 	}
 }

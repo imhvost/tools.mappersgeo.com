@@ -21,7 +21,7 @@ class Hidden_Field extends Field {
 	/**
 	 * This states configures if the field is shown in the backend.
 	 *
-	 * @param  bool  $hidden
+	 * @param  bool $hidden
 	 * @return self  $this
 	 */
 	public function set_hidden( $hidden = true ) {
@@ -38,9 +38,12 @@ class Hidden_Field extends Field {
 	public function to_json( $load ) {
 		$field_data = parent::to_json( $load );
 
-		$field_data = array_merge( $field_data, array(
-			'hidden' => $this->get_hidden()
-		) );
+		$field_data = array_merge(
+			$field_data,
+			array(
+				'hidden' => $this->get_hidden(),
+			)
+		);
 
 		return $field_data;
 	}

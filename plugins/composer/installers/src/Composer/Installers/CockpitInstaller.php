@@ -2,35 +2,33 @@
 
 namespace Composer\Installers;
 
-class CockpitInstaller extends BaseInstaller
-{
-    /** @var array<string, string> */
-    protected $locations = array(
-        'module' => 'cockpit/modules/addons/{$name}/',
-    );
+class CockpitInstaller extends BaseInstaller {
 
-    /**
-     * Format module name.
-     *
-     * Strip `module-` prefix from package name.
-     */
-    public function inflectPackageVars(array $vars): array
-    {
-        if ($vars['type'] == 'cockpit-module') {
-            return $this->inflectModuleVars($vars);
-        }
+	/** @var array<string, string> */
+	protected $locations = array(
+		'module' => 'cockpit/modules/addons/{$name}/',
+	);
 
-        return $vars;
-    }
+	/**
+	 * Format module name.
+	 *
+	 * Strip `module-` prefix from package name.
+	 */
+	public function inflectPackageVars( array $vars ): array {
+		if ( $vars['type'] == 'cockpit-module' ) {
+			return $this->inflectModuleVars( $vars );
+		}
 
-    /**
-     * @param array<string, string> $vars
-     * @return array<string, string>
-     */
-    public function inflectModuleVars(array $vars): array
-    {
-        $vars['name'] = ucfirst($this->pregReplace('/cockpit-/i', '', $vars['name']));
+		return $vars;
+	}
 
-        return $vars;
-    }
+	/**
+	 * @param array<string, string> $vars
+	 * @return array<string, string>
+	 */
+	public function inflectModuleVars( array $vars ): array {
+		$vars['name'] = ucfirst( $this->pregReplace( '/cockpit-/i', '', $vars['name'] ) );
+
+		return $vars;
+	}
 }

@@ -26,12 +26,14 @@ class Theme_Options_Datastore extends Key_Value_Datastore {
 
 		$storage_key_comparisons = $this->key_toolset->storage_key_patterns_to_sql( '`option_name`', $storage_key_patterns );
 
-		$storage_array = $wpdb->get_results( '
+		$storage_array = $wpdb->get_results(
+			'
 			SELECT `option_name` AS `key`, `option_value` AS `value`
 			FROM ' . $wpdb->options . '
 			WHERE ' . $storage_key_comparisons . '
 			ORDER BY `option_name` ASC
-		' );
+		'
+		);
 
 		$storage_array = apply_filters( 'carbon_fields_datastore_storage_array', $storage_array, $this, $storage_key_patterns );
 
@@ -53,11 +55,11 @@ class Theme_Options_Datastore extends Key_Value_Datastore {
 	 *
 	 * @param string $key
 	 * @param string $value
-	 * @param bool $autoload
+	 * @param bool   $autoload
 	 */
 	protected function save_key_value_pair_with_autoload( $key, $value, $autoload = true ) {
-		$autoload = $autoload ? 'yes': 'no';
-		$notoptions = wp_cache_get( 'notoptions', 'options' );
+		$autoload           = $autoload ? 'yes' : 'no';
+		$notoptions         = wp_cache_get( 'notoptions', 'options' );
 		$notoptions[ $key ] = '';
 		wp_cache_set( 'notoptions', $notoptions, 'options' );
 
@@ -106,7 +108,7 @@ class Theme_Options_Datastore extends Key_Value_Datastore {
 	public function delete( Field $field ) {
 		global $wpdb;
 
-		$storage_key_patterns = $this->key_toolset->get_storage_key_deleter_patterns(
+		$storage_key_patterns    = $this->key_toolset->get_storage_key_deleter_patterns(
 			( $field instanceof \Carbon_Fields\Field\Complex_Field ),
 			$field->is_simple_root_field(),
 			$this->get_full_hierarchy_for_field( $field ),
@@ -114,11 +116,13 @@ class Theme_Options_Datastore extends Key_Value_Datastore {
 		);
 		$storage_key_comparisons = $this->key_toolset->storage_key_patterns_to_sql( '`option_name`', $storage_key_patterns );
 
-		$option_names = $wpdb->get_col( '
+		$option_names = $wpdb->get_col(
+			'
 			SELECT `option_name`
 			FROM `' . $wpdb->options . '`
 			WHERE ' . $storage_key_comparisons . '
-		' );
+		'
+		);
 
 		foreach ( $option_names as $option_name ) {
 			delete_option( $option_name );

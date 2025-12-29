@@ -12,11 +12,11 @@ class Current_User_Role_Condition extends User_Role_Condition {
 	/**
 	 * Get roles for a user from the environment
 	 *
-	 * @param  array         $environment
+	 * @param  array $environment
 	 * @return array<string>
 	 */
 	protected function get_user_roles( $environment ) {
-		$user = wp_get_current_user();
+		$user  = wp_get_current_user();
 		$roles = $user ? $user->roles : array();
 		return $roles;
 	}

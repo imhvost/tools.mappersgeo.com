@@ -5,18 +5,18 @@ if ( ! isset( $container_css_class ) ) {
 }
 ?>
 <div class="wrap carbon-<?php echo $container_css_class; ?>">
-	<h2><?php echo $this->title ?></h2>
+	<h2><?php echo $this->title; ?></h2>
 
-	<?php if ( $this->errors ) :  ?>
+	<?php if ( $this->errors ) : ?>
 		<div class="error settings-error">
-			<?php foreach ( $this->errors as $error ) :  ?>
+			<?php foreach ( $this->errors as $error ) : ?>
 				<p><strong><?php echo $error; ?></strong></p>
 			<?php endforeach ?>
 		</div>
-	<?php elseif ( $this->notifications ) :  ?>
-		<?php foreach ( $this->notifications as $notification ) :  ?>
+	<?php elseif ( $this->notifications ) : ?>
+		<?php foreach ( $this->notifications as $notification ) : ?>
 			<div class="settings-error updated">
-				<p><strong><?php echo $notification ?></strong></p>
+				<p><strong><?php echo $notification; ?></strong></p>
 			</div>
 		<?php endforeach ?>
 	<?php endif; ?>

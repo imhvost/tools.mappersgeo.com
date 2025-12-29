@@ -57,7 +57,7 @@ final class Carbon_Fields {
 	public static function instance() {
 		static $instance = null;
 		if ( $instance === null ) {
-			$instance = new static();
+			$instance = new self();
 		}
 		return $instance;
 	}
@@ -77,7 +77,7 @@ final class Carbon_Fields {
 	 * @return mixed
 	 */
 	public static function resolve( $key, $subcontainer = null ) {
-		$ioc = static::instance()->ioc;
+		$ioc = self::instance()->ioc;
 		if ( $subcontainer !== null ) {
 			if ( ! isset( $ioc[ $subcontainer ] ) ) {
 				return null;
@@ -96,12 +96,12 @@ final class Carbon_Fields {
 	 * @return mixed
 	 */
 	public static function resolve_with_arguments( $identifier, $arguments, $subcontainer = null ) {
-		$local_container = $subcontainer ? static::resolve( $subcontainer ) : static::instance()->ioc;
-		$container = new PimpleContainer();
-		$container['root_container'] = static::instance()->ioc;
+		$local_container              = $subcontainer ? self::resolve( $subcontainer ) : self::instance()->ioc;
+		$container                    = new PimpleContainer();
+		$container['root_container']  = self::instance()->ioc;
 		$container['local_container'] = $local_container;
-		$container['arguments'] = $arguments;
-		$container['object'] = $local_container->raw( $identifier );
+		$container['arguments']       = $arguments;
+		$container['object']          = $local_container->raw( $identifier );
 		return $container['object'];
 	}
 
@@ -112,7 +112,7 @@ final class Carbon_Fields {
 	 * @return mixed
 	 */
 	public static function service( $service_name ) {
-		return static::resolve( $service_name, 'services' );
+		return self::resolve( $service_name, 'services' );
 	}
 
 	/**
@@ -123,7 +123,7 @@ final class Carbon_Fields {
 	 * @return bool
 	 */
 	public static function has( $key, $subcontainer = null ) {
-		$ioc = static::instance()->ioc;
+		$ioc = self::instance()->ioc;
 		if ( $subcontainer !== null ) {
 			if ( ! isset( $ioc[ $subcontainer ] ) ) {
 				return false;
@@ -142,15 +142,15 @@ final class Carbon_Fields {
 	public static function extend( $class, $extender ) {
 		$type_dictionary = array(
 			'_Container' => 'containers',
-			'_Field' => 'fields',
+			'_Field'     => 'fields',
 			'_Condition' => 'container_conditions',
 		);
 
-		$extension_suffix = '';
+		$extension_suffix       = '';
 		$extension_subcontainer = '';
 		foreach ( $type_dictionary as $suffix => $subcontainer ) {
 			if ( substr( $class, -strlen( $suffix ) ) === $suffix ) {
-				$extension_suffix = $suffix;
+				$extension_suffix       = $suffix;
 				$extension_subcontainer = $subcontainer;
 			}
 		}
@@ -160,8 +160,8 @@ final class Carbon_Fields {
 			return;
 		}
 
-		$identifier = Helper::class_to_type( $class, $extension_suffix );
-		$ioc = static::instance()->ioc[ $extension_subcontainer ];
+		$identifier         = Helper::class_to_type( $class, $extension_suffix );
+		$ioc                = self::instance()->ioc[ $extension_subcontainer ];
 		$ioc[ $identifier ] = $ioc->factory( $extender );
 	}
 
@@ -178,7 +178,7 @@ final class Carbon_Fields {
 	 * Boot Carbon Fields with default IoC dependencies
 	 */
 	public static function boot() {
-		if ( static::is_booted() ) {
+		if ( self::is_booted() ) {
 			return;
 		}
 
@@ -186,9 +186,9 @@ final class Carbon_Fields {
 			return; // Possibly attempting to load multiple versions of Carbon Fields; bail in favor of already loaded version
 		}
 
-		static::resolve( 'loader' )->boot();
-		static::instance()->booted = true;
-		static::instance()->get_emitter()->emit( 'loaded' );
+		self::resolve( 'loader' )->boot();
+		self::instance()->booted = true;
+		self::instance()->get_emitter()->emit( 'loaded' );
 		do_action( 'carbon_fields_loaded' );
 	}
 
@@ -196,14 +196,14 @@ final class Carbon_Fields {
 	 * Check if Carbon Fields has booted
 	 */
 	public static function is_booted() {
-		return static::instance()->booted;
+		return self::instance()->booted;
 	}
 
 	/**
 	 * Throw exception if Carbon Fields has not been booted
 	 */
 	public static function verify_boot() {
-		if ( ! static::is_booted() ) {
+		if ( ! self::is_booted() ) {
 			throw new \Exception( 'You must call Carbon_Fields\Carbon_Fields::boot() in a suitable WordPress hook before using Carbon Fields.' );
 		}
 	}
@@ -212,7 +212,7 @@ final class Carbon_Fields {
 	 * Throw exception if fields have not been registered yet
 	 */
 	public static function verify_fields_registered() {
-		$register_action = 'carbon_fields_register_fields';
+		$register_action   = 'carbon_fields_register_fields';
 		$registered_action = 'carbon_fields_fields_registered';
 		if ( ! doing_action( $register_action ) && ! doing_action( $registered_action ) && did_action( $registered_action ) === 0 ) {
 			Incorrect_Syntax_Exception::raise( 'Attempted to access a field before the ' . $register_action . ' and ' . $registered_action . ' actions have fired yet.' );
@@ -226,21 +226,21 @@ final class Carbon_Fields {
 	 * @return string
 	 */
 	public static function directory_to_url( $directory ) {
-		$url = \trailingslashit( $directory );
+		$url   = \trailingslashit( $directory );
 		$count = 0;
 
-		# Sanitize directory separator on Windows
-		$url = str_replace( '\\' ,'/', $url );
+		// Sanitize directory separator on Windows
+		$url = str_replace( '\\', '/', $url );
 
 		$possible_locations = array(
-			WP_PLUGIN_DIR => \plugins_url(), # If installed as a plugin
-			WP_CONTENT_DIR => \content_url(), # If anywhere in wp-content
-			ABSPATH => \site_url( '/' ), # If anywhere else within the WordPress installation
+			WP_PLUGIN_DIR  => \plugins_url(), // If installed as a plugin
+			WP_CONTENT_DIR => \content_url(), // If anywhere in wp-content
+			ABSPATH        => \site_url( '/' ), // If anywhere else within the WordPress installation
 		);
 
 		foreach ( $possible_locations as $test_dir => $test_url ) {
-			$test_dir_normalized = str_replace( '\\' ,'/', $test_dir );
-			$url = str_replace( $test_dir_normalized, $test_url, $url, $count );
+			$test_dir_normalized = str_replace( '\\', '/', $test_dir );
+			$url                 = str_replace( $test_dir_normalized, $test_url, $url, $count );
 
 			if ( $count > 0 ) {
 				return \untrailingslashit( $url );
@@ -257,7 +257,7 @@ final class Carbon_Fields {
 	 */
 	public function get_emitter() {
 		if ( $this->emitter === null ) {
-			$this->emitter = static::resolve( 'event_emitter' );
+			$this->emitter = self::resolve( 'event_emitter' );
 		}
 		return $this->emitter;
 	}
@@ -265,12 +265,12 @@ final class Carbon_Fields {
 	/**
 	 * Add a listener to an event
 	 *
-	 * @param string   $event
+	 * @param string         $event
 	 * @param Event\Listener $listener
 	 * @return Event\Listener $listener
 	 */
 	public static function add_listener( $event, $listener ) {
-		return static::instance()->get_emitter()->add_listener( $event, $listener );
+		return self::instance()->get_emitter()->add_listener( $event, $listener );
 	}
 
 	/**
@@ -279,29 +279,29 @@ final class Carbon_Fields {
 	 * @param Event\Listener $listener
 	 */
 	public static function remove_listener( $listener ) {
-		static::instance()->get_emitter()->remove_listener( $listener );
+		self::instance()->get_emitter()->remove_listener( $listener );
 	}
 
 	/**
 	 * Add a persistent listener to an event
 	 *
-	 * @param  string   $event    The event to listen for
-	 * @param  string   $callable The callable to call when the event is broadcasted
+	 * @param  string $event    The event to listen for
+	 * @param  string $callable The callable to call when the event is broadcasted
 	 * @return Event\Listener
 	 */
 	public static function on( $event, $callable ) {
-		return static::instance()->get_emitter()->on( $event, $callable );
+		return self::instance()->get_emitter()->on( $event, $callable );
 	}
 
 	/**
 	 * Add a one-time listener to an event
 	 *
-	 * @param  string   $event    The event to listen for
-	 * @param  string   $callable The callable to call when the event is broadcasted
+	 * @param  string $event    The event to listen for
+	 * @param  string $callable The callable to call when the event is broadcasted
 	 * @return Event\Listener
 	 */
 	public static function once( $event, $callable ) {
-		return static::instance()->get_emitter()->once( $event, $callable );
+		return self::instance()->get_emitter()->once( $event, $callable );
 	}
 
 	/**
@@ -312,73 +312,73 @@ final class Carbon_Fields {
 	protected static function get_default_ioc() {
 		$ioc = new PimpleContainer();
 
-		$ioc['loader'] = function( $ioc ) {
+		$ioc['loader'] = function ( $ioc ) {
 			return new Loader( $ioc['sidebar_manager'], $ioc['container_repository'] );
 		};
 
-		$ioc['container_repository'] = function() {
+		$ioc['container_repository'] = function () {
 			return new ContainerRepository();
 		};
 
-		$ioc['containers'] = function() {
+		$ioc['containers'] = function () {
 			return new PimpleContainer();
 		};
 
-		$ioc['fields'] = function() {
+		$ioc['fields'] = function () {
 			return new PimpleContainer();
 		};
 
-		$ioc['key_toolset'] = function() {
+		$ioc['key_toolset'] = function () {
 			return new Key_Toolset();
 		};
 
-		$ioc['wp_toolset'] = function() {
+		$ioc['wp_toolset'] = function () {
 			return new WP_Toolset();
 		};
 
-		$ioc['sidebar_manager'] = function() {
+		$ioc['sidebar_manager'] = function () {
 			return new Sidebar_Manager();
 		};
 
-		$ioc['rest_api_router'] = function( $ioc ) {
+		$ioc['rest_api_router'] = function ( $ioc ) {
 			return new REST_API_Router( $ioc['container_repository'] );
 		};
 
-		$ioc['rest_api_decorator'] = function( $ioc ) {
+		$ioc['rest_api_decorator'] = function ( $ioc ) {
 			return new REST_API_Decorator( $ioc['container_repository'] );
 		};
 
 		/* Services */
-		$ioc['services'] = function() {
+		$ioc['services'] = function () {
 			return new PimpleContainer();
 		};
 
-		$ioc['services']['revisions'] = function() use ( $ioc ) {
+		$ioc['services']['revisions'] = function () use ( $ioc ) {
 			return new Revisions_Service();
 		};
 
-		$ioc['services']['meta_query'] = function() use ( $ioc ) {
+		$ioc['services']['meta_query'] = function () use ( $ioc ) {
 			return new Meta_Query_Service( $ioc['container_repository'], $ioc['key_toolset'] );
 		};
 
-		$ioc['services']['legacy_storage'] = function() use ( $ioc ) {
+		$ioc['services']['legacy_storage'] = function () use ( $ioc ) {
 			return new Legacy_Storage_Service_v_1_5( $ioc['container_repository'], $ioc['key_toolset'] );
 		};
 
-		$ioc['services']['rest_api'] = function() use ( $ioc ) {
+		$ioc['services']['rest_api'] = function () use ( $ioc ) {
 			return new REST_API_Service( $ioc['rest_api_router'], $ioc['rest_api_decorator'] );
 		};
 
 		/* Events */
-		$ioc['event_emitter'] = function() {
+		$ioc['event_emitter'] = function () {
 			return new Emitter();
 		};
 
-		$ioc['event_persistent_listener'] = function() {
+		$ioc['event_persistent_listener'] = function () {
 			return new PersistentListener();
 		};
 
-		$ioc['event_single_event_listener'] = function() {
+		$ioc['event_single_event_listener'] = function () {
 			return new SingleEventListener();
 		};
 

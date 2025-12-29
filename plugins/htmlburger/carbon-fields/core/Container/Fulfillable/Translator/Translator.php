@@ -47,7 +47,7 @@ abstract class Translator {
 	/**
 	 * Translate foreign data to a Fulfillable
 	 *
-	 * @param  mixed       $foreign
+	 * @param  mixed $foreign
 	 * @return Fulfillable
 	 */
 	abstract public function foreign_to_fulfillable( $foreign );

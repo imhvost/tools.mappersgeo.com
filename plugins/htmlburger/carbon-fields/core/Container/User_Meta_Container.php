@@ -94,8 +94,8 @@ class User_Meta_Container extends Container {
 
 		$environment = array(
 			'user_id' => $user ? intval( $user->ID ) : 0,
-			'user' => $user ? $user : null,
-			'roles' => $user ? $user->roles : array(),
+			'user'    => $user ? $user : null,
+			'roles'   => $user ? $user->roles : array(),
 		);
 		return $environment;
 	}
@@ -119,11 +119,11 @@ class User_Meta_Container extends Container {
 	 * @return array
 	 */
 	protected function get_environment_for_object( $object_id ) {
-		$user = get_userdata( $object_id );
+		$user        = get_userdata( $object_id );
 		$environment = array(
 			'user_id' => intval( $user->ID ),
-			'user' => $user,
-			'roles' => $user->roles,
+			'user'    => $user,
+			'roles'   => $user->roles,
 		);
 		return $environment;
 	}
@@ -137,7 +137,7 @@ class User_Meta_Container extends Container {
 	public function is_valid_attach_for_object( $object_id = null ) {
 		$user = get_userdata( $object_id );
 
-		if ( ! $user  ) {
+		if ( ! $user ) {
 			return false;
 		}
 
@@ -174,7 +174,7 @@ class User_Meta_Container extends Container {
 			// array_shift removed the returned role from the $user_profile->roles
 			// $roles_to_shift prevents changing of the $user_profile->roles variable
 			$roles_to_shift = $user_profile->roles;
-			$profile_role = array_shift( $roles_to_shift );
+			$profile_role   = array_shift( $roles_to_shift );
 		}
 
 		include \Carbon_Fields\DIR . '/templates/Container/user_meta.php';

@@ -2,7 +2,6 @@
 
 namespace Carbon_Fields\Field;
 
-
 /**
  * File upload field class.
  *
@@ -44,16 +43,19 @@ class File_Field extends Field {
 	 *
 	 * @access public
 	 *
-	 * @param  bool  $load Should the value be loaded from the database or use the value from the current instance.
+	 * @param  bool $load Should the value be loaded from the database or use the value from the current instance.
 	 * @return array
 	 */
 	public function to_json( $load ) {
 		$field_data = parent::to_json( $load );
 
-		$field_data = array_merge( $field_data, array(
-			'type_filter' => $this->field_type,
-			'value_type'  => $this->value_type,
-		) );
+		$field_data = array_merge(
+			$field_data,
+			array(
+				'type_filter' => $this->field_type,
+				'value_type'  => $this->value_type,
+			)
+		);
 
 		return $field_data;
 	}

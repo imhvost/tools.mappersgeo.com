@@ -4,43 +4,46 @@ namespace Composer\Installers;
 
 /**
  * Plugin/theme installer for majima
+ *
  * @author David Neustadt
  */
-class MajimaInstaller extends BaseInstaller
-{
-    /** @var array<string, string> */
-    protected $locations = array(
-        'plugin' => 'plugins/{$name}/',
-    );
+class MajimaInstaller extends BaseInstaller {
 
-    /**
-     * Transforms the names
-     *
-     * @param array<string, string> $vars
-     * @return array<string, string>
-     */
-    public function inflectPackageVars(array $vars): array
-    {
-        return $this->correctPluginName($vars);
-    }
+	/** @var array<string, string> */
+	protected $locations = array(
+		'plugin' => 'plugins/{$name}/',
+	);
 
-    /**
-     * Change hyphenated names to camelcase
-     *
-     * @param array<string, string> $vars
-     * @return array<string, string>
-     */
-    private function correctPluginName(array $vars): array
-    {
-        $camelCasedName = preg_replace_callback('/(-[a-z])/', function ($matches) {
-            return strtoupper($matches[0][1]);
-        }, $vars['name']);
+	/**
+	 * Transforms the names
+	 *
+	 * @param array<string, string> $vars
+	 * @return array<string, string>
+	 */
+	public function inflectPackageVars( array $vars ): array {
+		return $this->correctPluginName( $vars );
+	}
 
-        if (null === $camelCasedName) {
-            throw new \RuntimeException('Failed to run preg_replace_callback: '.preg_last_error());
-        }
+	/**
+	 * Change hyphenated names to camelcase
+	 *
+	 * @param array<string, string> $vars
+	 * @return array<string, string>
+	 */
+	private function correctPluginName( array $vars ): array {
+		$camelCasedName = preg_replace_callback(
+			'/(-[a-z])/',
+			function ( $matches ) {
+				return strtoupper( $matches[0][1] );
+			},
+			$vars['name']
+		);
 
-        $vars['name'] = ucfirst($camelCasedName);
-        return $vars;
-    }
+		if ( null === $camelCasedName ) {
+			throw new \RuntimeException( 'Failed to run preg_replace_callback: ' . preg_last_error() );
+		}
+
+		$vars['name'] = ucfirst( $camelCasedName );
+		return $vars;
+	}
 }

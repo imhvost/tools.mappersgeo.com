@@ -17,8 +17,8 @@ class Post_Format_Condition extends Condition {
 	 */
 	public function is_fulfilled( $environment ) {
 		$post_id = $environment['post_id'];
-		$format = get_post_format( $post_id );
-		$format = ( $format ) ? $format : ''; // force an empty string for falsy values to ensure strict comparisons work
+		$format  = get_post_format( $post_id );
+		$format  = ( $format ) ? $format : ''; // force an empty string for falsy values to ensure strict comparisons work
 
 		return $this->compare(
 			$format,

@@ -10,12 +10,12 @@ class Time_Field extends Date_Field {
 	 * {@inheritDoc}
 	 */
 	protected $picker_options = array(
-		'allowInput' => true,
-		'enableTime' => true,
-		'noCalendar' => true,
+		'allowInput'    => true,
+		'enableTime'    => true,
+		'noCalendar'    => true,
 		'enableSeconds' => true,
-		'altInput' => true,
-		'altFormat' => "h:i:S K",
+		'altInput'      => true,
+		'altFormat'     => 'h:i:S K',
 	);
 
 	/**
@@ -35,9 +35,9 @@ class Time_Field extends Date_Field {
 
 	public function get_storage_format() {
 		if ( $this->get_context() === 'block' ) {
-			$this->input_format_js = "Y-m-d h:i:S K";
+			$this->input_format_js = 'Y-m-d h:i:S K';
 
-			return "Y-m-d H:i:s";
+			return 'Y-m-d H:i:s';
 		}
 
 		return $this->storage_format;

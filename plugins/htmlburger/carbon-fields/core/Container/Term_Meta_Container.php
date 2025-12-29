@@ -82,15 +82,15 @@ class Term_Meta_Container extends Container {
 	 * @return array
 	 */
 	protected function get_environment_for_request() {
-		$input = stripslashes_deep( $_GET );
-		$request_term_id = isset( $input['tag_ID'] ) ? intval( $input['tag_ID'] ) : 0;
+		$input            = stripslashes_deep( $_GET );
+		$request_term_id  = isset( $input['tag_ID'] ) ? intval( $input['tag_ID'] ) : 0;
 		$request_taxonomy = isset( $input['taxonomy'] ) ? $input['taxonomy'] : '';
 
-		$term = get_term( $request_term_id );
-		$term = ( $term && ! is_wp_error( $term ) ) ? $term : null;
+		$term        = get_term( $request_term_id );
+		$term        = ( $term && ! is_wp_error( $term ) ) ? $term : null;
 		$environment = array(
-			'term_id' => $term ? intval( $term->term_id ) : 0,
-			'term' => $term,
+			'term_id'  => $term ? intval( $term->term_id ) : 0,
+			'term'     => $term,
 			'taxonomy' => $term ? $term->taxonomy : $request_taxonomy,
 		);
 		return $environment;
@@ -117,10 +117,10 @@ class Term_Meta_Container extends Container {
 	 * @return array
 	 */
 	protected function get_environment_for_object( $object_id ) {
-		$term = get_term( intval( $object_id ) );
+		$term        = get_term( intval( $object_id ) );
 		$environment = array(
-			'term_id' => intval( $term->term_id ),
-			'term' => $term,
+			'term_id'  => intval( $term->term_id ),
+			'term'     => $term,
 			'taxonomy' => $term->taxonomy,
 		);
 		return $environment;
@@ -189,7 +189,7 @@ class Term_Meta_Container extends Container {
 	 * @return array<string>
 	 */
 	public function get_taxonomy_visibility() {
-		$all_taxonomies = get_taxonomies();
+		$all_taxonomies       = get_taxonomies();
 		$evaluated_collection = $this->condition_collection->evaluate( array( 'term_taxonomy' ), true, array(), true );
 
 		$shown_on = array();

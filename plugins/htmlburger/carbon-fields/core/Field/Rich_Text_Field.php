@@ -12,7 +12,7 @@ class Rich_Text_Field extends Textarea_Field {
 	 *
 	 * @var array
 	 */
-	protected static $settings_references = [];
+	protected static $settings_references = array();
 
 	/**
 	 * WP Editor settings
@@ -22,8 +22,8 @@ class Rich_Text_Field extends Textarea_Field {
 	 */
 	protected $settings = array(
 		'media_buttons' => true,
-		'tinymce' => array(
-			'resize' => true,
+		'tinymce'       => array(
+			'resize'           => true,
 			'wp_autoresize_on' => true,
 		),
 	);
@@ -43,11 +43,11 @@ class Rich_Text_Field extends Textarea_Field {
 	protected $settings_reference;
 
 	/**
-	* Set the editor settings
-	*
-	* @param  array $settings
-	* @return self  $this
-	*/
+	 * Set the editor settings
+	 *
+	 * @param  array $settings
+	 * @return self  $this
+	 */
 	public function set_settings( $settings ) {
 		$this->settings = array_merge( $this->settings, $settings );
 
@@ -92,7 +92,7 @@ class Rich_Text_Field extends Textarea_Field {
 	 * wp_editor() automatically enqueues and sets up everything.
 	 */
 	public function editor_init() {
-		if( in_array( $this->get_settings_reference(), self::$settings_references ) ) {
+		if ( in_array( $this->get_settings_reference(), self::$settings_references ) ) {
 			return;
 		}
 
@@ -110,7 +110,6 @@ class Rich_Text_Field extends Textarea_Field {
 
 	/**
 	 * Display Upload Image Button
-	 *
 	 */
 	public function upload_image_button_html() {
 		$upload_image_button = '<a href="#" class="button insert-media add_media" data-editor="<%- id %>" title="Add Media">
@@ -142,11 +141,14 @@ class Rich_Text_Field extends Textarea_Field {
 			$media_buttons = apply_filters( 'crb_media_buttons_html', ob_get_clean(), $this->base_name );
 		}
 
-		$field_data = array_merge( $field_data, array(
-			'rich_editing' => user_can_richedit() && ! empty( $this->settings['tinymce'] ),
-			'media_buttons' => $media_buttons,
-			'settings_reference' => $this->get_settings_reference(),
-		) );
+		$field_data = array_merge(
+			$field_data,
+			array(
+				'rich_editing'       => user_can_richedit() && ! empty( $this->settings['tinymce'] ),
+				'media_buttons'      => $media_buttons,
+				'settings_reference' => $this->get_settings_reference(),
+			)
+		);
 
 		return $field_data;
 	}

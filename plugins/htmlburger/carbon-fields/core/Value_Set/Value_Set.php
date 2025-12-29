@@ -56,10 +56,10 @@ class Value_Set {
 	 * @var array
 	 */
 	protected $empty_values = array(
-		self::TYPE_SINGLE_VALUE => '',
-		self::TYPE_MULTIPLE_VALUES => array(),
+		self::TYPE_SINGLE_VALUE        => '',
+		self::TYPE_MULTIPLE_VALUES     => array(),
 		self::TYPE_MULTIPLE_PROPERTIES => array(),
-		self::TYPE_VALUE_SET => array(),
+		self::TYPE_VALUE_SET           => array(),
 	);
 
 	/**
@@ -80,14 +80,14 @@ class Value_Set {
 	 * Value set constructor
 	 *
 	 * @param integer $type static::TYPE_* constant
-	 * @param array $additional_properties
+	 * @param array   $additional_properties
 	 */
 	public function __construct( $type = self::TYPE_SINGLE_VALUE, $additional_properties = array() ) {
 		if ( ! in_array( $type, $this->valid_types ) ) {
 			Incorrect_Syntax_Exception::raise( "Invalid type specified for Value_Set: $type" );
 		}
 
-		$this->type = $type;
+		$this->type       = $type;
 		$this->properties = array_merge( $this->properties, $additional_properties );
 	}
 
@@ -145,14 +145,17 @@ class Value_Set {
 		if ( $this->value_set === null ) {
 			return null;
 		}
-		$value = '';
+		$value          = '';
 		$value_property = static::VALUE_PROPERTY;
 
 		switch ( $this->type ) {
 			case static::TYPE_MULTIPLE_VALUES:
-				$value = array_map( function( $set ) use ( $value_property ) {
-					return $set[ $value_property ];
-				}, $this->value_set );
+				$value = array_map(
+					function ( $set ) use ( $value_property ) {
+						return $set[ $value_property ];
+					},
+					$this->value_set
+				);
 				break;
 			case static::TYPE_MULTIPLE_PROPERTIES:
 				$value = array();
@@ -210,9 +213,12 @@ class Value_Set {
 	protected function flat_array_to_raw_value_set( $value_array ) {
 		$raw_value_set = array();
 
-		$string_keys = array_filter( array_keys( $value_array ), function( $key ) {
-			return is_string( $key );
-		} );
+		$string_keys = array_filter(
+			array_keys( $value_array ),
+			function ( $key ) {
+				return is_string( $key );
+			}
+		);
 
 		if ( empty( $string_keys ) ) {
 			// the passed array does not contain string keys so we check each item if it's a value or a key=>value array

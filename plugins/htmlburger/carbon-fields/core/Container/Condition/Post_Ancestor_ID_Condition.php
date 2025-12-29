@@ -16,8 +16,8 @@ class Post_Ancestor_ID_Condition extends Condition {
 	 * @return bool
 	 */
 	public function is_fulfilled( $environment ) {
-		$post_id = $environment['post_id'];
-		$post = $environment['post'];
+		$post_id   = $environment['post_id'];
+		$post      = $environment['post'];
 		$ancestors = array();
 
 		if ( $post ) {

@@ -14,9 +14,9 @@ class Helper {
 	/**
 	 * Get a field from a specific container type or id
 	 *
-	 * @param  string  $container_type Container type to search in. Optional if $container_id is supplied
-	 * @param  string  $container_id   Container id to search in. Optional if $container_type is supplied
-	 * @param  string  $field_name     Field name to search for
+	 * @param  string $container_type Container type to search in. Optional if $container_id is supplied
+	 * @param  string $container_id   Container id to search in. Optional if $container_type is supplied
+	 * @param  string $field_name     Field name to search for
 	 * @return \Carbon_Fields\Field\Field
 	 */
 	public static function get_field( $container_type, $container_id, $field_name ) {
@@ -72,15 +72,15 @@ class Helper {
 			return;
 		}
 
-		$clone = clone $field;
-		$datastore = $clone->get_datastore();
+		$clone               = clone $field;
+		$datastore           = $clone->get_datastore();
 		$datastore_object_id = $datastore->get_object_id();
 
 		if ( $object_id !== null ) {
 			$datastore->set_object_id( $object_id );
 		}
 
-		$result = $action($clone);
+		$result = $action( $clone );
 
 		if ( $object_id !== null ) {
 			$datastore->set_object_id( $datastore_object_id );
@@ -104,7 +104,7 @@ class Helper {
 			$container_type,
 			$container_id,
 			$field_name,
-			function( $field ) {
+			function ( $field ) {
 				if ( ! $field ) {
 					return '';
 				}
@@ -131,7 +131,7 @@ class Helper {
 			$container_type,
 			$container_id,
 			$field_name,
-			function( $field ) use ( $container_type, $container_id, $field_name, $value ) {
+			function ( $field ) use ( $container_type, $container_id, $field_name, $value ) {
 				if ( ! $field ) {
 					$container_message = $container_id ? 'in container with id "' . $container_id . '"' : 'in containers of type "' . $container_type . '"';
 					Incorrect_Syntax_Exception::raise( 'Could not find a field which satisfies the supplied pattern ' . $container_message . ': ' . $field_name );
@@ -338,8 +338,8 @@ class Helper {
 	/**
 	 * Recursive sorting function by array key.
 	 *
-	 * @param  array   &$array     The input array.
-	 * @param  int     $sort_flags Flags for controlling sorting behavior.
+	 * @param  array &$array     The input array.
+	 * @param  int   $sort_flags Flags for controlling sorting behavior.
 	 * @return boolean
 	 */
 	public static function ksort_recursive( &$array, $sort_flags = SORT_REGULAR ) {
@@ -364,15 +364,17 @@ class Helper {
 	public static function get_relation_type_from_array( $array, $allowed_relations = array( 'AND', 'OR' ), $relation_key = 'relation' ) {
 		$allowed_relations = array_values( $allowed_relations );
 		$allowed_relations = array_map( 'strtoupper', $allowed_relations );
-		$relation = isset( $allowed_relations[0] ) ? $allowed_relations[0] : '';
+		$relation          = isset( $allowed_relations[0] ) ? $allowed_relations[0] : '';
 
 		if ( isset( $array[ $relation_key ] ) ) {
 			$relation = strtoupper( $array[ $relation_key ] );
 		}
 
 		if ( ! in_array( $relation, $allowed_relations ) ) {
-			Incorrect_Syntax_Exception::raise( 'Invalid relation type ' . $relation . '. ' .
-			'The rule should be one of the following: "' . implode( '", "', $allowed_relations ) . '"' );
+			Incorrect_Syntax_Exception::raise(
+				'Invalid relation type ' . $relation . '. ' .
+				'The rule should be one of the following: "' . implode( '", "', $allowed_relations ) . '"'
+			);
 		}
 
 		return $relation;
@@ -442,7 +444,7 @@ class Helper {
 	 */
 	public static function class_to_type( $class, $class_suffix = '' ) {
 		$reflection = new \ReflectionClass( $class );
-		$type = $reflection->getShortName();
+		$type       = $reflection->getShortName();
 
 		if ( $class_suffix ) {
 			$type = preg_replace( '/(' . preg_quote( $class_suffix, '/' ) . ')$/i', '', $type );
@@ -470,7 +472,7 @@ class Helper {
 	/**
 	 * Check if an id or name for containers and fields is valid
 	 *
-	 * @param  string  $id
+	 * @param  string $id
 	 * @return boolean
 	 */
 	public static function is_valid_entity_id( $id ) {
@@ -493,7 +495,7 @@ class Helper {
 	 * @static
 	 * @access public
 	 *
-	 * @param  string  $url
+	 * @param  string $url
 	 * @return integer
 	 */
 	public static function get_attachment_id( $url ) {
@@ -522,7 +524,7 @@ class Helper {
 						'compare' => 'LIKE',
 						'key'     => '_wp_attachment_metadata',
 					),
-				)
+				),
 			);
 
 			$query = new WP_Query( $query_args );
@@ -531,7 +533,7 @@ class Helper {
 				foreach ( $query->posts as $post_id ) {
 					$meta                = wp_get_attachment_metadata( $post_id );
 					$original_file       = wp_basename( $meta['file'] );
-					$sizes 				 = isset( $meta['sizes'] ) && ! empty( $meta['sizes'] ) ? $meta['sizes'] : array();
+					$sizes               = isset( $meta['sizes'] ) && ! empty( $meta['sizes'] ) ? $meta['sizes'] : array();
 					$cropped_image_files = wp_list_pluck( $sizes, 'file' );
 
 					if ( $original_file === $filename || in_array( $filename, $cropped_image_files ) ) {
@@ -560,8 +562,8 @@ class Helper {
 	 * @static
 	 * @access public
 	 *
-	 * @param  string  $id
-	 * @param  string  $type Value Type. Can be either id or url.
+	 * @param  string $id
+	 * @param  string $type Value Type. Can be either id or url.
 	 * @return array
 	 */
 	public static function get_attachment_metadata( $id, $type ) {
@@ -651,7 +653,7 @@ class Helper {
 	public static function expand_compacted_input( $input ) {
 		if ( isset( $input[ \Carbon_Fields\COMPACT_INPUT_KEY ] ) ) {
 			$inputs = $input[ \Carbon_Fields\COMPACT_INPUT_KEY ];
-			$input = array_merge( $input, $inputs );
+			$input  = array_merge( $input, $inputs );
 		}
 		return $input;
 	}
@@ -709,15 +711,18 @@ class Helper {
 
 	public static function get_attachments_urls( $media_files ) {
 		if ( empty( $media_files ) ) {
-            return is_array( $media_files ) ? [] : "";
-        }
+			return is_array( $media_files ) ? array() : '';
+		}
 
-        if ( ! is_array( $media_files ) && (int) $media_files > 0 ) {
-            return wp_get_attachment_url( $media_files );
-        }
+		if ( ! is_array( $media_files ) && (int) $media_files > 0 ) {
+			return wp_get_attachment_url( $media_files );
+		}
 
-        return array_map( function( $media_file ) {
-            return wp_get_attachment_url( $media_file );
-        }, $media_files );
-    }
+		return array_map(
+			function ( $media_file ) {
+				return wp_get_attachment_url( $media_file );
+			},
+			$media_files
+		);
+	}
 }

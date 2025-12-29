@@ -40,8 +40,8 @@ class Date_Field extends Field {
 	 */
 	protected $picker_options = array(
 		'allowInput' => true,
-		'altInput' => true,
-		'altFormat' => "j M Y",
+		'altInput'   => true,
+		'altFormat'  => 'j M Y',
 	);
 
 	/**
@@ -49,7 +49,7 @@ class Date_Field extends Field {
 	 */
 	public function set_value_from_input( $input ) {
 		if ( isset( $input[ $this->get_name() ] ) ) {
-			$date = \DateTime::createFromFormat( $this->input_format_php, $input[ $this->get_name() ] );
+			$date  = \DateTime::createFromFormat( $this->input_format_php, $input[ $this->get_name() ] );
 			$value = ( $date instanceof \DateTime ) ? $date->format( $this->storage_format ) : '';
 			$this->set_value( $value );
 		} else {
@@ -66,17 +66,23 @@ class Date_Field extends Field {
 
 		$value = $this->get_value();
 		if ( ! empty( $value ) ) {
-			$date = \DateTime::createFromFormat( $this->storage_format, $value );
+			$date  = \DateTime::createFromFormat( $this->storage_format, $value );
 			$value = ( $date instanceof \DateTime ) ? $date->format( $this->input_format_php ) : '';
 		}
 
-		$field_data = array_merge( $field_data, array(
-			'value' => $value,
-			'storage_format' => $this->get_storage_format(),
-			'picker_options' => array_merge( $this->get_picker_options(), array(
-				'dateFormat' => $this->input_format_js,
-			) ),
-		) );
+		$field_data = array_merge(
+			$field_data,
+			array(
+				'value'          => $value,
+				'storage_format' => $this->get_storage_format(),
+				'picker_options' => array_merge(
+					$this->get_picker_options(),
+					array(
+						'dateFormat' => $this->input_format_js,
+					)
+				),
+			)
+		);
 
 		return $field_data;
 	}
@@ -88,9 +94,9 @@ class Date_Field extends Field {
 	 */
 	public function get_storage_format() {
 		if ( $this->get_context() === 'block' ) {
-			$this->input_format_js = "Y-m-d h:i:S K";
+			$this->input_format_js = 'Y-m-d h:i:S K';
 
-			return "Y-m-d H:i:s";
+			return 'Y-m-d H:i:s';
 		}
 
 		return $this->storage_format;
@@ -116,7 +122,7 @@ class Date_Field extends Field {
 	 */
 	public function get_input_format( $php_format, $js_format ) {
 		$this->input_format_php = $php_format;
-		$this->input_format_js = $js_format;
+		$this->input_format_js  = $js_format;
 		return $this;
 	}
 
@@ -130,7 +136,7 @@ class Date_Field extends Field {
 	 */
 	public function set_input_format( $php_format, $js_format ) {
 		$this->input_format_php = $php_format;
-		$this->input_format_js = $js_format;
+		$this->input_format_js  = $js_format;
 		return $this;
 	}
 

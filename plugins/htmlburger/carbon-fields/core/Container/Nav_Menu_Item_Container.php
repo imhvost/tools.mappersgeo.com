@@ -113,11 +113,11 @@ class Nav_Menu_Item_Container extends Container {
 	public function is_valid_attach_for_request() {
 		global $pagenow;
 
-		$input = Helper::input();
-		$ajax = defined( 'DOING_AJAX' ) ? DOING_AJAX : false;
+		$input       = Helper::input();
+		$ajax        = defined( 'DOING_AJAX' ) ? DOING_AJAX : false;
 		$ajax_action = isset( $input['action'] ) ? $input['action'] : '';
 
-		$is_on_menu_page = ( $pagenow === 'nav-menus.php' );
+		$is_on_menu_page      = ( $pagenow === 'nav-menus.php' );
 		$is_menu_ajax_request = ( $ajax && $ajax_action === 'add-menu-item' );
 		if ( ! $is_on_menu_page && ! $is_menu_ajax_request ) {
 			return false;
@@ -196,7 +196,7 @@ class Nav_Menu_Item_Container extends Container {
 			$menu_item_field_prefix = $menu_item_datastore->get_garbage_prefix();
 
 			$custom_fields = array();
-			$fields = $this->get_fields();
+			$fields        = $this->get_fields();
 			foreach ( $fields as $field ) {
 				$tmp_field = clone $field;
 

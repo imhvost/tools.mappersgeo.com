@@ -37,13 +37,16 @@ class Decorator {
 	public function register_fields() {
 
 		$containers = $this->container_repository->get_containers();
-		$containers = array_filter( $containers, function( $container ) {
-			return ( $container->type !== 'theme_options' );
-		} );
+		$containers = array_filter(
+			$containers,
+			function ( $container ) {
+				return ( $container->type !== 'theme_options' );
+			}
+		);
 
 		foreach ( $containers as $container ) {
-			$fields = $container->get_fields();
-			$context = $container->type;
+			$fields        = $container->get_fields();
+			$context       = $container->type;
 			$type_callable = array( __CLASS__, "get_{$context}_container_settings" );
 			if ( ! is_callable( $type_callable ) ) {
 				continue; // unsupported container type
@@ -55,34 +58,36 @@ class Decorator {
 					continue;
 				}
 
-				$getter = function( $object, $field_name ) use ( $container ) {
+				$getter = function ( $object, $field_name ) use ( $container ) {
 					$object_id = self::get_object_id( $object, $container->type );
 
 					$value = Helper::get_value( $object_id, $container->type, '', $field_name );
 					$field = Helper::get_field( $container->type, $container->id, $field_name );
 
 					if ( apply_filters( 'carbon_fields_rest_api_return_attachments_as_urls', false, $value, $field, $object_id ) ) {
-                        $attachments_class = [
-                            "Carbon_Fields\Field\Media_Gallery_Field",
-                            "Carbon_Fields\Field\File_Field",
-                            "Carbon_Fields\Field\Image_Field"
-                        ];
+						$attachments_class = array(
+							'Carbon_Fields\Field\Media_Gallery_Field',
+							'Carbon_Fields\Field\File_Field',
+							'Carbon_Fields\Field\Image_Field',
+						);
 
-                        if ( in_array( get_class( $field ), $attachments_class ) ) {
-                            $value = Helper::get_attachments_urls($value);
-                        }
-                    }
+						if ( in_array( get_class( $field ), $attachments_class ) ) {
+							$value = Helper::get_attachments_urls( $value );
+						}
+					}
 
 					return $value;
 				};
 
-				$setter = function( $value, $object, $field_name ) use ( $container ) {
+				$setter = function ( $value, $object, $field_name ) use ( $container ) {
 					$object_id = self::get_object_id( $object, $container->type );
 					Helper::set_value( $object_id, $container->type, '', $field_name, $value );
 				};
 
-				register_rest_field( $types,
-					$field->get_base_name(), array(
+				register_rest_field(
+					$types,
+					$field->get_base_name(),
+					array(
 						'get_callback'    => $getter,
 						'update_callback' => $setter,
 						'schema'          => null,
@@ -140,7 +145,7 @@ class Decorator {
 	 * @return null|int
 	 */
 	public static function get_object_id( $object, $container_type ) {
-		$object = is_array( $object ) ? (object) $object : $object;
+		$object         = is_array( $object ) ? (object) $object : $object;
 		$container_type = Helper::normalize_type( $container_type );
 		switch ( $container_type ) {
 			case 'post_meta': // fallthrough intended

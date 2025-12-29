@@ -56,7 +56,7 @@ class Repository {
 	 */
 	public function register_container( Container $container ) {
 		$this->register_unique_container_id( $container->get_id() );
-		$this->containers[] = $container;
+		$this->containers[]         = $container;
 		$this->pending_containers[] = $container;
 	}
 
@@ -83,7 +83,7 @@ class Repository {
 	 */
 	public function get_containers( $type = null ) {
 		$raw_containers = $this->containers;
-		$containers = array();
+		$containers     = array();
 
 		if ( $type === null ) {
 			$containers = $raw_containers;
@@ -102,14 +102,14 @@ class Repository {
 	/**
 	 * Return field in a container with supplied id
 	 *
-	 * @param  string                    $field_name
-	 * @param  string                    $container_id
-	 * @param  bool                      $include_nested_fields
+	 * @param  string $field_name
+	 * @param  string $container_id
+	 * @param  bool   $include_nested_fields
 	 * @return \Carbon_Fields\Field\Field
 	 */
 	public function get_field_in_container( $field_name, $container_id, $include_nested_fields = true ) {
 		$containers = $this->get_containers();
-		$field = null;
+		$field      = null;
 
 		foreach ( $containers as $container ) {
 			if ( $container->get_id() !== $container_id ) {
@@ -130,14 +130,14 @@ class Repository {
 	/**
 	 * Return field in containers
 	 *
-	 * @param  string                    $field_name
-	 * @param  string                    $container_type
-	 * @param  bool                      $include_nested_fields
+	 * @param  string $field_name
+	 * @param  string $container_type
+	 * @param  bool   $include_nested_fields
 	 * @return \Carbon_Fields\Field\Field
 	 */
 	public function get_field_in_containers( $field_name, $container_type = null, $include_nested_fields = true ) {
 		$containers = $this->get_containers( $container_type );
-		$field = null;
+		$field      = null;
 
 		foreach ( $containers as $container ) {
 			if ( $include_nested_fields ) {
@@ -159,10 +159,13 @@ class Repository {
 	 * @return Container[]
 	 */
 	public function get_active_containers() {
-		return array_filter( $this->containers, function( $container ) {
-			/** @var Container $container */
-			return $container->is_active();
-		} );
+		return array_filter(
+			$this->containers,
+			function ( $container ) {
+				/** @var Container $container */
+				return $container->is_active();
+			}
+		);
 	}
 
 	/**
@@ -190,11 +193,11 @@ class Repository {
 			$id_prefix = '';
 		}
 
-		$wids = $this->widget_id_wildcard_suffix;
+		$wids      = $this->widget_id_wildcard_suffix;
 		$id_suffix = '';
 		if ( substr( $id, -strlen( $wids ) ) === $wids ) {
 			$id_suffix = $wids;
-			$id = substr( $id, 0, -strlen( $wids ) );
+			$id        = substr( $id, 0, -strlen( $wids ) );
 		}
 		$id = preg_replace( '~[\s]+~', '_', $id );
 		$id = preg_replace( '~[^\w\-\_]+~', '', $id );
@@ -202,20 +205,20 @@ class Repository {
 		// Remove multiple sequential underscores from the slug
 		$id = preg_replace( '~_+~', '_', $id );
 
-		// Sometimes we're unable to produce slug because the 
+		// Sometimes we're unable to produce slug because the
 		// source language isn't latin; in those cases
 		// we just produce stable hash from the title
-		if (empty($id) || $id === '_') {
+		if ( empty( $id ) || $id === '_' ) {
 			$id = substr( md5( $title ), 0, 8 );
 		}
 
 		$id = $id_prefix . $id . $id_suffix;
 
-		$base = $id;
+		$base   = $id;
 		$suffix = 0;
 
 		while ( ! $this->is_unique_container_id( $id ) ) {
-			$suffix++;
+			++$suffix;
 			$id = $base . strval( $suffix );
 		}
 

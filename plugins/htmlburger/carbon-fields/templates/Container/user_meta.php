@@ -5,7 +5,7 @@
 		<tr>
 			<th></th>
 			<td>
-				<fieldset class="container-<?php echo $this->get_id(); ?>" data-profile-role="<?php echo $profile_role ?>"></fieldset>
+				<fieldset class="container-<?php echo $this->get_id(); ?>" data-profile-role="<?php echo $profile_role; ?>"></fieldset>
 			</td>
 		</tr>
 	</tbody>

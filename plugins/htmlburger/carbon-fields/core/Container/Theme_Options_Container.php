@@ -23,11 +23,11 @@ class Theme_Options_Container extends Container {
 	 * @var array
 	 */
 	public $settings = array(
-		'parent' => '',
-		'file' => '',
-		'icon' => '',
+		'parent'        => '',
+		'file'          => '',
+		'icon'          => '',
 		'menu_position' => null,
-		'menu_title' => null,
+		'menu_title'    => null,
 	);
 
 	/**
@@ -56,15 +56,19 @@ class Theme_Options_Container extends Container {
 		$title = sanitize_file_name( $title );
 		$title = strtolower( $title );
 		$title = remove_accents( $title );
-		$title = preg_replace( array(
-			'~\s+~',
-			'~[^\w\d-]+~u',
-			'~-+~',
-		), array(
-			'-',
-			'-',
-			'-',
-		), $title );
+		$title = preg_replace(
+			array(
+				'~\s+~',
+				'~[^\w\d-]+~u',
+				'~-+~',
+			),
+			array(
+				'-',
+				'-',
+				'-',
+			),
+			$title
+		);
 		return $title . $extension;
 	}
 
@@ -188,7 +192,7 @@ class Theme_Options_Container extends Container {
 	 * @return boolean
 	 */
 	public function should_activate() {
-		$input = stripslashes_deep( $_GET );
+		$input        = stripslashes_deep( $_GET );
 		$request_page = isset( $input['page'] ) ? $input['page'] : '';
 		if ( ! empty( $request_page ) && $request_page === $this->get_page_file() ) {
 			return true;
@@ -201,7 +205,7 @@ class Theme_Options_Container extends Container {
 	 * Output the container markup
 	 */
 	public function render() {
-		$input = stripslashes_deep( $_GET );
+		$input                    = stripslashes_deep( $_GET );
 		$request_settings_updated = isset( $input['settings-updated'] ) ? $input['settings-updated'] : '';
 		if ( $request_settings_updated === 'true' ) {
 			$this->notifications[] = __( 'Settings saved.', 'carbon-fields' );
@@ -216,7 +220,7 @@ class Theme_Options_Container extends Container {
 	 * @return boolean
 	 */
 	protected function register_page() {
-		$file = $this->get_page_file();
+		$file   = $this->get_page_file();
 		$parent = $this->settings['parent'];
 
 		if ( ! $parent ) {
@@ -275,7 +279,7 @@ class Theme_Options_Container extends Container {
 	/**
 	 * Set the theme options file name of this container.
 	 *
-	 * @param  string    $file
+	 * @param  string $file
 	 * @return Container $this
 	 */
 	public function set_page_file( $file ) {
@@ -286,7 +290,7 @@ class Theme_Options_Container extends Container {
 	/**
 	 * Set the title of this container in the administration menu.
 	 *
-	 * @param  string    $title
+	 * @param  string $title
 	 * @return Container $this
 	 */
 	public function set_page_menu_title( $title ) {
@@ -297,7 +301,7 @@ class Theme_Options_Container extends Container {
 	/**
 	 * Alias of the set_page_menu_position() method for backwards compatibility
 	 *
-	 * @param  integer   $position
+	 * @param  integer $position
 	 * @return Container $this
 	 */
 	public function set_page_position( $position ) {
@@ -307,7 +311,7 @@ class Theme_Options_Container extends Container {
 	/**
 	 * Set the page position of this container in the administration menu.
 	 *
-	 * @param  integer   $position
+	 * @param  integer $position
 	 * @return Container $this
 	 */
 	public function set_page_menu_position( $position ) {
@@ -319,7 +323,7 @@ class Theme_Options_Container extends Container {
 	 * Set the icon of this theme options page.
 	 * Applicable only for parent theme option pages.
 	 *
-	 * @param  string    $icon
+	 * @param  string $icon
 	 * @return Container $this
 	 */
 	public function set_icon( $icon ) {

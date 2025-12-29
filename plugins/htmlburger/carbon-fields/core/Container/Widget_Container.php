@@ -49,8 +49,8 @@ class Widget_Container extends Container {
 			return true;
 		}
 
-		$screen = get_current_screen();
-		$input = Helper::input();
+		$screen         = get_current_screen();
+		$input          = Helper::input();
 		$request_action = isset( $input['action'] ) ? $input['action'] : '';
 		$is_widget_save = ( $request_action === 'save-widget' );
 
@@ -80,7 +80,8 @@ class Widget_Container extends Container {
 		return $this->all_conditions_pass( intval( $object_id ) );
 	}
 
-	/* Checks whether the current save request is valid
+	/*
+	Checks whether the current save request is valid
 	 *
 	 * @return bool
 	 */
@@ -109,4 +110,3 @@ class Widget_Container extends Container {
 		return parent::to_json( false );
 	}
 }
-

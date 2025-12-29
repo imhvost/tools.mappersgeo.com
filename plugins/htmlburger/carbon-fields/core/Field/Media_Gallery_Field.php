@@ -148,12 +148,16 @@ class Media_Gallery_Field extends Field {
 	public function to_json( $load ) {
 		$field_data = parent::to_json( $load );
 
-		$field_data = array_merge( $field_data, $this->value_to_json(), array(
-			'value_type'         => $this->value_type,
-			'type_filter'        => $this->file_type,
-			'can_edit_inline'    => $this->can_edit_inline,
-			'duplicates_allowed' => $this->get_duplicates_allowed(),
-		) );
+		$field_data = array_merge(
+			$field_data,
+			$this->value_to_json(),
+			array(
+				'value_type'         => $this->value_type,
+				'type_filter'        => $this->file_type,
+				'can_edit_inline'    => $this->can_edit_inline,
+				'duplicates_allowed' => $this->get_duplicates_allowed(),
+			)
+		);
 
 		return $field_data;
 	}

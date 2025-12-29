@@ -46,7 +46,7 @@ abstract class Key_Value_Datastore extends Datastore {
 	 * @return array<int>
 	 */
 	protected function get_full_hierarchy_index_for_field( Field $field ) {
-		$hierarchy_index = $field->get_hierarchy_index();
+		$hierarchy_index      = $field->get_hierarchy_index();
 		$full_hierarchy_index = ! empty( $hierarchy_index ) ? $hierarchy_index : array();
 		return $full_hierarchy_index;
 	}
@@ -59,7 +59,7 @@ abstract class Key_Value_Datastore extends Datastore {
 	 * @return array
 	 */
 	protected function cascading_storage_array_to_value_tree_array( $storage_array ) {
-		$tree = array();
+		$tree            = array();
 		$found_keepalive = false;
 
 		foreach ( $storage_array as $row ) {
@@ -84,7 +84,7 @@ abstract class Key_Value_Datastore extends Datastore {
 						$level[ $index ] = array();
 					}
 					$level = &$level[ $index ];
-				} else  {
+				} else {
 					if ( ! isset( $level[ $parsed_storage_key['value_index'] ] ) ) {
 						$level[ $parsed_storage_key['value_index'] ] = array();
 					}
@@ -114,8 +114,8 @@ abstract class Key_Value_Datastore extends Datastore {
 	 * @return array
 	 */
 	protected function value_tree_array_to_value_tree( $value_tree_array, Field $field ) {
-		$value_tree = $value_tree_array;
-		$hierarchy = $field->get_hierarchy();
+		$value_tree      = $value_tree_array;
+		$hierarchy       = $field->get_hierarchy();
 		$hierarchy_index = $field->get_hierarchy_index();
 
 		foreach ( $hierarchy as $index => $parent_field ) {
@@ -148,9 +148,9 @@ abstract class Key_Value_Datastore extends Datastore {
 	 * @return null|array<array>
 	 */
 	public function load( Field $field ) {
-		$storage_key_patterns = $this->key_toolset->get_storage_key_getter_patterns( $field->is_simple_root_field(), $this->get_full_hierarchy_for_field( $field ) );
+		$storage_key_patterns    = $this->key_toolset->get_storage_key_getter_patterns( $field->is_simple_root_field(), $this->get_full_hierarchy_for_field( $field ) );
 		$cascading_storage_array = $this->get_storage_array( $field, $storage_key_patterns );
-		$value_tree_array = $this->cascading_storage_array_to_value_tree_array( $cascading_storage_array );
+		$value_tree_array        = $this->cascading_storage_array_to_value_tree_array( $cascading_storage_array );
 		if ( $value_tree_array === null ) {
 			return $value_tree_array;
 		}

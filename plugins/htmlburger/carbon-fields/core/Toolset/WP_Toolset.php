@@ -23,7 +23,7 @@ class WP_Toolset {
 	/**
 	 * Get term title
 	 *
-	 * @param int $id
+	 * @param int    $id
 	 * @param string $subtype
 	 * @return string $title The title of the item.
 	 */
@@ -67,10 +67,10 @@ class WP_Toolset {
 			return null;
 		}
 
-		$value = $term_descriptor['value'];
-		$field = isset( $term_descriptor['field'] ) ? $term_descriptor['field'] : 'id';
+		$value    = $term_descriptor['value'];
+		$field    = isset( $term_descriptor['field'] ) ? $term_descriptor['field'] : 'id';
 		$taxonomy = $term_descriptor['taxonomy'];
-		$term = get_term_by( $field, $value, $taxonomy );
+		$term     = get_term_by( $field, $value, $taxonomy );
 
 		if ( ! $term ) {
 			Incorrect_Syntax_Exception::raise( 'Failed to load term for descriptor: ' . print_r( $term_descriptor, true ) );
@@ -91,8 +91,8 @@ class WP_Toolset {
 			$descriptor['field'] = 'id';
 		}
 
-		$term = $this->get_term_by_descriptor( $descriptor );
-		$descriptor['term_object'] = $term;
+		$term                          = $this->get_term_by_descriptor( $descriptor );
+		$descriptor['term_object']     = $term;
 		$descriptor['taxonomy_object'] = get_taxonomy( $term->taxonomy );
 		return $descriptor;
 	}

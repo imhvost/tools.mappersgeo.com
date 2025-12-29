@@ -49,7 +49,8 @@ class Term_Meta_Datastore extends Meta_Datastore {
 			$charset_collate .= ' COLLATE ' . $wpdb->collate;
 		}
 
-		$wpdb->query( 'CREATE TABLE ' . $wpdb->prefix . 'termmeta (
+		$wpdb->query(
+			'CREATE TABLE ' . $wpdb->prefix . 'termmeta (
 			meta_id bigint(20) unsigned NOT NULL auto_increment,
 			term_id bigint(20) unsigned NOT NULL default "0",
 			meta_key varchar(255) default NULL,
@@ -57,7 +58,8 @@ class Term_Meta_Datastore extends Meta_Datastore {
 			PRIMARY KEY	(meta_id),
 			KEY term_id (term_id),
 			KEY meta_key (meta_key)
-		) ' . $charset_collate . ';' );
+		) ' . $charset_collate . ';'
+		);
 	}
 
 	/**
@@ -70,10 +72,12 @@ class Term_Meta_Datastore extends Meta_Datastore {
 	public static function on_delete_term( $term_id ) {
 		global $wpdb;
 
-		return $wpdb->query( '
+		return $wpdb->query(
+			'
 			DELETE FROM ' . $wpdb->termmeta . '
 			WHERE `term_id` = "' . intval( $term_id ) . '"
-		' );
+		'
+		);
 	}
 
 	/**

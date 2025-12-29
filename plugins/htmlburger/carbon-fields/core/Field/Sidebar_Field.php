@@ -25,10 +25,10 @@ class Sidebar_Field extends Select_Field {
 	 */
 	protected function load_options() {
 		$sidebars = Helper::get_active_sidebars();
-		$options = array();
+		$options  = array();
 
 		foreach ( $sidebars as $sidebar ) {
-			if ( in_array( $sidebar[ 'id' ], $this->excluded_sidebars ) ) {
+			if ( in_array( $sidebar['id'], $this->excluded_sidebars ) ) {
 				continue;
 			}
 
@@ -62,7 +62,7 @@ class Sidebar_Field extends Select_Field {
 	/**
 	 * Returns an array that holds the field data, suitable for JSON representation.
 	 *
-	 * @param  bool  $load Should the value be loaded from the database or use the value from the current instance.
+	 * @param  bool $load Should the value be loaded from the database or use the value from the current instance.
 	 * @return array
 	 */
 	public function to_json( $load ) {
@@ -78,16 +78,22 @@ class Sidebar_Field extends Select_Field {
 		$field_data = parent::to_json( $load );
 		// override default value and options behavior since sidebars are
 		// loaded separately and not as a part of the field options
-		$field_data = array_merge( $field_data, array(
-			'value' => $this->get_formatted_value(),
-		) );
+		$field_data = array_merge(
+			$field_data,
+			array(
+				'value' => $this->get_formatted_value(),
+			)
+		);
 
 		$field_data['options'] = array_merge( $field_data['options'], $options );
 
 		if ( ! empty( $this->excluded_sidebars ) ) {
-			$field_data = array_merge( $field_data, array(
-				'excluded_sidebars' => $this->excluded_sidebars,
-			) );
+			$field_data = array_merge(
+				$field_data,
+				array(
+					'excluded_sidebars' => $this->excluded_sidebars,
+				)
+			);
 		}
 
 		return $field_data;

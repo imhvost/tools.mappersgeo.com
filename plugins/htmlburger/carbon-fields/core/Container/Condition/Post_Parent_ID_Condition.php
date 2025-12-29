@@ -14,7 +14,7 @@ class Post_Parent_ID_Condition extends Condition {
 	 * @return bool
 	 */
 	public function is_fulfilled( $environment ) {
-		$post = $environment['post'];
+		$post           = $environment['post'];
 		$post_parent_id = is_object( $post ) ? intval( $post->post_parent ) : 0;
 
 		return $this->compare(

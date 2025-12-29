@@ -58,7 +58,7 @@ class Fulfillable_Collection implements Fulfillable {
 	 */
 	public function __construct( Factory $condition_factory, Array_Translator $array_translator ) {
 		$this->condition_factory = $condition_factory;
-		$this->array_translator = $array_translator;
+		$this->array_translator  = $array_translator;
 	}
 
 	/**
@@ -92,13 +92,13 @@ class Fulfillable_Collection implements Fulfillable {
 	 * Set array of allowed condition types
 	 * WARNING: this will NOT remove already added conditions which are no longer allowed
 	 *
-	 * @param  array<string>          $condition_type_list
-	 * @param  bool                   $whitelist
+	 * @param  array<string> $condition_type_list
+	 * @param  bool          $whitelist
 	 * @return Fulfillable_Collection $this
 	 */
 	public function set_condition_type_list( $condition_type_list, $whitelist ) {
 		$this->condition_type_list_whitelist = $whitelist;
-		$this->condition_type_list = $condition_type_list;
+		$this->condition_type_list           = $condition_type_list;
 		$this->propmapperse_condition_type_list();
 		return $this;
 	}
@@ -131,7 +131,7 @@ class Fulfillable_Collection implements Fulfillable {
 	 */
 	protected function propmapperse_condition_type_list() {
 		$condition_type_list = $this->get_condition_type_list();
-		$fulfillables = $this->get_fulfillables();
+		$fulfillables        = $this->get_fulfillables();
 		foreach ( $fulfillables as $fulfillable ) {
 			if ( $fulfillable['fulfillable'] instanceof Fulfillable_Collection ) {
 				$fulfillable['fulfillable']->set_condition_type_list( $condition_type_list, $this->is_condition_type_list_whitelist() );
@@ -142,9 +142,9 @@ class Fulfillable_Collection implements Fulfillable {
 	/**
 	 * Shorthand for where with OR comparison
 	 *
-	 * @param  string|array|callable  $condition_type
-	 * @param  string                 $comparison_operator Can be skipped. Defaults to "="
-	 * @param  mixed                  $value
+	 * @param  string|array|callable $condition_type
+	 * @param  string                $comparison_operator Can be skipped. Defaults to "="
+	 * @param  mixed                 $value
 	 * @return Fulfillable_Collection $this
 	 */
 	public function or_where( $condition_type, $comparison_operator = '=', $value = null ) {
@@ -156,10 +156,10 @@ class Fulfillable_Collection implements Fulfillable {
 	 * Add fulfillable with optional comparison_operator
 	 * This method assumes there is no fulfillable that can be compared with literal NULL
 	 *
-	 * @param  string|array|callable  $condition_type
-	 * @param  string                 $comparison_operator Can be skipped. Defaults to "="
-	 * @param  mixed                  $value
-	 * @param  string                 $fulfillable_comparison
+	 * @param  string|array|callable $condition_type
+	 * @param  string                $comparison_operator Can be skipped. Defaults to "="
+	 * @param  mixed                 $value
+	 * @param  string                $fulfillable_comparison
 	 * @return Fulfillable_Collection $this
 	 */
 	public function where( $condition_type, $comparison_operator = '=', $value = null, $fulfillable_comparison = 'AND' ) {
@@ -178,7 +178,7 @@ class Fulfillable_Collection implements Fulfillable {
 
 		if ( $value === null ) {
 			// We do not have a supplied comparison_operator so we default to "="
-			$value = $comparison_operator;
+			$value               = $comparison_operator;
 			$comparison_operator = '=';
 		}
 
@@ -192,11 +192,11 @@ class Fulfillable_Collection implements Fulfillable {
 	/**
 	 * Add a Fulfillable through array representation
 	 *
-	 * @param  array                  $fulfillable_as_array
-	 * @param  string                 $fulfillable_comparison
+	 * @param  array  $fulfillable_as_array
+	 * @param  string $fulfillable_comparison
 	 * @return Fulfillable_Collection $this
 	 */
-	protected function where_array( $fulfillable_as_array, $fulfillable_comparison) {
+	protected function where_array( $fulfillable_as_array, $fulfillable_comparison ) {
 		$fulfillable = $this->array_translator->foreign_to_fulfillable( $fulfillable_as_array );
 		$this->add_fulfillable( $fulfillable, $fulfillable_comparison );
 		return $this;
@@ -205,11 +205,11 @@ class Fulfillable_Collection implements Fulfillable {
 	/**
 	 * Add a Fulfillable_Collection for nested logic
 	 *
-	 * @param  callable               $collection_callable
-	 * @param  string                 $fulfillable_comparison
+	 * @param  callable $collection_callable
+	 * @param  string   $fulfillable_comparison
 	 * @return Fulfillable_Collection $this
 	 */
-	protected function where_collection( $collection_callable, $fulfillable_comparison) {
+	protected function where_collection( $collection_callable, $fulfillable_comparison ) {
 		$collection = $this->create_collection();
 		$collection->set_condition_type_list( $this->get_condition_type_list(), $this->is_condition_type_list_whitelist() );
 		$collection_callable( $collection );
@@ -231,7 +231,7 @@ class Fulfillable_Collection implements Fulfillable {
 
 		$this->fulfillables[] = array(
 			'fulfillable_comparison' => $fulfillable_comparison,
-			'fulfillable' => $fulfillable,
+			'fulfillable'            => $fulfillable,
 		);
 	}
 
@@ -257,7 +257,7 @@ class Fulfillable_Collection implements Fulfillable {
 	/**
 	 * Get a copy of the collection with conditions not in the whitelist filtered out
 	 *
-	 * @param  array<string>          $condition_whitelist
+	 * @param  array<string> $condition_whitelist
 	 * @return Fulfillable_Collection
 	 */
 	public function filter( $condition_whitelist ) {
@@ -265,11 +265,11 @@ class Fulfillable_Collection implements Fulfillable {
 
 		$collection = $this->create_collection();
 		foreach ( $fulfillables as $fulfillable_tuple ) {
-			$fulfillable = $fulfillable_tuple['fulfillable'];
+			$fulfillable            = $fulfillable_tuple['fulfillable'];
 			$fulfillable_comparison = $fulfillable_tuple['fulfillable_comparison'];
 
 			if ( $fulfillable instanceof Fulfillable_Collection ) {
-				$filtered_collection = $fulfillable->filter( $condition_whitelist );
+				$filtered_collection              = $fulfillable->filter( $condition_whitelist );
 				$filtered_collection_fulfillables = $filtered_collection->get_fulfillables();
 				if ( empty( $filtered_collection_fulfillables ) ) {
 					continue; // skip empty collections to reduce clutter
@@ -293,11 +293,11 @@ class Fulfillable_Collection implements Fulfillable {
 	 * Useful when evaluating only certain condition types but preserving the rest
 	 * or when passing dynamic conditions to the front-end
 	 *
-	 * @param  array<string>          $condition_types
-	 * @param  array|boolean          $environment Environment array or a boolean value to force on conditions
-	 * @param  array<string>          $comparison_operators Array of comparison operators to evaluate regardless of condition type
-	 * @param  boolean                $condition_types_blacklist Whether the condition list should act as a blacklist
-	 * @param  boolean                $comparison_operators_blacklist Whether the comparison operators list should act as a blacklist
+	 * @param  array<string> $condition_types
+	 * @param  array|boolean $environment Environment array or a boolean value to force on conditions
+	 * @param  array<string> $comparison_operators Array of comparison operators to evaluate regardless of condition type
+	 * @param  boolean       $condition_types_blacklist Whether the condition list should act as a blacklist
+	 * @param  boolean       $comparison_operators_blacklist Whether the comparison operators list should act as a blacklist
 	 * @return Fulfillable_Collection
 	 */
 	public function evaluate( $condition_types, $environment, $comparison_operators = array(), $condition_types_blacklist = false, $comparison_operators_blacklist = false ) {
@@ -305,14 +305,14 @@ class Fulfillable_Collection implements Fulfillable {
 
 		$collection = $this->create_collection();
 		foreach ( $fulfillables as $fulfillable_tuple ) {
-			$fulfillable = $fulfillable_tuple['fulfillable'];
+			$fulfillable            = $fulfillable_tuple['fulfillable'];
 			$fulfillable_comparison = $fulfillable_tuple['fulfillable_comparison'];
 
 			if ( $fulfillable instanceof Fulfillable_Collection ) {
 				$evaluated_collection = $fulfillable->evaluate( $condition_types, $environment, $comparison_operators, $condition_types_blacklist, $comparison_operators_blacklist );
 				$collection->add_fulfillable( $evaluated_collection, $fulfillable_comparison );
 			} else {
-				$type = $this->condition_factory->get_type( get_class( $fulfillable ) );
+				$type                = $this->condition_factory->get_type( get_class( $fulfillable ) );
 				$comparison_operator = $fulfillable->get_comparison_operator();
 
 				$condition_type_match = in_array( $type, $condition_types );
@@ -347,11 +347,11 @@ class Fulfillable_Collection implements Fulfillable {
 	 * @return bool
 	 */
 	public function is_fulfilled( $environment ) {
-		$fulfilled = true; // return true for empty collections
+		$fulfilled    = true; // return true for empty collections
 		$fulfillables = $this->get_fulfillables();
 
 		foreach ( $fulfillables as $i => $fulfillable_tuple ) {
-			$fulfillable = $fulfillable_tuple['fulfillable'];
+			$fulfillable            = $fulfillable_tuple['fulfillable'];
 			$fulfillable_comparison = $fulfillable_tuple['fulfillable_comparison'];
 
 			if ( $i === 0 ) {

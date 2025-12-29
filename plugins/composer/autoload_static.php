@@ -4,43 +4,45 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit402a5679b9ebd05e24b2e4c7c49c90a1
-{
-    public static $prefixLengthsPsr4 = array (
-        'C' => 
-        array (
-            'Composer\\Installers\\' => 20,
-            'Carbon_Fields_Plugin\\' => 21,
-            'Carbon_Fields\\' => 14,
-        ),
-    );
+class ComposerStaticInit402a5679b9ebd05e24b2e4c7c49c90a1 {
 
-    public static $prefixDirsPsr4 = array (
-        'Composer\\Installers\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers',
-        ),
-        'Carbon_Fields_Plugin\\' => 
-        array (
-            0 => __DIR__ . '/../..' . '/core',
-        ),
-        'Carbon_Fields\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/htmlburger/carbon-fields/core',
-        ),
-    );
+	public static $prefixLengthsPsr4 = array(
+		'C' =>
+		array(
+			'Composer\\Installers\\' => 20,
+			'Carbon_Fields_Plugin\\' => 21,
+			'Carbon_Fields\\'        => 14,
+		),
+	);
 
-    public static $classMap = array (
-        'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
-    );
+	public static $prefixDirsPsr4 = array(
+		'Composer\\Installers\\' =>
+		array(
+			0 => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers',
+		),
+		'Carbon_Fields_Plugin\\' =>
+		array(
+			0 => __DIR__ . '/../..' . '/core',
+		),
+		'Carbon_Fields\\'        =>
+		array(
+			0 => __DIR__ . '/..' . '/htmlburger/carbon-fields/core',
+		),
+	);
 
-    public static function getInitializer(ClassLoader $loader)
-    {
-        return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit402a5679b9ebd05e24b2e4c7c49c90a1::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit402a5679b9ebd05e24b2e4c7c49c90a1::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit402a5679b9ebd05e24b2e4c7c49c90a1::$classMap;
+	public static $classMap = array(
+		'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
+	);
 
-        }, null, ClassLoader::class);
-    }
+	public static function getInitializer( ClassLoader $loader ) {
+		return \Closure::bind(
+			function () use ( $loader ) {
+				$loader->prefixLengthsPsr4 = ComposerStaticInit402a5679b9ebd05e24b2e4c7c49c90a1::$prefixLengthsPsr4;
+				$loader->prefixDirsPsr4    = ComposerStaticInit402a5679b9ebd05e24b2e4c7c49c90a1::$prefixDirsPsr4;
+				$loader->classMap          = ComposerStaticInit402a5679b9ebd05e24b2e4c7c49c90a1::$classMap;
+			},
+			null,
+			ClassLoader::class
+		);
+	}
 }

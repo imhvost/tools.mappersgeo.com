@@ -72,8 +72,7 @@ foreach ( $mappers_audit as $index => $audit_section ) {
 
 							$val = $condition_audit_question['val'] ?? null;
 							if ( 'not' === $val ) {
-									// echo '1' . $mappers_audit_section['name'] . ':' . $question['name'] . ' - ' . $val . '<br>';
-									return $carry;
+								return $carry;
 							}
 						}
 					}
@@ -89,7 +88,6 @@ foreach ( $mappers_audit as $index => $audit_section ) {
 					$val = $audit_question['val'] ?? null;
 
 					if ( 'not' === $val ) {
-						// echo '2' . $mappers_audit_section['name'] . ':' . $question['name'] . ' - ' . $val . '<br>';
 						return $carry;
 					}
 				}
@@ -105,8 +103,7 @@ foreach ( $mappers_audit as $index => $audit_section ) {
 							if ( 'yes' === $answer['val'] ) {
 								if ( ! empty( $answer['sub_questions'] ) ) {
 									$max_score = $answer['sub_questions'][0]['val'] ?? 0;
-									// var_dump( $max_score );
-									$carry += $max_score;
+									$carry    += $max_score;
 									return $carry;
 								}
 							}
@@ -153,11 +150,6 @@ $user_name       = mappers_get_user_name( $user_id );
 <?php get_header(); ?>
 <?php the_post(); ?>
 <div class="mappers-audit-hero"> 
-<pre style="font-size:10px;">
-<?php
-// print_r( $not_used_questions );
-?>
-</pre>
 	<div class="mappers-container">
 		<div class="mappers-audit-date">
 			<span><?php esc_html_e( 'від', 'mappers' ); ?></span>
@@ -233,14 +225,38 @@ $user_name       = mappers_get_user_name( $user_id );
 								?>
 								<div class="mappers-audit-section-list">
 									<?php
+									if ( ! empty( $audit_section['condition'] ) && ! empty( $audit_section['condition_ok'] ) ) {
+										get_template_part(
+											'template-parts/audit',
+											'result',
+											array(
+												'report' => $audit_section['condition_ok'],
+												'color'  => 'green',
+												'icon'   => 'like',
+											)
+										);
+									}
+									?>
+									<?php
 									foreach ( $audit_section['quiz'] as $question ) {
 										mappers_the_audit_result( $question );
 									}
 									?>
 								</div>
 							<?php endif; ?>
-						<?php else : ?>
-						<?php endif; ?>
+							<?php
+							elseif ( ! empty( $audit_section['condition_alert'] ) ) :
+									get_template_part(
+										'template-parts/audit',
+										'result',
+										array(
+											'report' => $audit_section['condition_alert'],
+											'color'  => 'red',
+											'icon'   => 'dislike',
+										)
+									);
+							endif;
+							?>
 					</div>
 				</div>
 			</div>

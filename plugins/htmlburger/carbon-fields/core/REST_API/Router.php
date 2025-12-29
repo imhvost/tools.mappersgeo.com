@@ -6,8 +6,8 @@ use Carbon_Fields\Helper\Helper;
 use Carbon_Fields\Container\Repository as ContainerRepository;
 
 /**
-* Register custom routes for REST API
-*/
+ * Register custom routes for REST API
+ */
 class Router {
 
 	/**
@@ -16,37 +16,37 @@ class Router {
 	 * @var array
 	 */
 	protected $routes = array(
-		'post_meta' => array(
+		'post_meta'           => array(
 			'path'                => '/posts/(?P<id>\d+)',
 			'callback'            => 'get_post_meta',
 			'permission_callback' => 'allow_access',
 			'methods'             => 'GET',
 		),
-		'term_meta' => array(
+		'term_meta'           => array(
 			'path'                => '/terms/(?P<id>\d+)',
 			'callback'            => 'get_term_meta',
 			'permission_callback' => 'allow_access',
 			'methods'             => 'GET',
 		),
-		'user_meta' => array(
+		'user_meta'           => array(
 			'path'                => '/users/(?P<id>\d+)',
 			'callback'            => 'get_user_meta',
 			'permission_callback' => 'allow_access',
 			'methods'             => 'GET',
 		),
-		'comment_meta' => array(
+		'comment_meta'        => array(
 			'path'                => '/comments/(?P<id>\d+)',
 			'callback'            => 'get_comment_meta',
 			'permission_callback' => 'allow_access',
 			'methods'             => 'GET',
 		),
-		'theme_options' => array(
+		'theme_options'       => array(
 			'path'                => '/options/',
 			'callback'            => 'options_accessor',
 			'permission_callback' => 'options_permission',
 			'methods'             => array( 'GET', 'POST' ),
 		),
-		'association_data' => array(
+		'association_data'    => array(
 			'path'                => '/association',
 			'callback'            => 'get_association_data',
 			'permission_callback' => 'allow_access',
@@ -58,20 +58,20 @@ class Router {
 			'permission_callback' => 'allow_access',
 			'methods'             => 'GET',
 		),
-		'attachment_data' => array(
+		'attachment_data'     => array(
 			'path'                => '/attachment',
 			'callback'            => 'get_attachment_data',
 			'permission_callback' => 'allow_access',
 			'methods'             => 'GET',
 			'args'                => 'attachment_data_args_schema',
 		),
-		'block_renderer' => array(
+		'block_renderer'      => array(
 			'path'                => '/block-renderer',
 			'callback'            => 'block_renderer',
 			'permission_callback' => 'block_renderer_permission',
 			'methods'             => 'POST',
 			'args'                => 'block_renderer_args_schema',
-		)
+		),
 	);
 
 	/**
@@ -193,12 +193,16 @@ class Router {
 	 * @param  array $route
 	 */
 	protected function register_route( $route ) {
-		register_rest_route( $this->get_vendor() . '/v' . $this->get_version(), $route['path'], array(
-			'methods'             => $route['methods'],
-			'permission_callback' => array( $this, $route['permission_callback'] ),
-			'callback'            => array( $this, $route['callback'] ),
-			'args'                => isset( $route['args'] ) ? call_user_func( array( $this, $route['args'] ) ) : array(),
-		) );
+		register_rest_route(
+			$this->get_vendor() . '/v' . $this->get_version(),
+			$route['path'],
+			array(
+				'methods'             => $route['methods'],
+				'permission_callback' => array( $this, $route['permission_callback'] ),
+				'callback'            => array( $this, $route['callback'] ),
+				'args'                => isset( $route['args'] ) ? call_user_func( array( $this, $route['args'] ) ) : array(),
+			)
+		);
 	}
 
 	/**
@@ -238,7 +242,7 @@ class Router {
 		$object_id = ( $object_id !== '' ) ? $object_id : null;
 
 		$containers = $this->container_repository->get_containers( $container_type );
-		$fields = array();
+		$fields     = array();
 		foreach ( $containers as $container ) {
 			$fields = array_merge( $fields, $container->get_fields() );
 		}
@@ -252,14 +256,14 @@ class Router {
 			$value = Helper::get_value( $object_id, $container_type, '', $field->get_base_name() );
 
 			if ( apply_filters( 'carbon_fields_rest_api_return_attachments_as_urls', false, $value, $field, $object_id ) ) {
-				$attachments_class = [
-					"Carbon_Fields\Field\Media_Gallery_Field",
-					"Carbon_Fields\Field\File_Field",
-					"Carbon_Fields\Field\Image_Field"
-				];
+				$attachments_class = array(
+					'Carbon_Fields\Field\Media_Gallery_Field',
+					'Carbon_Fields\Field\File_Field',
+					'Carbon_Fields\Field\Image_Field',
+				);
 
 				if ( in_array( get_class( $field ), $attachments_class ) ) {
-					$value = Helper::get_attachments_urls($value);
+					$value = Helper::get_attachments_urls( $value );
 				}
 			}
 
@@ -329,15 +333,18 @@ class Router {
 		/** @var \Carbon_Fields\Field\Association_Field $field */
 		$field = Helper::get_field( null, $container_id, $field_id );
 
-		$options = array_map( function ( $option ) {
-			$option = explode( ':', $option );
+		$options = array_map(
+			function ( $option ) {
+				$option = explode( ':', $option );
 
-			return [
-				'id'      => $option[0],
-				'type'    => $option[1],
-				'subtype' => $option[2],
-			];
-		}, $options );
+				return array(
+					'id'      => $option[0],
+					'type'    => $option[1],
+					'subtype' => $option[2],
+				);
+			},
+			$options
+		);
 
 		foreach ( $options as $option ) {
 			$item = array(
@@ -364,7 +371,7 @@ class Router {
 	 * @return array
 	 */
 	public function get_association_options() {
-		$page = isset( $_GET['page'] ) ? absint( $_GET['page'] )              : 1;
+		$page = isset( $_GET['page'] ) ? absint( $_GET['page'] ) : 1;
 		$term = isset( $_GET['term'] ) ? sanitize_text_field( $_GET['term'] ) : '';
 
 		$container_id = $_GET['container_id'];
@@ -373,10 +380,12 @@ class Router {
 		/** @var \Carbon_Fields\Field\Association_Field $field */
 		$field = Helper::get_field( null, $container_id, $field_id );
 
-		return $field->get_options( array(
-			'page' => $page,
-			'term' => $term,
-		) );
+		return $field->get_options(
+			array(
+				'page' => $page,
+				'term' => $term,
+			)
+		);
 	}
 
 	/**
@@ -450,8 +459,7 @@ class Router {
 					)
 				);
 			}
-		} else {
-			if ( ! current_user_can( 'edit_posts' ) ) {
+		} elseif ( ! current_user_can( 'edit_posts' ) ) {
 				return new \WP_Error(
 					'block_cannot_read',
 					__( 'Sorry, you are not allowed to read blocks as this user.', 'carbon-fields' ),
@@ -459,7 +467,6 @@ class Router {
 						'status' => rest_authorization_required_code(),
 					)
 				);
-			}
 		}
 
 		return true;
@@ -472,12 +479,12 @@ class Router {
 	 */
 	public function attachment_data_args_schema() {
 		return array(
-			'type'       => array(
+			'type'  => array(
 				'type'        => 'string',
 				'required'    => true,
 				'description' => __( 'The requested type: ID or URL.', 'carbon-fields' ),
 			),
-			'value'    => array(
+			'value' => array(
 				'type'        => 'string',
 				'required'    => true,
 				'description' => __( 'The ID / URL of the attachment', 'carbon-fields' ),
@@ -494,17 +501,17 @@ class Router {
 	 */
 	public function block_renderer_args_schema() {
 		return array(
-			'name'       => array(
+			'name'    => array(
 				'type'        => 'string',
 				'required'    => true,
 				'description' => __( 'The name of the block.', 'carbon-fields' ),
 			),
-			'content'    => array(
+			'content' => array(
 				'type'        => 'string',
 				'required'    => true,
 				'description' => __( 'The content of the block.', 'carbon-fields' ),
 			),
-			'post_id'    => array(
+			'post_id' => array(
 				'type'        => 'integer',
 				'description' => __( 'ID of the post context.', 'carbon-fields' ),
 			),

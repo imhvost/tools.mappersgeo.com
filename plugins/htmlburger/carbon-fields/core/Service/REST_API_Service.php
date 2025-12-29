@@ -29,7 +29,7 @@ class REST_API_Service extends Service {
 	 * @param Decorator $decorator
 	 */
 	public function __construct( Router $router, Decorator $decorator ) {
-		$this->router = $router;
+		$this->router    = $router;
 		$this->decorator = $decorator;
 	}
 

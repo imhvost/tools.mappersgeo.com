@@ -45,10 +45,13 @@ class Html_Field extends Field {
 
 		$field_html = is_callable( $this->field_html ) ? call_user_func( $this->field_html ) : $this->field_html;
 
-		$field_data = array_merge( $field_data, array(
-			'html' => $field_html,
-			'default_value' => $field_html,
-		) );
+		$field_data = array_merge(
+			$field_data,
+			array(
+				'html'          => $field_html,
+				'default_value' => $field_html,
+			)
+		);
 
 		return $field_data;
 	}

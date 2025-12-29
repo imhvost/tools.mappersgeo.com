@@ -22,7 +22,6 @@ class Post_Meta_Container extends Container {
 
 	/**
 	 * Post Types
-	 *
 	 */
 	protected $post_types;
 
@@ -40,7 +39,7 @@ class Post_Meta_Container extends Container {
 	 * @var array
 	 */
 	public $settings = array(
-		'meta_box_context' => 'normal',
+		'meta_box_context'  => 'normal',
 		'meta_box_priority' => 'high',
 	);
 
@@ -60,7 +59,7 @@ class Post_Meta_Container extends Container {
 	 * Bind attach() and save() to the appropriate WordPress actions.
 	 */
 	public function init() {
-		$input = stripslashes_deep( $_GET );
+		$input           = stripslashes_deep( $_GET );
 		$request_post_id = isset( $input['post'] ) ? intval( $input['post'] ) : 0;
 		if ( $request_post_id > 0 ) {
 			$this->set_post_id( $request_post_id );
@@ -82,14 +81,14 @@ class Post_Meta_Container extends Container {
 	 * @return bool
 	 */
 	public function is_valid_save() {
-		$params = func_get_args();
-		$post_id = $params[0];
+		$params    = func_get_args();
+		$post_id   = $params[0];
 		$post_type = get_post_type( $post_id );
 
-		$wp_preview = ( ! empty( $_POST['wp-preview'] ) ) ? $_POST['wp-preview'] : '';
-		$in_preview = $wp_preview === 'dopreview';
+		$wp_preview     = ( ! empty( $_POST['wp-preview'] ) ) ? $_POST['wp-preview'] : '';
+		$in_preview     = $wp_preview === 'dopreview';
 		$doing_autosave = defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE;
-		$is_revision = $post_type === 'revision';
+		$is_revision    = $post_type === 'revision';
 
 		if ( ( $doing_autosave || $is_revision ) && ( ! $in_preview || $this->revisions_disabled ) ) {
 			return false;
@@ -130,9 +129,9 @@ class Post_Meta_Container extends Container {
 	protected function get_environment_for_request() {
 		global $pagenow;
 
-		$input = stripslashes_deep( $_GET );
+		$input             = stripslashes_deep( $_GET );
 		$request_post_type = isset( $input['post_type'] ) ? $input['post_type'] : '';
-		$post_type = '';
+		$post_type         = '';
 
 		if ( $this->post_id ) {
 			$post_type = get_post_type( $this->post_id );
@@ -142,12 +141,12 @@ class Post_Meta_Container extends Container {
 			$post_type = 'post';
 		}
 
-		$post = get_post( $this->post_id );
-		$post = $post ? $post : null;
+		$post        = get_post( $this->post_id );
+		$post        = $post ? $post : null;
 		$environment = array(
-			'post_id' => $post ? $post->ID : 0,
+			'post_id'   => $post ? $post->ID : 0,
 			'post_type' => $post ? $post->post_type : $post_type,
-			'post' => $post,
+			'post'      => $post,
 		);
 		return $environment;
 	}
@@ -178,17 +177,17 @@ class Post_Meta_Container extends Container {
 	 * @return array
 	 */
 	protected function get_environment_for_object( $object_id ) {
-		$post = get_post( intval( $object_id ) );
+		$post      = get_post( intval( $object_id ) );
 		$post_type = $post->post_type;
 
 		if ( wp_is_post_revision( $post ) !== false ) {
-			$post = get_post( intval( $post->post_parent ) );
+			$post      = get_post( intval( $post->post_parent ) );
 			$post_type = $post->post_type;
 		}
 
 		$environment = array(
-			'post_id' => $post->ID,
-			'post' => $post,
+			'post_id'   => $post->ID,
+			'post'      => $post,
 			'post_type' => $post_type,
 		);
 		return $environment;
@@ -269,7 +268,7 @@ class Post_Meta_Container extends Container {
 	 * @return array<string>
 	 */
 	public function get_post_type_visibility() {
-		$all_post_types = get_post_types();
+		$all_post_types       = get_post_types();
 		$evaluated_collection = $this->condition_collection->evaluate( array( 'post_type' ), true, array(), true );
 
 		$shown_on = array();
@@ -318,7 +317,7 @@ class Post_Meta_Container extends Container {
 	 * @return object $this
 	 */
 	public function show_on_page_children( $parent_page_path ) {
-		$page = get_page_by_path( $parent_page_path );
+		$page    = get_page_by_path( $parent_page_path );
 		$page_id = ( $page ) ? $page->ID : -1;
 		$this->where( 'post_parent_id', '=', $page_id );
 		return $this;
@@ -405,11 +404,15 @@ class Post_Meta_Container extends Container {
 	 * @return object $this
 	 */
 	public function show_on_category( $category_slug ) {
-		$this->where( 'post_term', '=', array(
-			'value' => $category_slug,
-			'field' => 'slug',
-			'taxonomy' => 'category',
-		) );
+		$this->where(
+			'post_term',
+			'=',
+			array(
+				'value'    => $category_slug,
+				'field'    => 'slug',
+				'taxonomy' => 'category',
+			)
+		);
 		return $this;
 	}
 
@@ -422,11 +425,15 @@ class Post_Meta_Container extends Container {
 	 * @return object $this
 	 */
 	public function show_on_taxonomy_term( $term_slug, $taxonomy_slug ) {
-		$this->where( 'post_term', '=', array(
-			'value' => $term_slug,
-			'field' => 'slug',
-			'taxonomy' => $taxonomy_slug,
-		) );
+		$this->where(
+			'post_term',
+			'=',
+			array(
+				'value'    => $term_slug,
+				'field'    => 'slug',
+				'taxonomy' => $taxonomy_slug,
+			)
+		);
 		return $this;
 	}
 

@@ -2,22 +2,21 @@
 
 namespace Composer\Installers;
 
-class AkauntingInstaller extends BaseInstaller
-{
-    /** @var array<string, string> */
-    protected $locations = array(
-        'module' => 'modules/{$name}',
-    );
+class AkauntingInstaller extends BaseInstaller {
 
-    /**
-     * Format package name to CamelCase
-     */
-    public function inflectPackageVars(array $vars): array
-    {
-        $vars['name'] = strtolower($this->pregReplace('/(?<=\\w)([A-Z])/', '_\\1', $vars['name']));
-        $vars['name'] = str_replace(array('-', '_'), ' ', $vars['name']);
-        $vars['name'] = str_replace(' ', '', ucwords($vars['name']));
+	/** @var array<string, string> */
+	protected $locations = array(
+		'module' => 'modules/{$name}',
+	);
 
-        return $vars;
-    }
+	/**
+	 * Format package name to CamelCase
+	 */
+	public function inflectPackageVars( array $vars ): array {
+		$vars['name'] = strtolower( $this->pregReplace( '/(?<=\\w)([A-Z])/', '_\\1', $vars['name'] ) );
+		$vars['name'] = str_replace( array( '-', '_' ), ' ', $vars['name'] );
+		$vars['name'] = str_replace( ' ', '', ucwords( $vars['name'] ) );
+
+		return $vars;
+	}
 }

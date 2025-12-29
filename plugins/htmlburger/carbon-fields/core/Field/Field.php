@@ -224,11 +224,15 @@ class Field implements Datastore_Holder_Interface {
 		}
 
 		if ( Carbon_Fields::has( $type, 'fields' ) ) {
-			return Carbon_Fields::resolve_with_arguments( $type, array(
-				'type' => $type,
-				'name' => $name,
-				'label' => $label,
-			), 'fields' );
+			return Carbon_Fields::resolve_with_arguments(
+				$type,
+				array(
+					'type'  => $type,
+					'name'  => $name,
+					'label' => $label,
+				),
+				'fields'
+			);
 		}
 
 		// Fallback to class name-based resolution
@@ -270,7 +274,7 @@ class Field implements Datastore_Holder_Interface {
 		// Pick random ID
 		$random_string = md5( mt_rand() . $this->get_name() . $this->get_label() );
 		$random_string = substr( $random_string, 0, 5 ); // 5 chars should be enough
-		$this->id = 'carbon-' . $random_string;
+		$this->id      = 'carbon-' . $random_string;
 
 		$this->init();
 	}
@@ -358,7 +362,7 @@ class Field implements Datastore_Holder_Interface {
 	 * @return self  $this
 	 */
 	public function set_hierarchy_index( $hierarchy_index ) {
-		$hierarchy_index = ( ! empty( $hierarchy_index ) ) ? $hierarchy_index : array();
+		$hierarchy_index       = ( ! empty( $hierarchy_index ) ) ? $hierarchy_index : array();
 		$this->hierarchy_index = $hierarchy_index;
 		return $this;
 	}
@@ -483,7 +487,7 @@ class Field implements Datastore_Holder_Interface {
 		if ( $set_as_default && ! $this->has_default_datastore() ) {
 			return $this; // datastore has been overriden with a custom one - abort changing to a default one
 		}
-		$this->datastore = $datastore;
+		$this->datastore             = $datastore;
 		$this->has_default_datastore = $set_as_default;
 		return $this;
 	}
@@ -646,14 +650,14 @@ class Field implements Datastore_Holder_Interface {
 
 		// symbols ][ are supported in a hidden way - required for widgets to work (WP imposes dashes and square brackets on field names)
 		$field_name_characters = Helper::get_field_name_characters_pattern();
-		$regex = '/\A[' . $field_name_characters . '\[\]]+\z/';
+		$regex                 = '/\A[' . $field_name_characters . '\[\]]+\z/';
 		if ( ! preg_match( $regex, $name ) ) {
 			Incorrect_Syntax_Exception::raise( 'Field names  can only contain lowercase alphanumeric characters, dashes and underscores ("' . $name . '" passed).' );
 			return $this;
 		}
 
 		$name_prefix = $this->get_name_prefix();
-		$name = ( substr( $name, 0, strlen( $name_prefix ) ) !== $name_prefix ? $name_prefix . $name : $name );
+		$name        = ( substr( $name, 0, strlen( $name_prefix ) ) !== $name_prefix ? $name_prefix . $name : $name );
 
 		$this->name = $name;
 		return $this;
@@ -676,7 +680,7 @@ class Field implements Datastore_Holder_Interface {
 	 * @return self   $this
 	 */
 	public function set_name_prefix( $name_prefix ) {
-		$name_prefix = strval( $name_prefix );
+		$name_prefix       = strval( $name_prefix );
 		$old_prefix_length = strlen( $this->name_prefix );
 		$this->name_prefix = '';
 		$this->set_name( substr( $this->get_name(), $old_prefix_length ) );
@@ -818,7 +822,7 @@ class Field implements Datastore_Holder_Interface {
 	/**
 	 * Whether or not this value should be auto loaded. Applicable to theme options only.
 	 *
-	 * @param  bool  $autoload
+	 * @param  bool $autoload
 	 * @return self  $this
 	 */
 	public function set_autoload( $autoload ) {
@@ -838,7 +842,7 @@ class Field implements Datastore_Holder_Interface {
 	/**
 	 * Set the field width.
 	 *
-	 * @param  int   $width
+	 * @param  int $width
 	 * @return self  $this
 	 */
 	public function set_width( $width ) {
@@ -869,7 +873,7 @@ class Field implements Datastore_Holder_Interface {
 	/**
 	 * Whether this field is mandatory for the user
 	 *
-	 * @param  bool  $required
+	 * @param  bool $required
 	 * @return self  $this
 	 */
 	public function set_required( $required = true ) {
@@ -888,6 +892,7 @@ class Field implements Datastore_Holder_Interface {
 
 	/**
 	 * HTML id attribute getter.
+	 *
 	 * @return string
 	 */
 	public function get_id() {
@@ -933,7 +938,7 @@ class Field implements Datastore_Holder_Interface {
 	 */
 	protected function parse_conditional_rule( $rule ) {
 		$allowed_operators = array( '=', '!=', '>', '>=', '<', '<=', 'IN', 'NOT IN', 'INCLUDES', 'EXCLUDES' );
-		$array_operators = array( 'IN', 'NOT IN' );
+		$array_operators   = array( 'IN', 'NOT IN' );
 
 		// Check if the rule is valid
 		if ( ! is_array( $rule ) || empty( $rule['field'] ) ) {
@@ -942,14 +947,19 @@ class Field implements Datastore_Holder_Interface {
 		}
 
 		// Fill in optional keys with defaults
-		$rule = array_merge( array(
-			'compare' => '=',
-			'value' => '',
-		), $rule );
+		$rule = array_merge(
+			array(
+				'compare' => '=',
+				'value'   => '',
+			),
+			$rule
+		);
 
 		if ( ! in_array( $rule['compare'], $allowed_operators ) ) {
-			Incorrect_Syntax_Exception::raise( 'Invalid conditional logic compare operator: <code>' . $rule['compare'] . '</code><br>Allowed operators are: <code>' .
-			implode( ', ', $allowed_operators ) . '</code>' );
+			Incorrect_Syntax_Exception::raise(
+				'Invalid conditional logic compare operator: <code>' . $rule['compare'] . '</code><br>Allowed operators are: <code>' .
+				implode( ', ', $allowed_operators ) . '</code>'
+			);
 			return null;
 		}
 
@@ -975,7 +985,7 @@ class Field implements Datastore_Holder_Interface {
 
 		$parsed_rules = array(
 			'relation' => Helper::get_relation_type_from_array( $rules ),
-			'rules' => array(),
+			'rules'    => array(),
 		);
 
 		$rules_only = $rules;
@@ -997,7 +1007,7 @@ class Field implements Datastore_Holder_Interface {
 	/**
 	 * Set the REST visibility of the field
 	 *
-	 * @param  bool  $visible
+	 * @param  bool $visible
 	 * @return self  $this
 	 */
 	public function set_visible_in_rest_api( $visible = true ) {
@@ -1026,19 +1036,19 @@ class Field implements Datastore_Holder_Interface {
 		}
 
 		$field_data = array(
-			'id' => $this->get_id(),
-			'type' => $this->get_type(),
-			'label' => $this->get_label(),
-			'name' => $this->get_name(),
-			'base_name' => $this->get_base_name(),
-			'value' => $this->get_formatted_value(),
-			'default_value' => $this->get_default_value(),
-			'attributes' => (object) $this->get_attributes(),
-			'help_text' => $this->get_help_text(),
-			'context' => $this->get_context(),
-			'required' => $this->is_required(),
-			'width' => $this->get_width(),
-			'classes' => $this->get_classes(),
+			'id'                => $this->get_id(),
+			'type'              => $this->get_type(),
+			'label'             => $this->get_label(),
+			'name'              => $this->get_name(),
+			'base_name'         => $this->get_base_name(),
+			'value'             => $this->get_formatted_value(),
+			'default_value'     => $this->get_default_value(),
+			'attributes'        => (object) $this->get_attributes(),
+			'help_text'         => $this->get_help_text(),
+			'context'           => $this->get_context(),
+			'required'          => $this->is_required(),
+			'width'             => $this->get_width(),
+			'classes'           => $this->get_classes(),
 			'conditional_logic' => $this->get_conditional_logic(),
 		);
 

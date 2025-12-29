@@ -69,7 +69,7 @@ class Network_Container extends Theme_Options_Container {
 	/**
 	 * Set the site ID the container will operate with.
 	 *
-	 * @param  int  $id
+	 * @param  int $id
 	 * @return self $this
 	 */
 	public function set_site_id( $id ) {

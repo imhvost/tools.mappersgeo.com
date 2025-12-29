@@ -12,7 +12,7 @@ class User_Role_Condition extends Condition {
 	/**
 	 * Get roles for a user from the environment
 	 *
-	 * @param  array         $environment
+	 * @param  array $environment
 	 * @return array<string>
 	 */
 	protected function get_user_roles( $environment ) {

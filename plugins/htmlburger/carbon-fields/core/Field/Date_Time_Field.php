@@ -11,8 +11,8 @@ class Date_Time_Field extends Time_Field {
 	 * {@inheritDoc}
 	 */
 	protected $picker_options = array(
-		'allowInput' => true,
-		'enableTime' => true,
+		'allowInput'    => true,
+		'enableTime'    => true,
 		'enableSeconds' => true,
 	);
 

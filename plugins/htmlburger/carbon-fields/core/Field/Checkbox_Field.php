@@ -80,10 +80,13 @@ class Checkbox_Field extends Field {
 	public function to_json( $load ) {
 		$field_data = parent::to_json( $load );
 
-		$field_data = array_merge( $field_data, array(
-			'option_value' => $this->get_option_value(),
-			'option_label' => parent::get_label(),
-		) );
+		$field_data = array_merge(
+			$field_data,
+			array(
+				'option_value' => $this->get_option_value(),
+				'option_label' => parent::get_label(),
+			)
+		);
 
 		return $field_data;
 	}

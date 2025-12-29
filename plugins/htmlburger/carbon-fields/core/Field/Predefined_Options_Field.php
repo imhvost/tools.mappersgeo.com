@@ -21,7 +21,7 @@ abstract class Predefined_Options_Field extends Field {
 	/**
 	 * Check if an array is indexed
 	 *
-	 * @param  array   $array
+	 * @param  array $array
 	 * @return boolean
 	 */
 	protected function is_indexed_array( $array ) {
@@ -113,7 +113,7 @@ abstract class Predefined_Options_Field extends Field {
 	 * Will also work with a callable that returns an array.
 	 *
 	 * @param array|callable $options
-	 * @param bool $stringify_value (optional)
+	 * @param bool           $stringify_value (optional)
 	 * @return array
 	 */
 	protected function parse_options( $options, $stringify_value = false ) {
@@ -141,7 +141,7 @@ abstract class Predefined_Options_Field extends Field {
 	 */
 	protected function get_values_from_options( $values ) {
 		$options_values = $this->get_options_values();
-		$values = Helper::get_valid_options( $values, $options_values );
+		$values         = Helper::get_valid_options( $values, $options_values );
 		return $values;
 	}
 }
