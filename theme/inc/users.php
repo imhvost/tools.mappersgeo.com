@@ -35,11 +35,9 @@ function mappers_create_unique_user_login( $email ) {
  * @param int|null $user_id The user ID.
  * @return string User name or ''.
  */
-function mappers_get_user_name( $user_id = null ) {
-	$user_id   = $user_id ?? get_current_user_id();
-	$user_name = '';
+function mappers_get_user_name( $user_id ) {
 	if ( ! $user_id ) {
-		return $user_name;
+		return '';
 	}
 	$user_name = carbon_get_user_meta( $user_id, 'mappers_name' );
 	if ( ! $user_name ) {

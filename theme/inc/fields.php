@@ -31,6 +31,7 @@ add_action(
 		Container::make( 'user_meta', __( 'Поля', 'mappers' ) )
 			->add_fields(
 				array(
+
 					Field::make( 'text', 'mappers_name', __( "Ім'я та прізвище", 'mappers' ) ),
 					Field::make( 'text', 'mappers_tel', __( 'Номер телефону', 'mappers' ) ),
 					Field::make( 'text', 'mappers_website', __( 'Веб-сайт', 'mappers' ) ),
@@ -38,6 +39,8 @@ add_action(
 					Field::make( 'text', 'mappers_facebook', __( 'Facebook', 'mappers' ) ),
 					Field::make( 'text', 'mappers_credits', __( 'Кредити', 'mappers' ) )
 						->set_attribute( 'type', 'number' ),
+					Field::make( 'image', 'mappers_img', __( 'Зображення', 'mappers' ) ),
+					Field::make( 'text', 'mappers_expert_link', __( 'Посилання на сторінку експерта', 'mappers' ) ),
 				)
 			);
 
@@ -85,8 +88,8 @@ add_action(
 						->set_types(
 							array(
 								array(
-									'type'     => 'post',
-									'taxonomy' => 'mappers-package',
+									'type'      => 'post',
+									'post_type' => 'mappers-package',
 								),
 							)
 						)
@@ -107,9 +110,14 @@ add_action(
 		Container::make( 'post_meta', __( 'Поля', 'mappers' ) )
 			->where( 'post_template', '=', 'page-audit.php' )
 			->add_tab(
-				__( 'Строки для аудиту', 'mappers' ),
+				__( 'Загальне', 'mappers' ),
 				array(
 					Field::make( 'text', 'mappers_version', __( 'Версія', 'mappers' ) ),
+				),
+			)
+			->add_tab(
+				__( 'Строки для аудиту', 'mappers' ),
+				array(
 
 					Field::make( 'text', 'mappers_start_label', __( 'Старт - етикетка', 'mappers' ) ),
 					Field::make( 'text', 'mappers_start_title', __( 'Старт - заголовок', 'mappers' ) ),
@@ -144,6 +152,7 @@ add_action(
 					Field::make( 'text', 'mappers_id', __( 'ID', 'mappers' ) ),
 					Field::make( 'text', 'mappers_company', __( 'Компанія', 'mappers' ) ),
 					Field::make( 'text', 'mappers_address', __( 'Адреса', 'mappers' ) ),
+					Field::make( 'text', 'mappers_google_map', __( 'Посилання на профіль в Google Map', 'mappers' ) ),
 					Field::make( 'textarea', 'mappers_audit', __( 'Аудит', 'mappers' ) ),
 					Field::make( 'association', 'mappers_user', __( 'Користувач', 'mappers' ) )
 						->set_types(
@@ -155,6 +164,17 @@ add_action(
 							)
 						)
 						->set_max( 1 ),
+					Field::make( 'association', 'mappers_expert', __( 'Експерт', 'mappers' ) )
+						->set_types(
+							array(
+								array(
+									'type'      => 'user',
+									'post_type' => 'user',
+								),
+							)
+						)
+						->set_max( 1 ),
+					Field::make( 'rich_text', 'mappers_expert_comment', __( 'Коментар експерта', 'mappers' ) ),
 				),
 			);
 
@@ -279,6 +299,36 @@ add_action(
 						->set_width( 50 ),
 					Field::make( 'text', 'mappers_initial_score', __( 'Початкові бали', 'mappers' ) )
 						->set_attribute( 'type', 'number' ),
+				)
+			);
+
+		/* audit-page */
+		Container::make( 'post_meta', __( 'Поля', 'mappers' ) )
+			->where( 'post_template', '=', 'page-audits.php' )
+			->add_fields(
+				array(
+					Field::make( 'complex', 'mappers_audit_types', __( 'Типи аудитів', 'mappers' ) )
+						->set_collapsed( true )
+						->set_layout( 'tabbed-vertical' )
+						->add_fields(
+							array(
+								Field::make( 'text', 'title', __( 'Назва', 'mappers' ) ),
+								Field::make( 'text', 'name', __( 'name', 'mappers' ) ),
+								Field::make( 'text', 'price', __( 'Ціна', 'mappers' ) ),
+								Field::make( 'association', 'page', __( 'Сторінка з описом', 'mappers' ) )
+									->set_types(
+										array(
+											array(
+												'type' => 'post',
+												'post_type' => 'page',
+											),
+										)
+									)
+									->set_max( 1 ),
+							)
+						)
+						->set_header_template( '<%= title %>' ),
+					Field::make( 'image', 'mappers_google_map_info', __( 'Де взяти посилання на профіль в Google Map', 'mappers' ) ),
 				)
 			);
 	}

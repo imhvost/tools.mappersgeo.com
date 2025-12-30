@@ -260,8 +260,42 @@ $user_name       = mappers_get_user_name( $user_id );
 					</div>
 				</div>
 			</div>
-			<?php endforeach; ?>
+		<?php endforeach; ?>
 	</div>
 </main>
+<?php
+	$mappers_expert         = mappers_get_post_association_id( $post->ID, 'mappers_expert' );
+	$expert_name            = mappers_get_user_name( $mappers_expert );
+	$mappers_expert_comment = carbon_get_the_post_meta( 'mappers_expert_comment' );
+if ( $expert_name && $mappers_expert_comment ) :
+	$mappers_img         = carbon_get_user_meta( $mappers_expert, 'mappers_img' );
+	$mappers_expert_link = carbon_get_user_meta( $mappers_expert, 'mappers_expert_link' );
+	?>
+	<div class="mappers-audit-expert">
+		<div class="mappers-container">
+			<?php if ( $mappers_img ) : ?>
+				<<?php echo $mappers_expert_link ? 'a href="' . esc_url( $mappers_expert_link ) . '" target="_blank"' : 'div'; ?> class="mappers-audit-expert-img mappers-cover-img">
+					<?php echo wp_get_attachment_image( $mappers_img, 'full' ); ?>
+				</<?php echo $mappers_expert_link ? 'a' : 'div'; ?>>
+			<?php endif; ?>
+			<div class="mappers-audit-expert-body">
+				<div class="mappers-audit-expert-head">
+					<div class="mappers-audit-expert-title">
+						<?php esc_html_e( 'Коментар експерта', 'mappers' ); ?>
+					</div>
+					<<?php echo $mappers_expert_link ? 'a href="' . esc_url( $mappers_expert_link ) . '" target="_blank"' : 'div'; ?> class="mappers-audit-expert-name">
+						<?php echo esc_html( $expert_name ); ?>
+					</<?php echo $mappers_expert_link ? 'a' : 'div'; ?>>
+				</div>
+				<div class="mappers-audit-expert-comment mappers-content-text">
+					<?php
+						// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+						echo apply_filters( 'the_content', $mappers_expert_comment );
+					?>
+				</div>
+			</div>
+		</div>
+	</div>
+<?php endif; ?>
 <?php
 get_footer();
