@@ -41,9 +41,7 @@ if ( $user_id ) {
 	);
 }
 
-
 $mappers_audit_types = carbon_get_the_post_meta( 'mappers_audit_types' );
-$credits_page_id     = mappers_get_page_id_by_template( 'page-credits.php' );
 
 ?>
 <?php get_header(); ?>
@@ -60,7 +58,7 @@ $credits_page_id     = mappers_get_page_id_by_template( 'page-credits.php' );
 							<button
 								class="mappers-audits-btn mappers-btn <?php echo 0 === $key % 2 ? 'mappers-btn-border' : ''; ?>"
 								<?php if ( $user_id ) : ?>
-									<?php if ( $user_credits && $user_credits >= (int) $item['price'] ) : ?>
+									<?php if ( $user_credits && $user_credits >= (int) ( $item['price'] ?? 0 ) ) : ?>
 										<?php if ( 'self' === $item['name'] ) : ?>
 											data-action="start"
 											data-type="self"
@@ -69,7 +67,7 @@ $credits_page_id     = mappers_get_page_id_by_template( 'page-credits.php' );
 										<?php if ( 'pro' === $item['name'] ) : ?>
 											data-action="start"
 											data-type="pro"
-											data-btn-text="<?php esc_attr_e( 'Почати аудит', 'mappers' ); ?>"
+											data-btn-text="<?php esc_attr_e( 'Замовити', 'mappers' ); ?> <?php echo esc_attr( $item['title'] ); ?>"
 										<?php endif; ?>
 									<?php else : ?>
 										data-action="credits"
@@ -93,12 +91,43 @@ $credits_page_id     = mappers_get_page_id_by_template( 'page-credits.php' );
 					</div>
 				<?php endif; ?>
 			</div>
+			<?php if ( $audits ) : ?>
+				<table class="mappers-audits-table">
+					<thead>
+						<tr>
+							<td><?php esc_html_e( 'Назва', 'mappers' ); ?></td>
+							<td><?php esc_html_e( 'Адреса', 'mappers' ); ?></td>
+							<td><?php esc_html_e( 'Дата', 'mappers' ); ?></td>
+							<td><?php esc_html_e( 'Статус', 'mappers' ); ?></td>
+							<td><?php esc_html_e( 'Дії', 'mappers' ); ?></td>
+						</tr>
+					</thead>
+					<tbody>
+						<?php
+						foreach ( $audits as $audit_post_id ) :
+							$mappers_company   = carbon_get_post_meta( $audit_post_id, 'mappers_company' );
+							$mappers_address   = carbon_get_post_meta( $audit_post_id, 'mappers_address' );
+							$audit_post_status = get_post_status( $audit_post_id );
+							?>
+						<tr>
+							
+						</tr>
+						<?php endforeach; ?>
+					</tbody>
+				</table>
+			<?php else : ?>
+				<div class="mappers-audits-empty">
+					<?php esc_html_e( 'Ви поки що не отримали жодного результату аудиту. Замовте аудит', 'mappers' ); ?>
+				</div>
+			<?php endif; ?>
 		</div>
 	</div>
 </main>
 <?php
 if ( $user_id ) {
-	get_template_part( 'template-parts/modal/audit', 'start' );
+	get_template_part( 'template-parts/modal/audit', 'start', array( 'google_map_info' => carbon_get_the_post_meta( 'mappers_google_map_info' ) ) );
+	get_template_part( 'template-parts/modal/audit', 'sent', );
+	get_template_part( 'template-parts/modal/credits', 'end', );
 }
 ?>
 <?php

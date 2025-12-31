@@ -82,3 +82,23 @@ function mappers_is_editor_or_admin() {
 
 	return in_array( 'administrator', (array) $user->roles, true ) || in_array( 'editor', (array) $user->roles, true );
 }
+
+/**
+ * Get emails of all editors.
+ *
+ * @return array Emails array.
+ */
+function mappers_get_editors_email() {
+	$users  = get_users(
+		array(
+			'role'   => 'editor',
+			'fields' => array( 'user_email' ),
+		)
+	);
+	$emails = wp_list_pluck( $users, 'user_email' );
+	$emails = array_filter( array_map( 'trim', $emails ) );
+	$emails = array_unique( $emails );
+	$emails = array_values( $emails );
+
+	return $emails;
+}

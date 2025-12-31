@@ -38,6 +38,8 @@ export interface Section {
 export interface Audits {
   id: number | string;
   url?: string;
+  version?: string;
+  status?: 'publish' | 'draft';
   audit: Section[];
 }
 [];

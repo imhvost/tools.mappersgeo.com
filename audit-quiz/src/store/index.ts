@@ -12,6 +12,10 @@ export const useGlobalState = createGlobalState(() => {
     return audits.value.find(o => o.id === auditId.value)?.audit || [];
   });
 
+  const auditVersion = computed<string>(() => {
+    return audits.value.find(o => o.id === auditId.value)?.version || '';
+  });
+
   const updateAuditQuestion = (sectionName: string, questionName: string, value?: string) => {
     const question = audit.value
       .find(o => o.name === sectionName)
@@ -62,6 +66,7 @@ export const useGlobalState = createGlobalState(() => {
     audits,
     audit,
     auditId,
+    auditVersion,
     updateAuditQuestion,
     updateAuditSubQuestion,
     auditsIsLoad,

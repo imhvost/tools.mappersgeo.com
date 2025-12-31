@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { useFetch } from '@vueuse/core';
-import { ref, watch, toRaw, nextTick } from 'vue';
+import { ref, watch, toRaw, nextTick, onMounted, onUnmounted } from 'vue';
 import { useGlobalState } from '@/store';
 import type { Question } from '@/types';
 import QuizInfo from '@/components/QuizInfo.vue';
 import QuizSection from '@/components/QuizSection.vue';
 
-const { audit, audits, auditsIsLoad, auditId, sections, meta, isEnd } = useGlobalState();
+const { audit, audits, auditsIsLoad, auditId, auditVersion, sections, meta, isEnd } =
+  useGlobalState();
 
 const activeSectionName = ref<string>();
 
@@ -123,6 +124,8 @@ const endAudit = async () => {
     .post({
       id: auditId.value,
       audit: audit.value,
+      version: auditVersion.value,
+      status: isEnd.value ? 'publish' : 'draft',
     })
     .json();
 
@@ -137,6 +140,8 @@ const endAudit = async () => {
       id: data.value.id,
       audit: rawAudit,
       url: data.value.url,
+      version: data.value.version,
+      status: isEnd.value ? 'publish' : 'draft',
     });
 
     auditId.value = data.value.id;
@@ -149,6 +154,29 @@ const endAudit = async () => {
     window.history.replaceState(null, '', url.toString());
   }
 };
+
+const saveAudit = () => {
+  useFetch(`${import.meta.env.VITE_WP_URI}${import.meta.env.VITE_WP_API_BASE}/audit-quiz/`)
+    .post({
+      id: auditId.value,
+      audit: audit.value,
+      version: auditVersion.value,
+      status: isEnd.value ? 'publish' : 'draft',
+    })
+    .json();
+};
+
+onMounted(() => {
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') {
+      saveAudit();
+    }
+  });
+});
+
+onUnmounted(() => {
+  document.removeEventListener('visibilitychange', saveAudit);
+});
 </script>
 
 <template>

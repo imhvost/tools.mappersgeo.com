@@ -51,7 +51,7 @@ class Mappers_Credits {
 	 * @return int Number of credits.
 	 */
 	public function get_credits(): int {
-		if ( $this->is_valid() ) {
+		if ( ! $this->is_valid() ) {
 			return 0;
 		}
 		$credits = carbon_get_user_meta( $this->user_id, 'mappers_credits' );
@@ -65,7 +65,7 @@ class Mappers_Credits {
 	 * @return bool True on success.
 	 */
 	public function add_credits( int $amount ): bool {
-		if ( $this->is_valid() ) {
+		if ( ! $this->is_valid() ) {
 			return false;
 		}
 		$current = $this->get_credits();
@@ -88,7 +88,7 @@ class Mappers_Credits {
 	 * @return bool True on success, false if not enough credits.
 	 */
 	public function spend_credits( int $amount ): bool {
-		if ( $this->is_valid() ) {
+		if ( ! $this->is_valid() ) {
 			return false;
 		}
 		$current = $this->get_credits();
@@ -115,7 +115,7 @@ class Mappers_Credits {
 	 * @return bool True if user has enough credits, false otherwise.
 	 */
 	public function has_credits( int $amount ): bool {
-		if ( $this->is_valid() ) {
+		if ( ! $this->is_valid() ) {
 			return false;
 		}
 		return $this->get_credits() >= $amount;

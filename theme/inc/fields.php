@@ -150,6 +150,8 @@ add_action(
 			->add_fields(
 				array(
 					Field::make( 'text', 'mappers_id', __( 'ID', 'mappers' ) ),
+					Field::make( 'text', 'mappers_type', __( 'Тип', 'mappers' ) ),
+					Field::make( 'text', 'mappers_version', __( 'Версія', 'mappers' ) ),
 					Field::make( 'text', 'mappers_company', __( 'Компанія', 'mappers' ) ),
 					Field::make( 'text', 'mappers_address', __( 'Адреса', 'mappers' ) ),
 					Field::make( 'text', 'mappers_google_map', __( 'Посилання на профіль в Google Map', 'mappers' ) ),

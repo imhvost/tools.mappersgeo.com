@@ -473,3 +473,135 @@ function mappers_check_question_condition( array $question, string $section_name
 		$parsed['value']
 	);
 }
+
+/**
+ * Ajax start audit
+ *
+ * @return void
+ */
+function mappers_audit_start() {
+	$fields = mappers_check_text_fields(
+		array(
+			'company',
+			'address',
+			'google_map',
+			'type',
+		)
+	);
+
+	$user_id = get_current_user_id();
+	if ( ! $user_id ) {
+		wp_send_json_error( array( 'message' => esc_html__( 'Відсутній користувач.', 'mappers' ) ) );
+	}
+
+	$page_audits_id      = mappers_get_page_id_by_template( 'page-audits.php' );
+	$mappers_audit_types = carbon_get_post_meta( $page_audits_id, 'mappers_audit_types' );
+
+	if ( ! $mappers_audit_types || ! is_array( $mappers_audit_types ) ) {
+		wp_send_json_error( array( 'message' => esc_html__( 'Відсутній типи аудитів.', 'mappers' ) ) );
+	}
+
+	$audit_type = array_find( $mappers_audit_types, fn( $item ) => $fields['type'] === $item['name'] );
+
+	if ( ! $audit_type ) {
+		wp_send_json_error( array( 'message' => esc_html__( 'Не знайдено аудит.', 'mappers' ) ) );
+	}
+
+	$audit_cost = (int) ( $audit_type['price'] ?? 0 );
+
+	$user_credits = (int) carbon_get_user_meta( $user_id, 'mappers_credits' );
+
+	if ( ! $user_credits || $user_credits < $audit_cost ) {
+		wp_send_json_error( array( 'message' => esc_html__( 'Не вистачає кредитів.', 'mappers' ) ) );
+	}
+
+	$audit = mappers_get_audit_sections();
+	$audit = wp_json_encode( $audit, JSON_UNESCAPED_UNICODE );
+
+	if ( ! $audit ) {
+		wp_send_json_error( array( 'message' => esc_html__( 'Помилка кодування аудиту.', 'mappers' ) ) );
+	}
+
+	$slug = wp_unique_post_slug(
+		wp_generate_uuid4(),
+		0,
+		'publish',
+		'post',
+		0
+	);
+
+	$post_id = wp_insert_post(
+		array(
+			'post_type'   => 'mappers-audit',
+			'post_title'  => $fields['company'],
+			'post_status' => 'draft',
+			'post_name'   => $slug,
+		)
+	);
+
+	if ( is_wp_error( $post_id ) ) {
+		wp_send_json_error( array( 'message' => esc_html__( 'Помилка створення аудиту.', 'mappers' ) ) );
+	}
+
+	carbon_set_post_meta( $post_id, 'mappers_id', $slug );
+	carbon_set_post_meta( $post_id, 'mappers_type', $fields['type'] );
+	carbon_set_post_meta( $post_id, 'mappers_audit', $audit );
+	carbon_set_post_meta( $post_id, 'mappers_company', $fields['company'] );
+	carbon_set_post_meta( $post_id, 'mappers_address', $fields['address'] );
+	carbon_set_post_meta( $post_id, 'mappers_google_map', $fields['google_map'] );
+	carbon_set_post_meta(
+		$post_id,
+		'mappers_user',
+		array(
+			'value'   => 'user:user:' . $user_id,
+			'id'      => $user_id,
+			'type'    => 'user',
+			'subtype' => 'user',
+		)
+	);
+
+	$redirect = '';
+
+	$page_audit_id = mappers_get_page_id_by_template( 'page-audit.php' );
+	if ( $page_audit_id ) {
+		$version = carbon_get_post_meta( $page_audit_id, 'mappers_version' );
+		if ( $version ) {
+			carbon_set_post_meta( $post_id, 'mappers_version', $version );
+		}
+
+		$redirect = get_the_permalink( $page_audit_id ) . '?id=' . $slug;
+	}
+
+	if ( 'pro' === $fields['type'] ) {
+		mappers_mail_notification(
+			mappers_get_editors_email(),
+			array(
+				'subject' => esc_html__( 'Нова заявка на аудит', 'mappers' ),
+				'text'    => array(
+					sprintf(
+						/* translators: %s:  */
+						esc_html__( 'Посилання на  %s', 'mappers' ),
+						'[mappers_mail_link url="' . esc_url( get_edit_post_link( $post_id ) ) . '"]' . esc_html__( 'пост', 'mappers' ) . '[/mappers_mail_link]'
+					),
+					'[mappers_mail_link url="' . esc_url( $redirect ) . '"]' . esc_html__( 'Почати аудит', 'mappers' ) . '[/mappers_mail_link]',
+				),
+			)
+		);
+	}
+
+	$user_credits -= $audit_cost;
+	error_log( $audit_cost );
+	carbon_set_user_meta( $user_id, 'mappers_credits', $user_credits );
+
+	wp_send_json_success(
+		array(
+			'message'  => esc_html__( 'Аудит створено', 'mappers' ),
+			'post_id'  => $post_id,
+			'id'       => $slug,
+			'redirect' => 'self' === $fields['type'] ? $redirect : '',
+		)
+	);
+}
+
+add_action( 'wp_ajax_nopriv_mappers_audit_start', 'mappers_audit_start' );
+add_action( 'wp_ajax_mappers_audit_start', 'mappers_audit_start' );

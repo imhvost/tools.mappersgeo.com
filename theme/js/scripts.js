@@ -546,3 +546,68 @@ $(document).on('submit', '.mappers-credits-buy-form', function (e) {
 		},
 	});
 });
+
+/* mappers-audits-btn */
+
+$(document).on('click', '.mappers-audits-btn', function () {
+	const t = $(this);
+	const action = t.data('action');
+	if (action === 'start') {
+		$('.mappers-audit-start-form').data('type', t.data('type'));
+		$('.mappers-audit-start-submit').text(t.data('btn-text'));
+		mappersModal.openModal('mappers-modal-audit-start');
+	}
+	if (action === 'registration') {
+		mappersModal.openModal('mappers-modal-registration');
+	}
+	if (action === 'credits') {
+		mappersModal.openModal('mappers-modal-credits-end');
+	}
+});
+
+/* mappers-profile-form */
+
+$(document).on('submit', '.mappers-audit-start-form', function (e) {
+	e.preventDefault();
+	if (!window.wp_ajax) {
+		return;
+	}
+
+	const t = $(this);
+
+	if (t.hasClass('mappers-ajax-process')) {
+		return;
+	}
+	t.addClass('mappers-ajax-process');
+
+	const formData = new FormData(this);
+	formData.append('action', 'mappers_audit_start');
+	formData.append('type', t.data('type'));
+	formData.append('nonce', wp_ajax.nonce);
+	$.ajax({
+		url: wp_ajax.url,
+		type: 'POST',
+		data: formData,
+		processData: false,
+		contentType: false,
+		success: function (response) {
+			if (response.success) {
+				if (response.data.redirect) {
+					location.href = response.data.redirect;
+					return;
+				}
+				if (type === 'pro') {
+					mappersModal.openModal('mappers-modal-audit-sent');
+				}
+			}
+			t.removeClass('mappers-ajax-process');
+		},
+		error: error => {
+			t.removeClass('mappers-ajax-process');
+		},
+	});
+});
+
+$('#mappers-modal-audit-sent').on('accessible-minimodal:after-close', () => {
+	location.reload();
+});

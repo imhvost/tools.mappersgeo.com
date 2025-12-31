@@ -1032,6 +1032,9 @@ a.mappers-profile-menu-link {
 	display: flex;
 	flex-direction: column;
 	gap: 24px;
+	@media @md {
+		padding: 24px var(--mappers-container-padding);
+	}
 }
 
 .mappers-widget-head {
@@ -1039,10 +1042,63 @@ a.mappers-profile-menu-link {
 	align-items: center;
 	gap: 24px;
 	justify-content: space-between;
+	@media @md {
+		flex-direction: column;
+		align-items: unset;
+	}
 }
 
 .mappers-audits-btn-cost {
 	display: flex;
 	align-items: center;
 	gap: 4px;
+}
+
+.mappers-modal-audit-start {
+	.mappers-modal-title {
+		text-align: left;
+	}
+}
+
+.mappers-audit-start-form-inputs {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.mappers-audit-start-form-google-map-info {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	@media @md_ {
+		margin-top: -16px;
+	}
+}
+
+.mappers-audit-start-form-google-map-info-img {
+	display: flex;
+}
+
+.mappers-audits-btns {
+	display: flex;
+	gap: 12px;
+	@media @md {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+	}
+	@media @sm {
+		grid-template-columns: 1fr;
+	}
+}
+
+.mappers-modal-credits-end,
+.mappers-modal-audit-sent {
+	.mappers-modal-body {
+		display: flex;
+		flex-direction: column;
+		gap: 40px;
+		@media @md {
+			gap: 24px;
+		}
+	}
 }
