@@ -573,24 +573,26 @@ function mappers_audit_start() {
 	}
 
 	if ( 'pro' === $fields['type'] ) {
-		mappers_mail_notification(
-			mappers_get_editors_email(),
-			array(
-				'subject' => esc_html__( 'Нова заявка на аудит', 'mappers' ),
-				'text'    => array(
-					sprintf(
+		$editors_emails = mappers_get_editors_email();
+		if ( $editors_emails ) {
+			mappers_mail_notification(
+				mappers_get_editors_email(),
+				array(
+					'subject' => esc_html__( 'Нова заявка на аудит', 'mappers' ),
+					'text'    => array(
+						sprintf(
 						/* translators: %s:  */
-						esc_html__( 'Посилання на  %s', 'mappers' ),
-						'[mappers_mail_link url="' . esc_url( get_edit_post_link( $post_id ) ) . '"]' . esc_html__( 'пост', 'mappers' ) . '[/mappers_mail_link]'
+							esc_html__( 'Посилання на  %s', 'mappers' ),
+							'[mappers_mail_link url="' . esc_url( get_edit_post_link( $post_id ) ) . '"]' . esc_html__( 'пост', 'mappers' ) . '[/mappers_mail_link]'
+						),
+						'[mappers_mail_link url="' . esc_url( $redirect ) . '"]' . esc_html__( 'Почати аудит', 'mappers' ) . '[/mappers_mail_link]',
 					),
-					'[mappers_mail_link url="' . esc_url( $redirect ) . '"]' . esc_html__( 'Почати аудит', 'mappers' ) . '[/mappers_mail_link]',
-				),
-			)
-		);
+				)
+			);
+		}
 	}
 
 	$user_credits -= $audit_cost;
-	error_log( $audit_cost );
 	carbon_set_user_meta( $user_id, 'mappers_credits', $user_credits );
 
 	wp_send_json_success(

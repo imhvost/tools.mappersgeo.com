@@ -32,11 +32,11 @@
 	<!-- Strip the file paths down to the relevant bit -->
 	<arg name="colors"/>
 	<arg name="extensions" value="php"/>
-	<arg name="parallel" value="16"/><!-- Enables parallel processing when available for faster results. -->
+	<arg name="parallel" value="32"/><!-- Enables parallel processing when available for faster results. -->
 
 	<!-- Rules: Check PHP version compatibility -->
 	<!-- https://github.com/PHPCompatibility/PHPCompatibility#sniffing-your-code-for-compatibility-with-specific-php-versions -->
-	<config name="testVersion" value="7.4-"/>
+	<config name="testVersion" value="8.2-"/>
 
 	<!-- Rules: Check PHP version compatibility-->
 	<!-- https://github.com/PHPCompatibility/PHPCompatibilityWP -->
@@ -61,6 +61,10 @@
 		<properties>
 			<property name="blank_line_check" value="true"/>
 		</properties>
+	</rule>
+
+	<rule ref="WordPress">
+		<exclude name="Squiz.Commenting.InlineComment.InvalidEndChar"/>
 	</rule>
 
 	<exclude name="Generic.Commenting.CommentedOutCode"/>

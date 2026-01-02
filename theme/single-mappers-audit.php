@@ -9,12 +9,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/*
 $user_id      = get_current_user_id();
 $mappers_user = mappers_get_post_association_id( $post->ID, 'mappers_user' );
 
 if ( ( ! $user_id || $mappers_user !== $user_id ) && ! mappers_is_editor_or_admin() ) {
 	mappers_force_404();
 }
+*/
 
 $mappers_audit = carbon_get_the_post_meta( 'mappers_audit' );
 if ( ! $mappers_audit ) {
@@ -144,11 +146,14 @@ foreach ( $mappers_audit as $index => $audit_section ) {
 
 $mappers_company = carbon_get_the_post_meta( 'mappers_company' );
 $mappers_address = carbon_get_the_post_meta( 'mappers_address' );
-$user_name       = mappers_get_user_name( $user_id );
+$mappers_address = carbon_get_the_post_meta( 'mappers_address' );
+$mappers_user    = mappers_get_post_association_id( $post->ID, 'mappers_user' );
+$user_name       = $mappers_user ? mappers_get_user_name( $mappers_user ) : '';
 
 ?>
 <?php get_header(); ?>
 <?php the_post(); ?>
+
 <div class="mappers-audit-hero"> 
 	<div class="mappers-container">
 		<div class="mappers-audit-date">
@@ -168,7 +173,9 @@ $user_name       = mappers_get_user_name( $user_id );
 				<svg class="mappers-icon"><use xlink:href="#icon-email"/></svg>
 			</div>
 			<div class="mappers-audit-hello-body">
-				<p><?php esc_html_e( 'Вітаю,', 'mappers' ); ?> <?php echo esc_html( $user_name ); ?>!</p>
+				<?php if ( $user_name ) : ?>
+					<p><?php esc_html_e( 'Вітаю,', 'mappers' ); ?> <?php echo esc_html( $user_name ); ?>!</p>
+				<?php endif; ?>
 				<p>
 					<?php esc_html_e( 'Ми отримали вашу заявку на аудит картки вашої компанії', 'mappers' ); ?>
 					<span><?php echo esc_html( $mappers_company ); ?></span>

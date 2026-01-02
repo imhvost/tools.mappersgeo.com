@@ -21,6 +21,8 @@ watch(auditsIsLoad, async isLoaded => {
   if (id) {
     auditId.value = id;
     await nextTick();
+  } else {
+    return;
   }
 
   if (!Object.keys(audit.value).length) {
@@ -31,11 +33,6 @@ watch(auditsIsLoad, async isLoaded => {
       audits.value = data.value;
       auditId.value = data.value?.[0]?.id || 0;
     }
-  }
-
-  if (auditId.value === 0) {
-    url.searchParams.delete('id');
-    window.history.replaceState(null, '', url.toString());
   }
 
   const { data: auditQuizMeta } = await useFetch<Record<string, string>>(
@@ -131,27 +128,6 @@ const endAudit = async () => {
 
   if (!data.value?.success || !data.value.id) {
     return;
-  }
-
-  if (auditId.value === 0) {
-    const rawAudit = structuredClone(toRaw(audit.value));
-
-    audits.value.push({
-      id: data.value.id,
-      audit: rawAudit,
-      url: data.value.url,
-      version: data.value.version,
-      status: isEnd.value ? 'publish' : 'draft',
-    });
-
-    auditId.value = data.value.id;
-
-    audits.value = audits.value.filter(o => o.id === data.value.id);
-
-    const url = new URL(window.location.href);
-    url.searchParams.set('id', String(data.value.id));
-
-    window.history.replaceState(null, '', url.toString());
   }
 };
 

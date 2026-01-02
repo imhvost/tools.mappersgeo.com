@@ -580,9 +580,11 @@ $(document).on('submit', '.mappers-audit-start-form', function (e) {
 	}
 	t.addClass('mappers-ajax-process');
 
+	const type = t.data('type');
+
 	const formData = new FormData(this);
 	formData.append('action', 'mappers_audit_start');
-	formData.append('type', t.data('type'));
+	formData.append('type', type);
 	formData.append('nonce', wp_ajax.nonce);
 	$.ajax({
 		url: wp_ajax.url,
@@ -600,7 +602,6 @@ $(document).on('submit', '.mappers-audit-start-form', function (e) {
 					mappersModal.openModal('mappers-modal-audit-sent');
 				}
 			}
-			t.removeClass('mappers-ajax-process');
 		},
 		error: error => {
 			t.removeClass('mappers-ajax-process');
@@ -611,3 +612,74 @@ $(document).on('submit', '.mappers-audit-start-form', function (e) {
 $('#mappers-modal-audit-sent').on('accessible-minimodal:after-close', () => {
 	location.reload();
 });
+
+/* mappers-audits-table-btn-download */
+
+$(document).on('click', '.mappers-audits-table-btn-download', function () {
+	const t = $(this);
+	if (t.hasClass('mappers-process')) {
+		return;
+	}
+	t.addClass('mappers-process');
+
+	const item = t.closest('.mappers-audits-table-item');
+
+	const src = item.data('src');
+	const id = item.data('mappers_id');
+
+	const iframe = document.createElement('iframe');
+
+	iframe.style.position = 'fixed';
+	iframe.style.left = '-9999px';
+	iframe.style.width = '1200px';
+	iframe.style.height = '2000px';
+	iframe.src = src + '?print=1';
+
+	document.body.appendChild(iframe);
+
+	iframe.onload = async () => {
+		const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+		iframeDoc.querySelectorAll('svg').forEach(el => el.remove());
+
+		const target = iframeDoc.body;
+
+		const canvas = await html2canvas(target, {
+			scale: 2,
+			useCORS: true,
+			backgroundColor: '#fff',
+		});
+
+		const imgData = canvas.toDataURL('image/jpeg', 1.0);
+
+		const pdf = new jspdf.jsPDF('p', 'mm', 'a4');
+		const pdfWidth = 210;
+		const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+		pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+		pdf.save(`${id}.pdf`);
+
+		document.body.removeChild(iframe);
+
+		t.removeClass('mappers-process');
+	};
+});
+
+async function down() {
+	$('body').each(function () {});
+	const canvas = await html2canvas($('body')[0], {
+		scale: 2,
+		useCORS: true,
+		backgroundColor: '#fff',
+	});
+
+	const imgData = canvas.toDataURL('image/jpeg', 1.0);
+
+	const pdf = new jspdf.jsPDF('p', 'mm', 'a4');
+	const pdfWidth = 210;
+	const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+	pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+	pdf.save('document.pdf');
+}
+
+// down();

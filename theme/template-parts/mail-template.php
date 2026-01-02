@@ -1,6 +1,6 @@
 <?php
 /**
- * Mail header
+ * Mail template
  *
  * @package lac
  */

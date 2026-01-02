@@ -193,7 +193,7 @@ add_shortcode(
 );
 
 /**
- * Returns inline CSS for email text using Montserrat font.
+ * Returns inline CSS for email text.
  *
  * @param int   $font_size   Font size in pixels. Default 16.
  * @param float $line_height Line height. Default 1.25.
@@ -202,5 +202,5 @@ add_shortcode(
  * @return string Inline CSS string.
  */
 function mappers_get_email_font_styles( $font_size = 16, $line_height = 1.5, $font_weight = 400 ) {
-	return 'font-family: Montserrat, sans-serif; -webkit-text-size-adjust:none; mso-line-height-rule:exactly; font-size:' . $font_size . 'px; line-height: ' . $line_height . '; font-weight: ' . $font_weight . ';';
+	return 'font-family: Montserrat, Roboto, sans-serif; -webkit-text-size-adjust:none; mso-line-height-rule:exactly; font-size:' . $font_size . 'px; line-height: ' . $line_height . '; font-weight: ' . $font_weight . ';';
 }

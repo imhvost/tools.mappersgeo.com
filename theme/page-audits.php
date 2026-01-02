@@ -31,7 +31,6 @@ if ( $user_id ) {
 			'posts_per_page' => -1,
 			'fields'         => 'ids',
 			'meta_query'     => array(
-				'relation' => 'OR',
 				array(
 					'key'   => '_mappers_user|||0|id',
 					'value' => $user_id,
@@ -91,7 +90,10 @@ $mappers_audit_types = carbon_get_the_post_meta( 'mappers_audit_types' );
 					</div>
 				<?php endif; ?>
 			</div>
-			<?php if ( $audits ) : ?>
+			<?php
+			if ( $audits ) :
+				$audit_page_id = mappers_get_page_id_by_template( 'page-audit.php' );
+				?>
 				<table class="mappers-audits-table">
 					<thead>
 						<tr>
@@ -103,14 +105,65 @@ $mappers_audit_types = carbon_get_the_post_meta( 'mappers_audit_types' );
 						</tr>
 					</thead>
 					<tbody>
-						<?php
-						foreach ( $audits as $audit_post_id ) :
-							$mappers_company   = carbon_get_post_meta( $audit_post_id, 'mappers_company' );
-							$mappers_address   = carbon_get_post_meta( $audit_post_id, 'mappers_address' );
-							$audit_post_status = get_post_status( $audit_post_id );
-							?>
-						<tr>
-							
+					<?php
+					foreach ( $audits as $audit_post_id ) :
+						$mappers_id        = carbon_get_post_meta( $audit_post_id, 'mappers_id' );
+						$mappers_type      = carbon_get_post_meta( $audit_post_id, 'mappers_type' );
+						$mappers_company   = carbon_get_post_meta( $audit_post_id, 'mappers_company' );
+						$mappers_address   = carbon_get_post_meta( $audit_post_id, 'mappers_address' );
+						$audit_post_status = get_post_status( $audit_post_id );
+
+						$is_self_draft = 'self' === $mappers_type && 'draft' === $audit_post_status;
+						?>
+						<tr
+							data-id="<?php echo esc_attr( $mappers_id ); ?>"
+							data-src="<?php echo esc_url( get_the_permalink( $audit_post_id ) ); ?>"
+							class="mappers-audits-table-item mappers-audits-table-item-<?php echo esc_attr( $audit_post_status ); ?>"
+						>
+							<td>
+								<<?php echo $is_self_draft ? 'a href="' . esc_url( get_the_permalink( $audit_page_id ) ) . '?id=' . esc_attr( $mappers_id ) . '"' : 'div'; ?> class="mappers-audits-table-company">
+									<?php echo esc_html( $mappers_company ); ?>
+								</<?php echo $is_self_draft ? 'a' : 'div'; ?>>
+							</td>
+							<td>
+								<div class="mappers-audits-table-address">
+									<?php echo esc_html( $mappers_address ); ?>
+								</div>
+							</td>
+							<td>
+								<div class="mappers-audits-table-date">
+									<?php echo esc_html( get_the_date( 'd.m.Y', $audit_post_id ) ); ?>
+								</div>
+							</td>
+							<td>
+								<<?php echo $is_self_draft ? 'a href="' . esc_url( get_the_permalink( $audit_page_id ) ) . '?id=' . esc_attr( $mappers_id ) . '"' : 'div'; ?> class="mappers-audits-table-status">
+									<?php
+									if ( 'publish' === $audit_post_status ) {
+										esc_html_e( 'Звіт готов', 'mappers' );
+									} elseif ( $is_self_draft ) {
+										esc_html_e( 'Продовжити', 'mappers' );
+									} elseif ( 'pro' === $mappers_type ) {
+										esc_html_e( 'Готовимо звіт', 'mappers' );
+									}
+									?>
+								</<?php echo $is_self_draft ? 'a' : 'div'; ?>>
+							</td>
+							<td>
+								<div class="mappers-audits-table-actions">
+									<button aria-label="<?php esc_attr_e( 'Поділитися', 'mappers' ); ?>" class="mappers-audits-table-btn mappers-audits-table-btn-share">
+										<svg class="mappers-icon"><use xlink:href="#icon-share" /></svg>
+									</button>
+									<button aria-label="<?php esc_attr_e( 'Завантажити', 'mappers' ); ?>" class="mappers-audits-table-btn mappers-audits-table-btn-download">
+										<svg class="mappers-icon"><use xlink:href="#icon-download" /></svg>
+									</button>
+									<button aria-label="<?php esc_attr_e( 'Роздрукувати', 'mappers' ); ?>" class="mappers-audits-table-btn mappers-audits-table-btn-print">
+										<svg class="mappers-icon"><use xlink:href="#icon-print" /></svg>
+									</button>
+									<<?php echo 'publish' === $audit_post_status ? 'a href="' . esc_url( get_the_permalink( $audit_post_id ) ) . '"' : 'div'; ?> aria-label="<?php esc_attr_e( 'Переглянути', 'mappers' ); ?>" class="mappers-audits-table-btn mappers-audits-table-btn-view">
+										<svg class="mappers-icon"><use xlink:href="#icon-arrow-link" /></svg>
+									</<?php echo 'publish' === $audit_post_status ? 'a' : 'div'; ?>>
+								</div>
+							</td>
 						</tr>
 						<?php endforeach; ?>
 					</tbody>

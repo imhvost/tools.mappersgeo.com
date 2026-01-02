@@ -968,6 +968,13 @@ a.mappers-profile-menu-link {
 	}
 }
 
+.mappers-print {
+	.mappers-audit-hero,
+	.mappers-audit-expert {
+		background: #fff4f1;
+	}
+}
+
 .mappers-audit-expert-img {
 	flex: none;
 	width: 358px;
@@ -1027,7 +1034,7 @@ a.mappers-profile-menu-link {
 .mappers-widget {
 	border-radius: 20px;
 	border: solid 1px @border;
-	background-color: @white;
+	background-color: @widget;
 	padding: 40px;
 	display: flex;
 	flex-direction: column;
@@ -1100,5 +1107,135 @@ a.mappers-profile-menu-link {
 		@media @md {
 			gap: 24px;
 		}
+	}
+}
+
+.mappers-audits-main {
+	gap: 40px;
+}
+
+.mappers-audits-table {
+	width: 100%;
+	background-color: @white;
+	table-layout: fixed;
+	line-height: 1;
+	thead {
+		background-color: #efefef;
+		font-weight: 700;
+		td {
+			height: 64px;
+		}
+	}
+	td {
+		padding: 10px 16px;
+		height: 60px;
+		border-right: solid 1px @border;
+		border-bottom: solid 1px @white;
+		&:nth-child(1) {
+			width: 24.5%;
+			padding-left: 24px;
+		}
+		&:nth-child(2) {
+			width: 24.5%;
+		}
+		&:nth-child(3) {
+			width: 16.11%;
+		}
+		&:nth-child(4) {
+			width: 16.11%;
+		}
+		&:last-child {
+			border-right: 0;
+			padding-right: 60px;
+			position: relative;
+		}
+	}
+	tbody {
+		color: @title;
+	}
+}
+
+.mappers-audits-table-item {
+	&:nth-child(even) {
+		background-color: #f8f4f3;
+	}
+	&.mappers-audits-table-item-draft {
+		.mappers-audits-table-btn {
+			color: fade(@black, 15%);
+			pointer-events: none;
+		}
+		.mappers-audits-table-btn-view {
+			background-color: fade(@black, 15%);
+			color: @white;
+		}
+	}
+	&.mappers-audits-table-item-publish {
+		.mappers-audits-table-status {
+			background-color: #dcf6d0;
+		}
+	}
+}
+
+.mappers-audits-table-company {
+	font-weight: 700;
+	overflow-wrap: anywhere;
+}
+
+a.mappers-audits-table-company {
+	transition: color 0.4s;
+	&:hover {
+		color: @linkH;
+	}
+}
+
+.mappers-audits-table-address {
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+}
+
+.mappers-audits-table-status {
+	padding: 4px 8px;
+	border-radius: 2px;
+	background-color: #ffeac6;
+	width: fit-content;
+}
+
+a.mappers-audits-table-status {
+	transition: color 0.4s;
+	&:hover {
+		color: @linkH;
+	}
+}
+
+.mappers-audits-table-actions {
+	display: flex;
+	gap: 4px;
+}
+
+.mappers-audits-table-btn {
+	flex: auto;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 40px;
+	color: @link;
+	transition:
+		color 0.4s,
+		background-color 0.4s;
+	&:hover {
+		color: @linkH;
+	}
+}
+
+.mappers-audits-table-btn-view {
+	position: absolute;
+	inset: 0 0 0 auto;
+	width: 60px;
+	background-color: fade(@link, 15%);
+	height: auto;
+	&:hover {
+		color: @white;
+		background-color: @link;
 	}
 }

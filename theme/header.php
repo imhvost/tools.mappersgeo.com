@@ -13,9 +13,22 @@ $mappers_logo       = carbon_get_theme_option( 'mappers_logo' );
 $mappers_header_tel = carbon_get_theme_option( 'mappers_header_tel' );
 
 $credits = new Mappers_Credits( get_current_user_id() );
+
+$fields = mappers_check_text_fields(
+	array( 'print' ),
+	false,
+	'GET',
+	false
+);
+
+$html_class = array();
+
+if ( $fields['print'] ) {
+	$html_class[] = 'mappers-print';
+}
 ?>
 <!DOCTYPE html>
-<html <?php language_attributes(); ?>>
+<html <?php language_attributes(); ?> class="<?php echo esc_attr( implode( ' ', $html_class ) ); ?>">
 <head>
 	<meta charset="<?php bloginfo( 'charset' ); ?>">
 	<meta name="viewport" content="width=device-width">
