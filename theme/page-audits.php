@@ -120,22 +120,22 @@ $mappers_audit_types = carbon_get_the_post_meta( 'mappers_audit_types' );
 							data-src="<?php echo esc_url( get_the_permalink( $audit_post_id ) ); ?>"
 							class="mappers-audits-table-item mappers-audits-table-item-<?php echo esc_attr( $audit_post_status ); ?>"
 						>
-							<td>
+							<td data-title="<?php esc_attr_e( 'Назва', 'mappers' ); ?>">
 								<<?php echo $is_self_draft ? 'a href="' . esc_url( get_the_permalink( $audit_page_id ) ) . '?id=' . esc_attr( $mappers_id ) . '"' : 'div'; ?> class="mappers-audits-table-company">
 									<?php echo esc_html( $mappers_company ); ?>
 								</<?php echo $is_self_draft ? 'a' : 'div'; ?>>
 							</td>
-							<td>
+							<td data-title="<?php esc_attr_e( 'Адреса', 'mappers' ); ?>">
 								<div class="mappers-audits-table-address">
 									<?php echo esc_html( $mappers_address ); ?>
 								</div>
 							</td>
-							<td>
+							<td data-title="<?php esc_attr_e( 'Дата', 'mappers' ); ?>">
 								<div class="mappers-audits-table-date">
 									<?php echo esc_html( get_the_date( 'd.m.Y', $audit_post_id ) ); ?>
 								</div>
 							</td>
-							<td>
+							<td data-title="<?php esc_attr_e( 'Статус', 'mappers' ); ?>">
 								<<?php echo $is_self_draft ? 'a href="' . esc_url( get_the_permalink( $audit_page_id ) ) . '?id=' . esc_attr( $mappers_id ) . '"' : 'div'; ?> class="mappers-audits-table-status">
 									<?php
 									if ( 'publish' === $audit_post_status ) {
@@ -148,9 +148,14 @@ $mappers_audit_types = carbon_get_the_post_meta( 'mappers_audit_types' );
 									?>
 								</<?php echo $is_self_draft ? 'a' : 'div'; ?>>
 							</td>
-							<td>
+							<td data-title="<?php esc_attr_e( 'Дії', 'mappers' ); ?>">
 								<div class="mappers-audits-table-actions">
-									<button aria-label="<?php esc_attr_e( 'Поділитися', 'mappers' ); ?>" class="mappers-audits-table-btn mappers-audits-table-btn-share">
+									<button
+										aria-label="<?php esc_attr_e( 'Поділитися', 'mappers' ); ?>"
+										class="mappers-audits-table-btn mappers-audits-table-btn-share"
+										data-url="<?php echo esc_url( get_the_permalink( $audit_post_id ) ); ?>"
+										data-title="<?php esc_attr_e( 'Аудит компанії', 'mappers' ); ?> <?php echo esc_attr( $mappers_company ); ?>"
+									>
 										<svg class="mappers-icon"><use xlink:href="#icon-share" /></svg>
 									</button>
 									<button aria-label="<?php esc_attr_e( 'Завантажити', 'mappers' ); ?>" class="mappers-audits-table-btn mappers-audits-table-btn-download">
@@ -168,12 +173,75 @@ $mappers_audit_types = carbon_get_the_post_meta( 'mappers_audit_types' );
 						<?php endforeach; ?>
 					</tbody>
 				</table>
+				<div class="mappers-audits-table-share-tooltip">
+					<?php
+						$sharer = array( 'x', 'facebook', 'linkedin', 'whatsapp', 'viber', 'telegram' );
+					foreach ( $sharer as $item ) :
+						?>
+						<button
+							class="mappers-audits-table-share-btn"
+							data-sharer="<?php echo esc_attr( $item ); ?>"
+							aria-label="<?php esc_attr_e( 'Поділитися в', 'mappers' ); ?> <?php echo esc_attr( $item ); ?>"
+						>
+							<img src="<?php echo esc_url( get_template_directory_uri() ); ?>/img/share/<?php echo esc_attr( $item ); ?>.svg" alt="">
+						</button>
+					<?php endforeach; ?>
+					<button
+						class="mappers-audits-table-share-btn mappers-audits-table-share-btn-copy"
+						aria-label="<?php esc_attr_e( 'Скопіювати посилання', 'mappers' ); ?>"
+					>
+						<img src="<?php echo esc_url( get_template_directory_uri() ); ?>/img/share/link.svg" alt="">
+					</button>
+				</div>
 			<?php else : ?>
 				<div class="mappers-audits-empty">
 					<?php esc_html_e( 'Ви поки що не отримали жодного результату аудиту. Замовте аудит', 'mappers' ); ?>
 				</div>
 			<?php endif; ?>
 		</div>
+		<?php
+			$childs = get_posts(
+				array(
+					'post_type'      => 'page',
+					'posts_per_page' => -1,
+					'post_parent'    => $post->ID,
+					'fields'         => 'ids',
+				)
+			);
+			if ( $childs ) :
+				?>
+			<div class="mappers-audits-childs">
+				<?php
+				foreach ( $childs as $item ) :
+					$excerpt = mappers_get_excerpt( $item, 100 );
+					?>
+					<div class="mappers-audits-child mappers-widget">
+						<?php if ( has_post_thumbnail( $item ) ) : ?>
+							<a href="<?php echo esc_url( get_the_post_thumbnail_url( $item, 'full' ) ); ?>" class="mappers-audits-child-img mappers-cover-img glightbox" data-gallery="mappers-audits-child-<?php echo esc_attr( $item ); ?>">
+								<?php echo get_the_post_thumbnail( $item, 'full' ); ?>
+								<i>
+									<svg class="mappers-icon"><use xlink:href="#icon-zoom"/></svg>
+								</i>
+							</a>
+						<?php endif; ?>
+						<div class="mappers-audits-child-body">
+							<div class="mappers-widget-title mappers-h2">
+								<?php echo esc_html( get_the_title( $item ) ); ?>
+							</div>
+							<?php if ( $excerpt ) : ?>
+								<div class="mappers-widget-desc">
+									<?php echo esc_html( $excerpt ); ?>
+								</div>
+							<?php endif; ?>
+							<a href="<?php echo esc_url( get_the_permalink( $item ) ); ?>" class="mappers-widget-link">
+								<span><?php echo esc_html_e( 'Дізнатись більше', 'mappers' ); ?></span>
+								<svg class="mappers-icon"><use xlink:href="#icon-arrow-link"/></svg>
+							</a>
+						</div>
+					</div>
+				<?php endforeach; ?>
+			</div>
+		<?php endif; ?>
 	</div>
 </main>
 <?php

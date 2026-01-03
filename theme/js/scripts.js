@@ -615,6 +615,19 @@ $('#mappers-modal-audit-sent').on('accessible-minimodal:after-close', () => {
 
 /* mappers-audits-table-btn-download */
 
+function mappersCreateAuditResultIframe(src) {
+	const iframe = document.createElement('iframe');
+
+	iframe.style.position = 'fixed';
+	iframe.style.left = '-9999px';
+	iframe.style.width = '1600px';
+	iframe.src = src + '?print=1';
+
+	$('body').append(iframe);
+
+	return iframe;
+}
+
 $(document).on('click', '.mappers-audits-table-btn-download', function () {
 	const t = $(this);
 	if (t.hasClass('mappers-process')) {
@@ -625,25 +638,18 @@ $(document).on('click', '.mappers-audits-table-btn-download', function () {
 	const item = t.closest('.mappers-audits-table-item');
 
 	const src = item.data('src');
-	const id = item.data('mappers_id');
+	const id = item.data('id');
 
-	const iframe = document.createElement('iframe');
-
-	iframe.style.position = 'fixed';
-	iframe.style.left = '-9999px';
-	iframe.style.width = '1200px';
-	iframe.style.height = '2000px';
-	iframe.src = src + '?print=1';
-
-	document.body.appendChild(iframe);
+	const iframe = mappersCreateAuditResultIframe(src);
 
 	iframe.onload = async () => {
 		const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
 		iframeDoc.querySelectorAll('svg').forEach(el => el.remove());
 
-		const target = iframeDoc.body;
+		const body = iframeDoc.body;
+		// iframe.style.height = $(body).innerHeight() + 'px';
 
-		const canvas = await html2canvas(target, {
+		const canvas = await html2canvas(body, {
 			scale: 2,
 			useCORS: true,
 			backgroundColor: '#fff',
@@ -652,10 +658,26 @@ $(document).on('click', '.mappers-audits-table-btn-download', function () {
 		const imgData = canvas.toDataURL('image/jpeg', 1.0);
 
 		const pdf = new jspdf.jsPDF('p', 'mm', 'a4');
-		const pdfWidth = 210;
-		const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
 
-		pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+		const pageWidth = 210;
+		const pageHeight = 297;
+
+		const imgWidth = pageWidth;
+		const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+		let heightLeft = imgHeight;
+		let position = 0;
+
+		pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
+		heightLeft -= pageHeight;
+
+		while (heightLeft > 0) {
+			position = heightLeft - imgHeight;
+			pdf.addPage();
+			pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
+			heightLeft -= pageHeight;
+		}
+
 		pdf.save(`${id}.pdf`);
 
 		document.body.removeChild(iframe);
@@ -664,22 +686,88 @@ $(document).on('click', '.mappers-audits-table-btn-download', function () {
 	};
 });
 
-async function down() {
-	$('body').each(function () {});
-	const canvas = await html2canvas($('body')[0], {
-		scale: 2,
-		useCORS: true,
-		backgroundColor: '#fff',
+$(document).on('click', '.mappers-audits-table-btn-print', function () {
+	const t = $(this);
+	if (t.hasClass('mappers-process')) {
+		return;
+	}
+	t.addClass('mappers-process');
+
+	const item = t.closest('.mappers-audits-table-item');
+
+	const src = item.data('src');
+
+	const iframe = mappersCreateAuditResultIframe(src);
+
+	const iframeWindow = iframe.contentWindow;
+	if (!iframeWindow) {
+		return;
+	}
+
+	iframeWindow.focus();
+	iframeWindow.print();
+
+	const cleanup = () => {
+		iframeWindow.removeEventListener('afterprint', cleanup);
+		iframe.remove();
+	};
+
+	iframeWindow.addEventListener('afterprint', cleanup);
+
+	t.removeClass('mappers-process');
+});
+
+/* mappers-audits-table-btn-share */
+
+if (window.tippy) {
+	const tooltip = tippy(document.body, {
+		content: $('.mappers-audits-table-share-tooltip')[0],
+		allowHTML: true,
+		interactive: true,
+		trigger: 'manual',
+		placement: 'top',
+		theme: 'mappers-light',
 	});
 
-	const imgData = canvas.toDataURL('image/jpeg', 1.0);
+	$(document).on('click', '.mappers-audits-table-btn-share', function () {
+		const t = $(this);
 
-	const pdf = new jspdf.jsPDF('p', 'mm', 'a4');
-	const pdfWidth = 210;
-	const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+		console.log(tooltip);
 
-	pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
-	pdf.save('document.pdf');
+		$(tooltip.popper)
+			.find('.mappers-audits-table-share-btn')
+			.data('title', t.data('title'))
+			.data('url', t.data('url'))
+			.attr('data-title', t.data('title'))
+			.attr('data-url', t.data('url'));
+
+		tooltip.setProps({
+			getReferenceClientRect: () => t[0].getBoundingClientRect(),
+		});
+
+		tooltip.show();
+
+		window.Sharer.init();
+	});
 }
 
-// down();
+/* mappers-audits-table-share-btn-copy */
+
+$(document).on('click', '.mappers-audits-table-share-btn-copy', async function () {
+	const t = $(this);
+	if (navigator.clipboard && navigator.clipboard.writeText) {
+		await navigator.clipboard.writeText(t.data('url'));
+	}
+});
+
+/* glightbox */
+
+const lacLightbox = GLightbox({
+	openEffect: 'fade',
+	closeEffect: 'fade',
+	videosWidth: 1600,
+});
+
+lacLightbox.on('open', () => $(mappersFixedElements).addClass('gscrollbar-fixer'));
+
+lacLightbox.on('close', () => $(mappersFixedElements).removeClass('gscrollbar-fixer'));

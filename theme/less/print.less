@@ -1,0 +1,24 @@
+.mappers-print {
+	body {
+		padding-top: 0;
+	}
+	.mappers-header {
+		position: static;
+	}
+	#wpadminbar {
+		display: none !important;
+	}
+	.mappers-header-nav-toggle {
+		display: none;
+	}
+	.mappers-audit-section {
+		break-inside: avoid;
+	}
+}
+
+@media print {
+	@page {
+		margin: 20mm 10mm 15mm;
+	}
+	.mappers-print;
+}

@@ -309,6 +309,7 @@ add_action(
 			->where( 'post_template', '=', 'page-audits.php' )
 			->add_fields(
 				array(
+					Field::make( 'image', 'mappers_icon', __( 'Іконка', 'mappers' ) ),
 					Field::make( 'complex', 'mappers_audit_types', __( 'Типи аудитів', 'mappers' ) )
 						->set_collapsed( true )
 						->set_layout( 'tabbed-vertical' )
@@ -317,16 +318,6 @@ add_action(
 								Field::make( 'text', 'title', __( 'Назва', 'mappers' ) ),
 								Field::make( 'text', 'name', __( 'name', 'mappers' ) ),
 								Field::make( 'text', 'price', __( 'Ціна', 'mappers' ) ),
-								Field::make( 'association', 'page', __( 'Сторінка з описом', 'mappers' ) )
-									->set_types(
-										array(
-											array(
-												'type' => 'post',
-												'post_type' => 'page',
-											),
-										)
-									)
-									->set_max( 1 ),
 							)
 						)
 						->set_header_template( '<%= title %>' ),

@@ -80,7 +80,7 @@ const props = defineProps<{
   }
 }
 
-.tippy-box[data-theme~='mappers'] {
+.tippy-box[data-theme~='mappers-dark'] {
   background-color: @title;
   font-size: 16px;
   border-radius: 8px;

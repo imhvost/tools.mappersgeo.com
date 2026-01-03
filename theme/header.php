@@ -87,7 +87,6 @@ if ( $fields['print'] ) {
 										<?php echo esc_html_e( 'Профіль', 'mappers' ); ?>
 										</span>
 									</a>
-									
 								<?php endif; ?>
 								<a href="<?php echo esc_url( wp_logout_url( home_url( '/' ) ) ); ?>" class="mappers-header-logout" aria-label="<?php esc_attr_e( 'Вийти з профілю', 'mappers' ); ?>">
 									<svg class="mappers-icon"><use xlink:href="#icon-logout"/></svg>

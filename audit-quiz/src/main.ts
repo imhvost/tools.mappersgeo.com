@@ -13,7 +13,7 @@ if (import.meta.env.DEV) {
 const app = createApp(App);
 app.use(VueTippy, {
   defaultProps: {
-    theme: 'mappers',
+    theme: 'mappers-dark',
     maxWidth: 436,
     trigger: 'click',
     touch: ['click', 0],

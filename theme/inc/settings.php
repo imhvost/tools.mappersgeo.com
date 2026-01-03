@@ -109,7 +109,7 @@ add_action(
 
 		$css_plugins = array(
 			// 'swiper-bundle.min.css',
-			// 'glightbox.min.css',
+			'glightbox.min.css',
 		);
 
 		foreach ( $css_plugins as $item ) {
@@ -136,15 +136,17 @@ add_action(
 		$js_plugins = array(
 			'accessible-minimodal.umd.js',
 			// 'swiper-bundle.min.js',
-			// 'glightbox.min.js',
+			'glightbox.min.js',
 			// 'focus-visible.min.js',
 		);
 
-		// if ( 'page-audits.php' === basename( get_page_template() ) ) {
+		if ( 'page-audits.php' === basename( get_page_template() ) ) {
 			$js_plugins[] = 'html2canvas.min.js';
 			$js_plugins[] = 'sharer.min.js';
 			$js_plugins[] = 'jspdf.umd.min.js';
-		// }
+			$js_plugins[] = 'popper.min.js';
+			$js_plugins[] = 'tippy-bundle.umd.min.js';
+		}
 
 		foreach ( $js_plugins as $item ) {
 			wp_enqueue_script( $item, get_template_directory_uri() . '/js/plugins/' . $item, false, filemtime( get_template_directory() . '/js/plugins/' . $item ), true );
