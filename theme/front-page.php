@@ -103,6 +103,17 @@ $audits_page_id  = mappers_get_page_id_by_template( 'page-audits.php' );
 			</div>
 		<?php endif; ?>
 	</div>
+	<?php
+		$page_content = get_the_content( null, false, $post->ID );
+	if ( $page_content ) :
+		?>
+	<div class="mappers-page-content home-page-content content-text">
+		<?php
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			echo apply_filters( 'the_content', $page_content );
+		?>
+	</div>
+	<?php endif; ?>
 </main>
 <?php the_post(); ?>
 <?php

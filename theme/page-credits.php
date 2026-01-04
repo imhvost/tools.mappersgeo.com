@@ -29,7 +29,7 @@ $packages = get_posts(
 ?>
 <?php get_header(); ?>
 <?php the_post(); ?>
-<main class="mappers-page-main">
+<main class="mappers-main">
 	<div class="mappers-container">
 		<h1 class="mappers-page-title mappers-h1">
 			<?php the_title(); ?>
@@ -99,6 +99,17 @@ $packages = get_posts(
 			<?php endif; ?>
 		</div>
 	</div>
+	<?php
+		$page_content = get_the_content( null, false, $post->ID );
+	if ( $page_content ) :
+		?>
+	<div class="mappers-page-content home-page-content content-text">
+		<?php
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			echo apply_filters( 'the_content', $page_content );
+		?>
+	</div>
+	<?php endif; ?>
 </main>
 <?php
 get_template_part( 'template-parts/modal/credits', 'buy', array( 'packages' => $packages ) );

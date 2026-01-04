@@ -1560,3 +1560,157 @@ a.mappers-audits-table-status {
 		color: @linkH;
 	}
 }
+
+.mappers-page-content {
+	margin-top: 80px;
+	@media @md {
+		margin-top: 40px;
+	}
+	&:first-child {
+		margin-top: 0;
+	}
+}
+
+.mappers-footer {
+	margin-top: auto;
+	background-color: #191e25;
+	color: @white;
+	padding: 48px 0;
+	@media @md {
+		padding: 40px 0;
+	}
+}
+
+.mappers-footer-body {
+	display: grid;
+	@media @md_ {
+		grid-template-columns: 1fr 1fr 1fr;
+		border-bottom: solid 1px fade(@white, 10%);
+	}
+}
+
+.mappers-footer-cell {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+	gap: 24px;
+	@media @md_ {
+		padding: 0 32px 32px;
+		&:not(:last-child) {
+			border-right: solid 1px fade(@white, 10%);
+		}
+	}
+	@media @md {
+		padding-bottom: 24px;
+		margin-bottom: 24px;
+		border-bottom: solid 1px fade(@white, 10%);
+	}
+}
+
+.mappers-footer-cell-title {
+	font-size: 20px;
+}
+
+.mappers-footer-offices {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+}
+
+.mappers-footer-office {
+	display: flex;
+	align-items: flex-start;
+	gap: 8px;
+}
+
+.mappers-footer-contacts {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	align-items: flex-start;
+}
+
+.mappers-footer-contact-link {
+	display: flex;
+	white-space: nowrap;
+	align-items: center;
+	color: inherit;
+	gap: 8px;
+	transition: color 0.4s;
+	&:hover {
+		color: @link;
+	}
+}
+
+.mappers-social-links {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.mappers-social-link {
+	display: grid;
+	place-items: center;
+	width: 48px;
+	aspect-ratio: 1;
+	border-radius: 50%;
+	color: @white;
+	background-color: fade(@white, 20%);
+	transition: background-color 0.4s;
+	&:hover {
+		background-color: @link;
+	}
+}
+
+.mappers-foot {
+	margin-top: 24px;
+	display: flex;
+	align-items: center;
+	gap: 24px;
+	justify-content: space-between;
+	@media @md {
+		flex-direction: column;
+		align-items: unset;
+	}
+}
+
+.mappers-foot-logo {
+	display: flex;
+	gap: 24px;
+	.mappers-logo {
+		max-width: 150px;
+	}
+}
+
+.mappers-foot-copyright {
+	padding-left: 24px;
+	border-left: solid 1px fade(@white, 10%);
+	display: flex;
+	align-items: center;
+}
+
+.mappers-footer-menu {
+	display: flex;
+	color: fade(@white, 50%);
+	li {
+		&:not(:last-child) {
+			margin-right: 16px;
+			padding-right: 16px;
+			position: relative;
+			&:after {
+				content: '/';
+				position: absolute;
+				top: 0;
+				left: 100%;
+				transform: translateX(-50%);
+			}
+		}
+	}
+	a {
+		color: inherit;
+		transition: color 0.4s;
+		&:hover {
+			color: @white;
+		}
+	}
+}

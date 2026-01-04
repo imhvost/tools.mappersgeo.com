@@ -14,8 +14,9 @@ add_action(
 	function () {
 		register_nav_menus(
 			array(
-				'mappers_header' => esc_html__( 'Шапка', 'mappers' ),
+				'mappers_header' => esc_html__( 'Хедер', 'mappers' ),
 				'mappers_rules'  => esc_html__( 'Правила', 'mappers' ),
+				'mappers_footer' => esc_html__( 'Футер', 'mappers' ),
 			)
 		);
 	}

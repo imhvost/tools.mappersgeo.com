@@ -12,6 +12,55 @@ if ( ! defined( 'ABSPATH' ) ) {
 use Carbon_Fields\Container;
 use Carbon_Fields\Field;
 
+/**
+ * Returns section fields.
+ *
+ * @return array Fields array
+ */
+function mappers_get_section_fields() {
+
+	if ( class_exists( 'Carbon_Fields\Field' ) ) {
+		return array(
+			Field::make( 'text', 'mappers_section_label', __( 'Ярлик', 'mappers' ) )
+				->set_width( 80 ),
+			Field::make( 'select', 'mappers_section_label_tag', __( 'Ярлик - тег', 'mappers' ) )
+				->set_width( 20 )
+				->set_options(
+					array(
+						'div' => 'div',
+						'h1'  => 'h1',
+						'h2'  => 'h2',
+						'h3'  => 'h3',
+						'h4'  => 'h4',
+						'h5'  => 'h5',
+						'h6'  => 'h6',
+					)
+				)
+				->set_default_value( 'div' ),
+			Field::make( 'textarea', 'mappers_section_title', __( 'Заголовок', 'mappers' ) )
+				->set_width( 80 )
+				->set_rows( 3 ),
+			Field::make( 'select', 'mappers_section_title_tag', __( 'Заголовок - тег', 'mappers' ) )
+				->set_width( 20 )
+				->set_options(
+					array(
+						'div' => 'div',
+						'h1'  => 'h1',
+						'h2'  => 'h2',
+						'h3'  => 'h3',
+						'h4'  => 'h4',
+						'h5'  => 'h5',
+						'h6'  => 'h6',
+					)
+				)
+				->set_default_value( 'h2' ),
+			Field::make( 'rich_text', 'mappers_section_desc', __( 'Опис', 'mappers' ) ),
+			Field::make( 'color', 'mappers_section_bg', __( 'Фон блокa', 'mappers' ) )
+					->set_palette( array( '#ffffff' ) ),
+		);
+	}
+	return array();
+}
 
 add_action(
 	'carbon_fields_register_fields',
@@ -19,11 +68,43 @@ add_action(
 
 		/* options */
 		Container::make( 'theme_options', __( 'Налаштування теми', 'mappers' ) )
-			->add_fields(
+			->add_tab(
+				__( 'Основне', 'mappers' ),
 				array(
 					Field::make( 'text', 'mappers_credit_price', __( 'Ціна кредиту', 'mappers' ) )
 						->set_attribute( 'type', 'number' ),
 					Field::make( 'text', 'mappers_currency', __( 'Валюта', 'mappers' ) ),
+				)
+			)
+			->add_tab(
+				__( 'Футер', 'mappers' ),
+				array(
+					Field::make( 'image', 'mappers_footer_logo', __( 'Лого', 'mappers' ) ),
+					Field::make( 'complex', 'mappers_offices', __( 'Офіси', 'mappers' ) )
+						->set_collapsed( true )
+						->set_layout( 'tabbed-vertical' )
+						->add_fields(
+							array(
+								Field::make( 'textarea', 'office', __( 'Офіс', 'mappers' ) ),
+							)
+						)
+						->set_header_template( '<%= office %>' ),
+					Field::make( 'textarea', 'mappers_tels', __( 'Телефон', 'mappers' ) )
+						->set_rows( 3 ),
+					Field::make( 'textarea', 'mappers_emails', __( 'Пошта', 'mappers' ) )
+						->set_rows( 3 ),
+					Field::make( 'text', 'mappers_viber', __( 'Viber', 'mappers' ) ),
+					Field::make( 'text', 'mappers_telegram', __( 'Telegram', 'mappers' ) ),
+					Field::make( 'text', 'mappers_whatsapp', __( 'Whatsapp', 'mappers' ) ),
+					Field::make( 'text', 'mappers_youtube', __( 'Youtube', 'mappers' ) ),
+					Field::make( 'text', 'mappers_linkedin', __( 'Linkedin', 'mappers' ) ),
+					Field::make( 'text', 'mappers_facebook', __( 'Facebook', 'mappers' ) ),
+					Field::make( 'text', 'mappers_instagram', __( 'Instagram', 'mappers' ) ),
+					Field::make( 'text', 'mappers_tiktok', __( 'Tiktok', 'mappers' ) ),
+					Field::make( 'textarea', 'mappers_trustpilot', __( 'Trustpilot', 'mappers' ) )
+						->set_rows( 3 ),
+					Field::make( 'text', 'mappers_copyright', __( 'Копирайт', 'mappers' ) )
+						->set_help_text( __( '{Y} - Поточний рік', 'mappers' ) ),
 				)
 			);
 
@@ -31,7 +112,6 @@ add_action(
 		Container::make( 'user_meta', __( 'Поля', 'mappers' ) )
 			->add_fields(
 				array(
-
 					Field::make( 'text', 'mappers_name', __( "Ім'я та прізвище", 'mappers' ) ),
 					Field::make( 'text', 'mappers_tel', __( 'Номер телефону', 'mappers' ) ),
 					Field::make( 'text', 'mappers_website', __( 'Веб-сайт', 'mappers' ) ),

@@ -58,7 +58,6 @@ if ( $fields['print'] ) {
 							)
 						);
 					}
-
 					?>
 					<div class="mappers-header-btns">
 						<?php

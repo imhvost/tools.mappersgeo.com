@@ -9,7 +9,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$logo = get_theme_mod( 'custom_logo' );
+$logo = $args['logo'] ?? null;
+if ( ! $logo ) {
+	$logo = get_theme_mod( 'custom_logo' );
+}
+
+
 ?>
 <?php
 if ( $logo ) :
