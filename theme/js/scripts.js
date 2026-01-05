@@ -771,3 +771,75 @@ const lacLightbox = GLightbox({
 lacLightbox.on('open', () => $(mappersFixedElements).addClass('gscrollbar-fixer'));
 
 lacLightbox.on('close', () => $(mappersFixedElements).removeClass('gscrollbar-fixer'));
+
+/* audits filter */
+
+async function mappersFilterAudits(reset) {
+	if (!window.wp_ajax) {
+		return;
+	}
+
+	const currentRequest = $('html').data('mappers-filter-audits-request');
+	if (currentRequest) {
+		currentRequest.abort();
+	}
+
+	const args = JSON.parse($('.mappers-filter-audits-args').text());
+
+	args.s = '';
+	args.tax_query = [];
+	args.add_args = {};
+
+	const url = new URL(window.location.href);
+	url.pathname = url.pathname.replace(/\/page\/\d+\/?/, '');
+	url.search = '';
+
+	const search = $('.mappers-audits-search-input').val()?.trim();
+	if (search) {
+		args.s = search;
+		args.add_args.search = search;
+		url.searchParams.set('search', search);
+	}
+
+	window.history.replaceState({}, '', url.toString());
+
+	const request = $.ajax({
+		url: wp_ajax.url,
+		type: 'POST',
+		data: {
+			action: 'mappers_audits_filter',
+			nonce: wp_ajax.nonce,
+			args: args,
+		},
+		success: function (response) {
+			if (response) {
+				$('.mappers-audits').html(response);
+			}
+			$('html').data('mappers-filter-audits-request', null);
+		},
+		error: error => {
+			$('html').data('mappers-filter-audits-request', null);
+		},
+	});
+
+	$('html').data('mappers-filter-audits-request', request);
+
+	try {
+		await request;
+	} catch (err) {
+		console.error(err);
+	}
+}
+
+$(document).on('input', '.mappers-audits-search-input', function () {
+	const t = $(this);
+	if (t.data('debounce')) {
+		clearTimeout(t.data('debounce'));
+	}
+	t.data('debounce', setTimeout(mappersFilterAudits, 400));
+});
+
+$(document).on('submit', '.mappers-audits-search', function () {
+	mappersFilterAudits();
+	return false;
+});

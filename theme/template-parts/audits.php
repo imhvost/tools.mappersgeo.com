@@ -38,27 +38,31 @@ if ( $audits ) :
 		$query = new WP_Query( $query_args );
 	}
 
+	?>
+<script type="application/json" class="mappers-filter-audits-args">
+	<?php echo wp_json_encode( $query_args ); ?>
+</script>
+<div class="mappers-audits-filter">
+	<form action="?" class="mappers-audits-search">
+		<label class="mappers-form-block">
+			<svg class="mappers-icon"><use xlink:href="#icon-search"/></svg>
+			<span class="mappers-input-block">
+				<input
+					type="search"
+					class="mappers-input mappers-audits-search-input"
+					name="search"
+					placeholder="<?php esc_attr_e( 'Пошук', 'mappers' ); ?>"
+					value="<?php echo esc_attr( $query_args['s'] ?? '' ); ?>"
+				>
+			</span>
+		</label>
+	</form>
+</div>
+	<?php
+
 	if ( $query->have_posts() ) :
 		$audit_page_id = mappers_get_page_id_by_template( 'page-audit.php' );
 		?>
-		<script type="application/json" class="filter-args">
-			<?php echo wp_json_encode( $query_args ); ?>
-		</script>
-		<div class="mappers-audits-filter">
-			<form action="?" class="mappers-audits-search">
-				<label class="mappers-form-block">
-					<svg class="mappers-icon"><use xlink:href="#icon-search"/></svg>
-					<span class="mappers-input-block">
-						<input
-							type="search"
-							class="mappers-input"
-							name="search"
-							placeholder="<?php esc_attr_e( 'Пошук', 'mappers' ); ?>"
-						>
-					</span>
-				</label>
-			</form>
-		</div>
 		<table class="mappers-audits-table">
 			<thead>
 				<tr>
@@ -138,6 +142,18 @@ if ( $audits ) :
 				<?php endforeach; ?>
 			</tbody>
 		</table>
+		<?php
+		get_template_part(
+			'template-parts/pagination',
+			'',
+			array(
+				'current'       => $query_args['paged'] ?? 1,
+				'max_num_pages' => $query->max_num_pages,
+				'base_url'      => $query_args['base_url'] ?? '',
+				'add_args'      => $query_args['add_args'] ?? array(),
+			)
+		);
+		?>
 		<div class="mappers-audits-table-share-tooltip">
 			<?php
 				$sharer = array( 'x', 'facebook', 'linkedin', 'whatsapp', 'viber', 'telegram' );

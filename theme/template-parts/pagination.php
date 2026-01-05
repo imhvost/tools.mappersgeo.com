@@ -27,15 +27,15 @@ $pagination = paginate_links(
 		'current'   => $current,
 		'total'     => $max_num_pages,
 		'type'      => 'list',
-		'prev_text' => '<svg class="mappers-icon"><use xlink:href="#icon-arrow-left"/></svg> <span>' . __( 'Назад', 'mappers' ) . '</span>',
-		'next_text' => '<svg class="mappers-icon"><use xlink:href="#icon-arrow-right"/></svg> <span>' . __( 'Вперед', 'mappers' ) . '</span>',
+		'prev_text' => '<svg class="mappers-icon"><use xlink:href="#icon-arrow-left"/></svg><div>' . __( 'Назад', 'mappers' ) . '</div>',
+		'next_text' => '<div>' . __( 'Вперед', 'mappers' ) . '</div><svg class="mappers-icon"><use xlink:href="#icon-arrow-right"/></svg>',
 		'add_args'  => $add_args,
 	)
 );
 
 if ( $pagination ) {
 	echo wp_kses(
-		str_repmapperse( '/page/1/', '/', $pagination ),
+		str_replace( '/page/1/', '/', $pagination ),
 		mappers_allow_svg_in_kses()
 	);
 }

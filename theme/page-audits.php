@@ -32,11 +32,12 @@ $fields = mappers_check_text_fields(
 $args = array(
 	'post_type'      => 'mappers-audit',
 	'post_status'    => array( 'draft', 'publish' ),
-	'posts_per_page' => -1,
+	'posts_per_page' => 16,
 	'fields'         => 'ids',
 	's'              => $fields['search'],
 	'sentence'       => true,
 	'paged'          => $current_page,
+	'base_url'       => get_the_permalink(),
 	'meta_query'     => array(
 		array(
 			'key'   => '_mappers_user|||0|id',
@@ -95,7 +96,9 @@ $mappers_audit_types = carbon_get_the_post_meta( 'mappers_audit_types' );
 					</div>
 				<?php endif; ?>
 			</div>
-			<?php get_template_part( 'template-parts/audits', '', array( 'query_args' => $args ) ); ?>
+			<div class="mappers-audits">
+				<?php get_template_part( 'template-parts/audits', '', array( 'query_args' => $args ) ); ?>
+			</div>
 		</div>
 		<?php
 			$childs = get_posts(

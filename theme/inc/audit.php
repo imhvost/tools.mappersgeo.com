@@ -607,3 +607,32 @@ function mappers_audit_start() {
 
 add_action( 'wp_ajax_nopriv_mappers_audit_start', 'mappers_audit_start' );
 add_action( 'wp_ajax_mappers_audit_start', 'mappers_audit_start' );
+
+
+/**
+ * Ajax audits filter
+ *
+ * @return void
+ */
+function mappers_audits_filter() {
+	check_ajax_referer( 'mappers_ajaxnonce', 'nonce' );
+
+	// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+	$args = isset( $_POST['args'] ) ? wp_unslash( $_POST['args'] ) : array();
+
+	ob_start();
+	get_template_part(
+		'template-parts/audits',
+		'',
+		array(
+			'query_args' => $args,
+		)
+	);
+	// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	echo ob_get_clean();
+
+	wp_die();
+}
+
+add_action( 'wp_ajax_nopriv_mappers_audits_filter', 'mappers_audits_filter' );
+add_action( 'wp_ajax_mappers_audits_filter', 'mappers_audits_filter' );
